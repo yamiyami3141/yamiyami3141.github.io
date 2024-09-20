@@ -1,0 +1,229 @@
+:root {
+    --maincolor-r:#ff0000;
+    --maincolor-g:#00ff00;
+    --maincolor-b:#0000ff;
+    --maincolor-y:#ffff00;
+    --maincolor-m:#ff00ff;
+    --maincolor-c:#00ffff;
+    --maincolor-fff: #ffffff;
+    --maincolor-000: #000000;
+
+    --sub-color01: #eedbd5;
+}
+/* デフォルト
+    --sub-color01: #eedbd5;
+    --sub-color02: #323e4c;
+    --sub-color03: #ffffff;
+*/
+
+.color-r {
+    color: var(--maincolor-r);
+}
+.color-g {
+    color: var(--maincolor-g);
+}
+.color-b {
+    color: var(--maincolor-b);
+}
+.color-y {
+    color: var(--maincolor-y);
+}
+.color-m {
+    color: var(--maincolor-m);
+}
+.color-c {
+    color: var(--maincolor-c);
+}
+.color-fff {
+    color: var(--maincolor-fff);
+}
+.color-000 {
+    color: var(--maincolor-000);
+}
+.color-s1 {
+    color: var(--sub-color01);
+}
+.color-s2 {
+    color: var(--sub-color02);
+}
+.color-s3 {
+    color: var(--sub-color03);
+}
+
+.color-r1-10 { color: color-mix(in srgb, var(--maincolor-r)  10%, var(--sub-color01) 100%);}
+.color-r1-20 { color: color-mix(in srgb, var(--maincolor-r)  20%, var(--sub-color01) 100%);}
+.color-r1-30 { color: color-mix(in srgb, var(--maincolor-r)  30%, var(--sub-color01) 100%);}
+.color-r1-40 { color: color-mix(in srgb, var(--maincolor-r)  40%, var(--sub-color01) 100%);}
+.color-r1-50 { color: color-mix(in srgb, var(--maincolor-r)  50%, var(--sub-color01) 100%);}
+.color-r1-60 { color: color-mix(in srgb, var(--maincolor-r)  60%, var(--sub-color01) 100%);}
+.color-r1-70 { color: color-mix(in srgb, var(--maincolor-r)  70%, var(--sub-color01) 100%);}
+.color-r1-80 { color: color-mix(in srgb, var(--maincolor-r)  80%, var(--sub-color01) 100%);}
+.color-r1-90 { color: color-mix(in srgb, var(--maincolor-r)  90%, var(--sub-color01) 100%);}
+.color-r1-100 { color: color-mix(in srgb, var(--maincolor-r)  100%, var(--sub-color01) 100%);}
+
+.color-g1-10 { color: color-mix(in srgb, var(--maincolor-g)  10%, var(--sub-color01) 100%);}
+.color-g1-20 { color: color-mix(in srgb, var(--maincolor-g)  20%, var(--sub-color01) 100%);}
+.color-g1-30 { color: color-mix(in srgb, var(--maincolor-g)  30%, var(--sub-color01) 100%);}
+.color-g1-40 { color: color-mix(in srgb, var(--maincolor-g)  40%, var(--sub-color01) 100%);}
+.color-g1-50 { color: color-mix(in srgb, var(--maincolor-g)  50%, var(--sub-color01) 100%);}
+.color-g1-60 { color: color-mix(in srgb, var(--maincolor-g)  60%, var(--sub-color01) 100%);}
+.color-g1-70 { color: color-mix(in srgb, var(--maincolor-g)  70%, var(--sub-color01) 100%);}
+.color-g1-80 { color: color-mix(in srgb, var(--maincolor-g)  80%, var(--sub-color01) 100%);}
+.color-g1-90 { color: color-mix(in srgb, var(--maincolor-g)  90%, var(--sub-color01) 100%);}
+.color-g1-100 { color: color-mix(in srgb, var(--maincolor-g)  100%, var(--sub-color01) 100%);}
+
+.color-b1-10 { color: color-mix(in srgb, var(--maincolor-b)  10%, var(--sub-color01) 100%);}
+.color-b1-20 { color: color-mix(in srgb, var(--maincolor-b)  20%, var(--sub-color01) 100%);}
+.color-b1-30 { color: color-mix(in srgb, var(--maincolor-b)  30%, var(--sub-color01) 100%);}
+.color-b1-40 { color: color-mix(in srgb, var(--maincolor-b)  40%, var(--sub-color01) 100%);}
+.color-b1-50 { color: color-mix(in srgb, var(--maincolor-b)  50%, var(--sub-color01) 100%);}
+.color-b1-60 { color: color-mix(in srgb, var(--maincolor-b)  60%, var(--sub-color01) 100%);}
+.color-b1-70 { color: color-mix(in srgb, var(--maincolor-b)  70%, var(--sub-color01) 100%);}
+.color-b1-80 { color: color-mix(in srgb, var(--maincolor-b)  80%, var(--sub-color01) 100%);}
+.color-b1-90 { color: color-mix(in srgb, var(--maincolor-b)  90%, var(--sub-color01) 100%);}
+.color-b1-100 { color: color-mix(in srgb, var(--maincolor-b)  100%, var(--sub-color01) 100%);}
+
+.color-y1-10 { color: color-mix(in srgb, var(--maincolor-y)  10%, var(--sub-color01) 100%);}
+.color-y1-20 { color: color-mix(in srgb, var(--maincolor-y)  20%, var(--sub-color01) 100%);}
+.color-y1-30 { color: color-mix(in srgb, var(--maincolor-y)  30%, var(--sub-color01) 100%);}
+.color-y1-40 { color: color-mix(in srgb, var(--maincolor-y)  40%, var(--sub-color01) 100%);}
+.color-y1-50 { color: color-mix(in srgb, var(--maincolor-y)  50%, var(--sub-color01) 100%);}
+.color-y1-60 { color: color-mix(in srgb, var(--maincolor-y)  60%, var(--sub-color01) 100%);}
+.color-y1-70 { color: color-mix(in srgb, var(--maincolor-y)  70%, var(--sub-color01) 100%);}
+.color-y1-80 { color: color-mix(in srgb, var(--maincolor-y)  80%, var(--sub-color01) 100%);}
+.color-y1-90 { color: color-mix(in srgb, var(--maincolor-y)  90%, var(--sub-color01) 100%);}
+.color-y1-100 { color: color-mix(in srgb, var(--maincolor-y)  100%, var(--sub-color01) 100%);}
+
+.color-m1-10 { color: color-mix(in srgb, var(--maincolor-m)  10%, var(--sub-color01) 100%);}
+.color-m1-20 { color: color-mix(in srgb, var(--maincolor-m)  20%, var(--sub-color01) 100%);}
+.color-m1-30 { color: color-mix(in srgb, var(--maincolor-m)  30%, var(--sub-color01) 100%);}
+.color-m1-40 { color: color-mix(in srgb, var(--maincolor-m)  40%, var(--sub-color01) 100%);}
+.color-m1-50 { color: color-mix(in srgb, var(--maincolor-m)  50%, var(--sub-color01) 100%);}
+.color-m1-60 { color: color-mix(in srgb, var(--maincolor-m)  60%, var(--sub-color01) 100%);}
+.color-m1-70 { color: color-mix(in srgb, var(--maincolor-m)  70%, var(--sub-color01) 100%);}
+.color-m1-80 { color: color-mix(in srgb, var(--maincolor-m)  80%, var(--sub-color01) 100%);}
+.color-m1-90 { color: color-mix(in srgb, var(--maincolor-m)  90%, var(--sub-color01) 100%);}
+.color-m1-100 { color: color-mix(in srgb, var(--maincolor-m)  100%, var(--sub-color01) 100%);}
+
+.color-c1-10 { color: color-mix(in srgb, var(--maincolor-c)  10%, var(--sub-color01) 100%);}
+.color-c1-20 { color: color-mix(in srgb, var(--maincolor-c)  20%, var(--sub-color01) 100%);}
+.color-c1-30 { color: color-mix(in srgb, var(--maincolor-c)  30%, var(--sub-color01) 100%);}
+.color-c1-40 { color: color-mix(in srgb, var(--maincolor-c)  40%, var(--sub-color01) 100%);}
+.color-c1-50 { color: color-mix(in srgb, var(--maincolor-c)  50%, var(--sub-color01) 100%);}
+.color-c1-60 { color: color-mix(in srgb, var(--maincolor-c)  60%, var(--sub-color01) 100%);}
+.color-c1-70 { color: color-mix(in srgb, var(--maincolor-c)  70%, var(--sub-color01) 100%);}
+.color-c1-80 { color: color-mix(in srgb, var(--maincolor-c)  80%, var(--sub-color01) 100%);}
+.color-c1-90 { color: color-mix(in srgb, var(--maincolor-c)  90%, var(--sub-color01) 100%);}
+.color-c1-100 { color: color-mix(in srgb, var(--maincolor-c)  100%, var(--sub-color01) 100%);}
+
+.color-fff1-10 { color: color-mix(in srgb, var(--maincolor-fff)  10%, var(--sub-color01) 100%);}
+.color-fff1-20 { color: color-mix(in srgb, var(--maincolor-fff)  20%, var(--sub-color01) 100%);}
+.color-fff1-30 { color: color-mix(in srgb, var(--maincolor-fff)  30%, var(--sub-color01) 100%);}
+.color-fff1-40 { color: color-mix(in srgb, var(--maincolor-fff)  40%, var(--sub-color01) 100%);}
+.color-fff1-50 { color: color-mix(in srgb, var(--maincolor-fff)  50%, var(--sub-color01) 100%);}
+.color-fff1-60 { color: color-mix(in srgb, var(--maincolor-fff)  60%, var(--sub-color01) 100%);}
+.color-fff1-70 { color: color-mix(in srgb, var(--maincolor-fff)  70%, var(--sub-color01) 100%);}
+.color-fff1-80 { color: color-mix(in srgb, var(--maincolor-fff)  80%, var(--sub-color01) 100%);}
+.color-fff1-90 { color: color-mix(in srgb, var(--maincolor-fff)  90%, var(--sub-color01) 100%);}
+.color-fff1-100 { color: color-mix(in srgb, var(--maincolor-fff)  100%, var(--sub-color01) 100%);}
+
+.color-0001-10 { color: color-mix(in srgb, var(--maincolor-000)  10%, var(--sub-color01) 100%);}
+.color-0001-20 { color: color-mix(in srgb, var(--maincolor-000)  20%, var(--sub-color01) 100%);}
+.color-0001-30 { color: color-mix(in srgb, var(--maincolor-000)  30%, var(--sub-color01) 100%);}
+.color-0001-40 { color: color-mix(in srgb, var(--maincolor-000)  40%, var(--sub-color01) 100%);}
+.color-0001-50 { color: color-mix(in srgb, var(--maincolor-000)  50%, var(--sub-color01) 100%);}
+.color-0001-60 { color: color-mix(in srgb, var(--maincolor-000)  60%, var(--sub-color01) 100%);}
+.color-0001-70 { color: color-mix(in srgb, var(--maincolor-000)  70%, var(--sub-color01) 100%);}
+.color-0001-80 { color: color-mix(in srgb, var(--maincolor-000)  80%, var(--sub-color01) 100%);}
+.color-0001-90 { color: color-mix(in srgb, var(--maincolor-000)  90%, var(--sub-color01) 100%);}
+.color-0001-100 { color: color-mix(in srgb, var(--maincolor-000)  100%, var(--sub-color01) 100%);}
+
+
+
+.bgcolor-r1-10 { background-color: color-mix(in srgb, var(--maincolor-r)  10%, var(--sub-color01) 100%);}
+.bgcolor-r1-20 { background-color: color-mix(in srgb, var(--maincolor-r)  20%, var(--sub-color01) 100%);}
+.bgcolor-r1-30 { background-color: color-mix(in srgb, var(--maincolor-r)  30%, var(--sub-color01) 100%);}
+.bgcolor-r1-40 { background-color: color-mix(in srgb, var(--maincolor-r)  40%, var(--sub-color01) 100%);}
+.bgcolor-r1-50 { background-color: color-mix(in srgb, var(--maincolor-r)  50%, var(--sub-color01) 100%);}
+.bgcolor-r1-60 { background-color: color-mix(in srgb, var(--maincolor-r)  60%, var(--sub-color01) 100%);}
+.bgcolor-r1-70 { background-color: color-mix(in srgb, var(--maincolor-r)  70%, var(--sub-color01) 100%);}
+.bgcolor-r1-80 { background-color: color-mix(in srgb, var(--maincolor-r)  80%, var(--sub-color01) 100%);}
+.bgcolor-r1-90 { background-color: color-mix(in srgb, var(--maincolor-r)  90%, var(--sub-color01) 100%);}
+.bgcolor-r1-100 { background-color: color-mix(in srgb, var(--maincolor-r)  100%, var(--sub-color01) 100%);}
+
+.bgcolor-g1-10 { background-color: color-mix(in srgb, var(--maincolor-g)  10%, var(--sub-color01) 100%);}
+.bgcolor-g1-20 { background-color: color-mix(in srgb, var(--maincolor-g)  20%, var(--sub-color01) 100%);}
+.bgcolor-g1-30 { background-color: color-mix(in srgb, var(--maincolor-g)  30%, var(--sub-color01) 100%);}
+.bgcolor-g1-40 { background-color: color-mix(in srgb, var(--maincolor-g)  40%, var(--sub-color01) 100%);}
+.bgcolor-g1-50 { background-color: color-mix(in srgb, var(--maincolor-g)  50%, var(--sub-color01) 100%);}
+.bgcolor-g1-60 { background-color: color-mix(in srgb, var(--maincolor-g)  60%, var(--sub-color01) 100%);}
+.bgcolor-g1-70 { background-color: color-mix(in srgb, var(--maincolor-g)  70%, var(--sub-color01) 100%);}
+.bgcolor-g1-80 { background-color: color-mix(in srgb, var(--maincolor-g)  80%, var(--sub-color01) 100%);}
+.bgcolor-g1-90 { background-color: color-mix(in srgb, var(--maincolor-g)  90%, var(--sub-color01) 100%);}
+.bgcolor-g1-100 { background-color: color-mix(in srgb, var(--maincolor-g)  100%, var(--sub-color01) 100%);}
+
+.bgcolor-b1-10 { background-color: color-mix(in srgb, var(--maincolor-b)  10%, var(--sub-color01) 100%);}
+.bgcolor-b1-20 { background-color: color-mix(in srgb, var(--maincolor-b)  20%, var(--sub-color01) 100%);}
+.bgcolor-b1-30 { background-color: color-mix(in srgb, var(--maincolor-b)  30%, var(--sub-color01) 100%);}
+.bgcolor-b1-40 { background-color: color-mix(in srgb, var(--maincolor-b)  40%, var(--sub-color01) 100%);}
+.bgcolor-b1-50 { background-color: color-mix(in srgb, var(--maincolor-b)  50%, var(--sub-color01) 100%);}
+.bgcolor-b1-60 { background-color: color-mix(in srgb, var(--maincolor-b)  60%, var(--sub-color01) 100%);}
+.bgcolor-b1-70 { background-color: color-mix(in srgb, var(--maincolor-b)  70%, var(--sub-color01) 100%);}
+.bgcolor-b1-80 { background-color: color-mix(in srgb, var(--maincolor-b)  80%, var(--sub-color01) 100%);}
+.bgcolor-b1-90 { background-color: color-mix(in srgb, var(--maincolor-b)  90%, var(--sub-color01) 100%);}
+.bgcolor-b1-100 { background-color: color-mix(in srgb, var(--maincolor-b)  100%, var(--sub-color01) 100%);}
+
+.bgcolor-y1-10 { background-color: color-mix(in srgb, var(--maincolor-y)  10%, var(--sub-color01) 100%);}
+.bgcolor-y1-20 { background-color: color-mix(in srgb, var(--maincolor-y)  20%, var(--sub-color01) 100%);}
+.bgcolor-y1-30 { background-color: color-mix(in srgb, var(--maincolor-y)  30%, var(--sub-color01) 100%);}
+.bgcolor-y1-40 { background-color: color-mix(in srgb, var(--maincolor-y)  40%, var(--sub-color01) 100%);}
+.bgcolor-y1-50 { background-color: color-mix(in srgb, var(--maincolor-y)  50%, var(--sub-color01) 100%);}
+.bgcolor-y1-60 { background-color: color-mix(in srgb, var(--maincolor-y)  60%, var(--sub-color01) 100%);}
+.bgcolor-y1-70 { background-color: color-mix(in srgb, var(--maincolor-y)  70%, var(--sub-color01) 100%);}
+.bgcolor-y1-80 { background-color: color-mix(in srgb, var(--maincolor-y)  80%, var(--sub-color01) 100%);}
+.bgcolor-y1-90 { background-color: color-mix(in srgb, var(--maincolor-y)  90%, var(--sub-color01) 100%);}
+.bgcolor-y1-100 { background-color: color-mix(in srgb, var(--maincolor-y)  100%, var(--sub-color01) 100%);}
+
+.bgcolor-m1-10 { background-color: color-mix(in srgb, var(--maincolor-m)  10%, var(--sub-color01) 100%);}
+.bgcolor-m1-20 { background-color: color-mix(in srgb, var(--maincolor-m)  20%, var(--sub-color01) 100%);}
+.bgcolor-m1-30 { background-color: color-mix(in srgb, var(--maincolor-m)  30%, var(--sub-color01) 100%);}
+.bgcolor-m1-40 { background-color: color-mix(in srgb, var(--maincolor-m)  40%, var(--sub-color01) 100%);}
+.bgcolor-m1-50 { background-color: color-mix(in srgb, var(--maincolor-m)  50%, var(--sub-color01) 100%);}
+.bgcolor-m1-60 { background-color: color-mix(in srgb, var(--maincolor-m)  60%, var(--sub-color01) 100%);}
+.bgcolor-m1-70 { background-color: color-mix(in srgb, var(--maincolor-m)  70%, var(--sub-color01) 100%);}
+.bgcolor-m1-80 { background-color: color-mix(in srgb, var(--maincolor-m)  80%, var(--sub-color01) 100%);}
+.bgcolor-m1-90 { background-color: color-mix(in srgb, var(--maincolor-m)  90%, var(--sub-color01) 100%);}
+.bgcolor-m1-100 { background-color: color-mix(in srgb, var(--maincolor-m)  100%, var(--sub-color01) 100%);}
+
+.bgcolor-c1-10 { background-color: color-mix(in srgb, var(--maincolor-c)  10%, var(--sub-color01) 100%);}
+.bgcolor-c1-20 { background-color: color-mix(in srgb, var(--maincolor-c)  20%, var(--sub-color01) 100%);}
+.bgcolor-c1-30 { background-color: color-mix(in srgb, var(--maincolor-c)  30%, var(--sub-color01) 100%);}
+.bgcolor-c1-40 { background-color: color-mix(in srgb, var(--maincolor-c)  40%, var(--sub-color01) 100%);}
+.bgcolor-c1-50 { background-color: color-mix(in srgb, var(--maincolor-c)  50%, var(--sub-color01) 100%);}
+.bgcolor-c1-60 { background-color: color-mix(in srgb, var(--maincolor-c)  60%, var(--sub-color01) 100%);}
+.bgcolor-c1-70 { background-color: color-mix(in srgb, var(--maincolor-c)  70%, var(--sub-color01) 100%);}
+.bgcolor-c1-80 { background-color: color-mix(in srgb, var(--maincolor-c)  80%, var(--sub-color01) 100%);}
+.bgcolor-c1-90 { background-color: color-mix(in srgb, var(--maincolor-c)  90%, var(--sub-color01) 100%);}
+.bgcolor-c1-100 { background-color: color-mix(in srgb, var(--maincolor-c)  100%, var(--sub-color01) 100%);}
+
+.bgcolor-fff1-10 { background-color: color-mix(in srgb, var(--maincolor-fff)  10%, var(--sub-color01) 100%);}
+.bgcolor-fff1-20 { background-color: color-mix(in srgb, var(--maincolor-fff)  20%, var(--sub-color01) 100%);}
+.bgcolor-fff1-30 { background-color: color-mix(in srgb, var(--maincolor-fff)  30%, var(--sub-color01) 100%);}
+.bgcolor-fff1-40 { background-color: color-mix(in srgb, var(--maincolor-fff)  40%, var(--sub-color01) 100%);}
+.bgcolor-fff1-50 { background-color: color-mix(in srgb, var(--maincolor-fff)  50%, var(--sub-color01) 100%);}
+.bgcolor-fff1-60 { background-color: color-mix(in srgb, var(--maincolor-fff)  60%, var(--sub-color01) 100%);}
+.bgcolor-fff1-70 { background-color: color-mix(in srgb, var(--maincolor-fff)  70%, var(--sub-color01) 100%);}
+.bgcolor-fff1-80 { background-color: color-mix(in srgb, var(--maincolor-fff)  80%, var(--sub-color01) 100%);}
+.bgcolor-fff1-90 { background-color: color-mix(in srgb, var(--maincolor-fff)  90%, var(--sub-color01) 100%);}
+.bgcolor-fff1-100 { background-color: color-mix(in srgb, var(--maincolor-fff)  100%, var(--sub-color01) 100%);}
+
+.bgcolor-0001-10 { background-color: color-mix(in srgb, var(--maincolor-000)  10%, var(--sub-color01) 100%);}
+.bgcolor-0001-20 { background-color: color-mix(in srgb, var(--maincolor-000)  20%, var(--sub-color01) 100%);}
+.bgcolor-0001-30 { background-color: color-mix(in srgb, var(--maincolor-000)  30%, var(--sub-color01) 100%);}
+.bgcolor-0001-40 { background-color: color-mix(in srgb, var(--maincolor-000)  40%, var(--sub-color01) 100%);}
+.bgcolor-0001-50 { background-color: color-mix(in srgb, var(--maincolor-000)  50%, var(--sub-color01) 100%);}
+.bgcolor-0001-60 { background-color: color-mix(in srgb, var(--maincolor-000)  60%, var(--sub-color01) 100%);}
+.bgcolor-0001-70 { background-color: color-mix(in srgb, var(--maincolor-000)  70%, var(--sub-color01) 100%);}
+.bgcolor-0001-80 { background-color: color-mix(in srgb, var(--maincolor-000)  80%, var(--sub-color01) 100%);}
+.bgcolor-0001-90 { background-color: color-mix(in srgb, var(--maincolor-000)  90%, var(--sub-color01) 100%);}
+.bgcolor-0001-100 { background-color: color-mix(in srgb, var(--maincolor-000)  100%, var(--sub-color01) 100%);}

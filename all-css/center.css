@@ -1,0 +1,39 @@
+/*ここからcenterサイズ*/
+
+.t-c {text-align: center;}
+
+.t-cc {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.center-10 {
+    margin: 0 10vw;
+}
+
+.center-25 {
+    margin: 0 25vw;
+}
+
+.center-33 {
+    margin: 0 33vw;
+}
+
+.center-50 {
+    margin: 0 auto;
+}
+
+.center-66 {
+    margin: 0 66vw;
+}
+
+.center-75 {
+    margin: 0 75vw;
+}
+
+.center-90 {
+    margin: 0 90vw;
+}

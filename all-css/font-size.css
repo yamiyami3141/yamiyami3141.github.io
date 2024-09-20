@@ -1,0 +1,96 @@
+.fs-b0 {
+    font-weight: normal;
+}
+.fs-b1 {
+    font-weight: 100;
+}
+.fs-b2 {
+    font-weight: 200;
+}
+.fs-b3 {
+    font-weight: 300;
+}
+.fs-b4 {
+    font-weight: 400;
+}
+.fs-b5 {
+    font-weight: 500;
+}
+.fs-b6 {
+    font-weight: 600;
+}
+.fs-b7 {
+    font-weight: 700;
+}
+.fs-b8 {
+    font-weight: 800;
+}
+.fs-b9 {
+    font-weight: 900;
+}
+.fs-b10 {
+    font-weight: 1000;
+}
+
+
+.fs-h0 {
+    font-size: clamp(8px/0.8, 6vw/0.8, 50px/0.8);
+}
+
+.fs-h1 {
+    font-size: clamp(8px/1.0, 6vw/1.0, 50px/1.0);
+}
+
+.fs-h2 {
+    font-size: clamp(8px/1.2, 6vw/1.2, 50px/1.2);
+}
+
+.fs-h3 {
+    font-size: clamp(8px/1.4, 6vw/1.4, 50px/1.4);
+}
+
+.fs-h4 {
+    font-size: clamp(8px/1.6, 6vw/1.6, 50px/1.6);
+}
+
+.fs-h5 {
+    font-size: clamp(8px/1.8, 6vw/1.8, 50px/1.8);
+}
+
+.fs-h6 {
+    font-size: clamp(8px/2.0, 6vw/2.0, 50px/2.0);
+}
+
+.fs-h7 {
+    font-size: clamp(8px/2.2, 6vw/2.2, 50px/2.2);
+}
+
+.fs-h8 {
+    font-size: clamp(8px/2.4, 6vw/2.4, 50px/2.4);
+}
+
+.fs-n {
+    font-size: 0px;
+}
+
+.fs-ha {
+    font-size: clamp(50px, 6vw, 80px);
+}
+
+@media screen and (max-width: 768px) {
+    .fs-ha {
+        font-size: clamp(20px, 6vw, 50px);
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .fs-ha {
+        font-size: clamp(11px, 6vw, 20px);
+    }
+}
+
+@media screen and (max-width: 140px) {
+    .fs-ha {
+        font-size: clamp(3.5px, 6vw, 11px);
+    }
+}

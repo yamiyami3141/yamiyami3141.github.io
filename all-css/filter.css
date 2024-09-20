@@ -1,0 +1,200 @@
+/*
+filterは適用した要素自体に反映
+
+filter: none;
+filter: url("filters.svg#filter-id");
+filter: blur(5px);
+filter: brightness(0.4);
+filter: contrast(200%);
+filter: drop-shadow(16px 16px 20px blue);
+filter: grayscale(50%);
+filter: hue-rotate(90deg);
+filter: invert(75%);
+filter: opacity(25%);
+filter: saturate(30%);
+filter: sepia(60%);
+//複数のフィルター
+filter: drop-shadow(16px 16px 20px red) invert(75%);
+filter: drop-shadow(3px 3px red) sepia(100%) drop-shadow(-3px -3px blue);
+
+//////////////////////////////
+backdrop-filterは適用した要素の背景に対して反映
+
+backdrop-filter: none;
+backdrop-filter: url(commonfilters.svg#filter);
+backdrop-filter: blur(2px);
+backdrop-filter: brightness(60%);
+backdrop-filter: contrast(40%);
+backdrop-filter: drop-shadow(4px 4px 10px blue);
+backdrop-filter: grayscale(30%);
+backdrop-filter: hue-rotate(120deg);
+backdrop-filter: invert(70%);
+backdrop-filter: opacity(20%);
+backdrop-filter: sepia(90%);
+backdrop-filter: saturate(80%);
+//複数のフィルター
+backdrop-filter: url(filters.svg#filter) blur(4px) saturate(150%);
+
+//////////////////////////////
+
+/*
+none: 何もフィルターを適用しません。
+url(): SVGフィルターへのURLを指定します。
+blur(2px): 要素の背後に2pxのぼかし効果を適用します。
+brightness(60%): 要素の背後の明るさを60%に設定します。
+contrast(40%): 要素の背後のコントラストを40%に設定します。
+drop-shadow(4px 4px 10px blue): 要素の背後に4pxのオフセットを持つ10pxの青色のドロップシャドウを適用します。
+grayscale(30%): 要素の背後を30%のグレースケールに変換します。
+hue-rotate(120deg): 要素の背後の色相を120度回転させます。
+invert(70%): 要素の背後の色を70%反転させます。
+opacity(20%): 要素の背後の不透明度を20%に設定します。
+sepia(90%): 要素の背後を90%のセピア色に変換します。
+saturate(80%): 要素の背後の彩度を80%に設定します。
+*/
+
+/*
+mix-blend-mode: normal;  通常
+--------------------------------
+mix-blend-mode: darken;  比較(暗)
+mix-blend-mode: multiply;  乗算
+mix-blend-mode: color-burn;  焼き込み
+--------------------------------
+mix-blend-mode: lighten;  比較(明)
+mix-blend-mode: screen;  スクリーン
+mix-blend-mode: color-dodge;  覆い焼き
+--------------------------------
+mix-blend-mode: overlay;  オーバーレイ
+mix-blend-mode: soft-light;  ソフトライト
+mix-blend-mode: hard-light;  ハードライト
+--------------------------------
+mix-blend-mode: difference;  差の絶対値
+mix-blend-mode: exclusion;  除外
+--------------------------------
+mix-blend-mode: hue;  色相
+mix-blend-mode: saturation;  彩度
+mix-blend-mode: color;  カラー
+mix-blend-mode: luminosity;  輝度
+--------------------------------
+mix-blend-mode: plus-lighter;  不透明度の遷移
+*/
+
+/*
+backface-visibility: visible;
+backface-visibility: hidden;*/
+/*blur(ぼかし)*/
+
+.glass {
+    mix-blend-mode: overlay;
+    filter: blur(5px);
+}
+
+.bg-glass {
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.f-q {
+    filter: opacity(25%);
+}
+
+.f-opa-01 {filter: opacity(1%);}
+.f-opa-02 {filter: opacity(2%);}
+.f-opa-03 {filter: opacity(3%);}
+.f-opa-04 {filter: opacity(4%);}
+.f-opa-05 {filter: opacity(5%);}
+.f-opa-06 {filter: opacity(6%);}
+.f-opa-07 {filter: opacity(7%);}
+.f-opa-08 {filter: opacity(8%);}
+.f-opa-09 {filter: opacity(9%);}
+.f-opa-10 {filter: opacity(10%);}
+.f-opa-11 {filter: opacity(11%);}
+.f-opa-12 {filter: opacity(12%);}
+.f-opa-13 {filter: opacity(13%);}
+.f-opa-14 {filter: opacity(14%);}
+.f-opa-15 {filter: opacity(15%);}
+.f-opa-16 {filter: opacity(16%);}
+.f-opa-17 {filter: opacity(17%);}
+.f-opa-18 {filter: opacity(18%);}
+.f-opa-19 {filter: opacity(19%);}
+.f-opa-20 {filter: opacity(20%);}
+.f-opa-21 {filter: opacity(21%);}
+.f-opa-22 {filter: opacity(22%);}
+.f-opa-23 {filter: opacity(23%);}
+.f-opa-24 {filter: opacity(24%);}
+.f-opa-25 {filter: opacity(25%);}
+.f-opa-26 {filter: opacity(26%);}
+.f-opa-27 {filter: opacity(27%);}
+.f-opa-28 {filter: opacity(28%);}
+.f-opa-29 {filter: opacity(29%);}
+.f-opa-30 {filter: opacity(30%);}
+.f-opa-31 {filter: opacity(31%);}
+.f-opa-32 {filter: opacity(32%);}
+.f-opa-33 {filter: opacity(33%);}
+.f-opa-34 {filter: opacity(34%);}
+.f-opa-35 {filter: opacity(35%);}
+.f-opa-36 {filter: opacity(36%);}
+.f-opa-37 {filter: opacity(37%);}
+.f-opa-38 {filter: opacity(38%);}
+.f-opa-39 {filter: opacity(39%);}
+.f-opa-40 {filter: opacity(40%);}
+.f-opa-41 {filter: opacity(41%);}
+.f-opa-42 {filter: opacity(42%);}
+.f-opa-43 {filter: opacity(43%);}
+.f-opa-44 {filter: opacity(44%);}
+.f-opa-45 {filter: opacity(45%);}
+.f-opa-46 {filter: opacity(46%);}
+.f-opa-47 {filter: opacity(47%);}
+.f-opa-48 {filter: opacity(48%);}
+.f-opa-49 {filter: opacity(49%);}
+.f-opa-50 {filter: opacity(50%);}
+.f-opa-51 {filter: opacity(51%);}
+.f-opa-52 {filter: opacity(52%);}
+.f-opa-53 {filter: opacity(53%);}
+.f-opa-54 {filter: opacity(54%);}
+.f-opa-55 {filter: opacity(55%);}
+.f-opa-56 {filter: opacity(56%);}
+.f-opa-57 {filter: opacity(57%);}
+.f-opa-58 {filter: opacity(58%);}
+.f-opa-59 {filter: opacity(59%);}
+.f-opa-60 {filter: opacity(60%);}
+.f-opa-61 {filter: opacity(61%);}
+.f-opa-62 {filter: opacity(62%);}
+.f-opa-63 {filter: opacity(63%);}
+.f-opa-64 {filter: opacity(64%);}
+.f-opa-65 {filter: opacity(65%);}
+.f-opa-66 {filter: opacity(66%);}
+.f-opa-67 {filter: opacity(67%);}
+.f-opa-68 {filter: opacity(68%);}
+.f-opa-69 {filter: opacity(69%);}
+.f-opa-70 {filter: opacity(70%);}
+.f-opa-71 {filter: opacity(71%);}
+.f-opa-72 {filter: opacity(72%);}
+.f-opa-73 {filter: opacity(73%);}
+.f-opa-74 {filter: opacity(74%);}
+.f-opa-75 {filter: opacity(75%);}
+.f-opa-76 {filter: opacity(76%);}
+.f-opa-77 {filter: opacity(77%);}
+.f-opa-78 {filter: opacity(78%);}
+.f-opa-79 {filter: opacity(79%);}
+.f-opa-80 {filter: opacity(80%);}
+.f-opa-81 {filter: opacity(81%);}
+.f-opa-82 {filter: opacity(82%);}
+.f-opa-83 {filter: opacity(83%);}
+.f-opa-84 {filter: opacity(84%);}
+.f-opa-85 {filter: opacity(85%);}
+.f-opa-86 {filter: opacity(86%);}
+.f-opa-87 {filter: opacity(87%);}
+.f-opa-88 {filter: opacity(88%);}
+.f-opa-89 {filter: opacity(89%);}
+.f-opa-90 {filter: opacity(90%);}
+.f-opa-91 {filter: opacity(91%);}
+.f-opa-92 {filter: opacity(92%);}
+.f-opa-93 {filter: opacity(93%);}
+.f-opa-94 {filter: opacity(94%);}
+.f-opa-95 {filter: opacity(95%);}
+.f-opa-96 {filter: opacity(96%);}
+.f-opa-97 {filter: opacity(97%);}
+.f-opa-98 {filter: opacity(98%);}
+.f-opa-99 {filter: opacity(99%);}
+.f-opa-100 {filter: opacity(100%);}
+

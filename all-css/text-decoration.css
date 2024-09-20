@@ -1,0 +1,20 @@
+.p-kawaii-1 {
+    color: #f0c8c8;
+    font-weight: 1000;
+    font-size: clamp(3px, 10vw, 15px);
+    user-select: none;
+}
+
+.p-kawaii-2 {
+    color: #f0c8c8;
+    font-weight: 1000;
+    font-size: clamp(6.5px, 20vw, 30px);
+    user-select: none;
+}
+
+.p-kawaii-3 {
+    color: #f0c8c8;
+    font-weight: 1000;
+    font-size: clamp(6.5px, 30vw, 30px);
+    user-select: none;
+}

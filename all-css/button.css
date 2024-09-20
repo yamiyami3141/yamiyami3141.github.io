@@ -1,0 +1,72 @@
+.button {
+    margin: 50px auto;
+    align-items: center;
+    justify-content: center;
+    width: clamp(50px, 20vw, 230px);
+    height: clamp(50px, 20vw, 230px);
+    aspect-ratio: 1;
+    background-color: #eeeeee;
+    border-radius: 50%;
+    box-shadow: -4px -4px 8px #fff, 4px 4px 8px rgb(0 0 0 / 24%);
+}
+
+@media (any-hover: hover) {
+.button {
+    transition: box-shadow 0.2s;
+}
+
+.button:hover {
+    box-shadow: -2px -2px 4px #fff, 2px 2px 4px rgb(0 0 0 / 24%);
+}
+
+.button:active {
+    background-color: #ebebeb;
+    box-shadow: inset 4px 4px 8px rgb(0 0 0 / 16%);
+}
+}
+
+.button-red {
+    display: inline-block;
+    border-radius: 4px;
+    background-color: #f4511e;
+    border: none;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: clamp(6px, 4vw/1.6, 30px);
+    font-weight: 600;
+    padding: clamp(4px, 2vw, 25px);
+    width: clamp(30px, 20vw, 230px);
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.button-red span {
+cursor: pointer;
+display: inline-block;
+position: relative;
+transition: 0.5s;
+}
+
+.button-red span:after {
+content: '»';
+position: absolute;
+opacity: 0;
+top: 0;
+right: -20px;
+transition: 0.5s;
+}
+
+.button-red:hover span {
+padding-right: 25px;
+}
+
+.button-red:hover span:after {
+opacity: 1;
+right: 0;
+}
+
+.button-red:active {
+background-color: #ebebeb;
+box-shadow: inset 4px 4px 8px rgb(0 0 0 / 16%);
+}

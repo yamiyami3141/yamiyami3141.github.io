@@ -1,0 +1,51 @@
+.box-10 {
+    width: 10vw;
+    height: auto;
+}
+
+.box-25 {
+    width: 25vw;
+    height: auto;
+}
+
+.box-33 {
+    width: 33vw;
+    height: auto;
+}
+
+.box-50 {
+    width: 50vw;
+    height: auto;
+}
+
+.box-75 {
+    width: 75vw;
+    height: auto;
+}
+
+.box-100 {
+    width: 100vw;
+    height: auto;
+}
+
+.text-box {
+    width: 50ch;
+    height: 5em;
+}
+
+.box-w1 {
+    column-count: 1;
+}
+.box-w2 {
+    column-count: 2;
+}
+.box-w3 {
+    column-count: 3;
+}
+.box-w4 {
+    column-count: 4;
+}
+.box-wa {
+    column-count: auto;
+    column-width: 8rem;
+}

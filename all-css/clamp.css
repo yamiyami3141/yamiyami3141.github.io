@@ -1,0 +1,29 @@
+.clamp {
+    border-radius: 4px;
+    margin: clamp(4px, 4%, 18px);
+    padding: clamp(4px, 2%, 20px);
+    font-weight: 1000;
+    box-shadow: -4px -4px 8px #fff, 4px 4px 8px rgb(0 0 0 / 24%);
+}
+
+span {
+    margin-left: clamp(2px, 2%, 10px);
+}
+
+/*SP版*/
+@media screen and (max-width: 420px) {
+    .clamp {
+        font-size: clamp(11px, 6vw, 20px);
+        color: #ff4d4d50;
+    }
+}
+
+@media screen and (max-width: 140px) {
+    .clamp {
+        font-size: clamp(3.5px, 6vw, 11px);
+        color: #ff4d4d50;
+    }
+}
+
+
+

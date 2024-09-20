@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小鳥Lab</title>
+    <link rel="stylesheet" href="import.css">
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="html,css,javascript,小鳥Lab">
+    <link rel="icon" href="./img/和logo.ico">
+    <meta name="description" content="webサイト体験をもっと楽しく簡単に!!">
+    <meta property="og:image" content="./img/和logo.avif">
+    <meta property="og:title" content="小鳥Lab">
+    <meta property="og:site_name" content="小鳥Lab">
+    <meta property="og:description" content="webサイト体験をもっと楽しく簡単に!!">
+</head>
+
+<div id="stalker""></div>
+<body class="fs-h6 in-img1">
+    <header id="ホーム">
+        <div class="df box-shadow m-02 fs-h6 fs-b10 text-shadow">
+            <div class="button df in-img2">
+                <a class="color-b1-30" href="./index-01.html">ホーム</a>
+            </div>
+            <div class="button df in-img2">
+                <a class="color-r1-30"  href="./index-02.html">概要</a>
+            </div>
+            <div class="button df in-img2">
+                <a class="color-r1-30"  href="./index-03.html">サービス</a>
+            </div>
+            <div class="button df in-img2">
+                <a class="color-r1-30"  href="/index-04.html">お問い合わせ</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="ml-10">
+        <div class="sen-h-1 color-r1-10 w-80"></div>
+        <div class="color-g1-40 fs-h6">
+            <p class="color-y1-60 mb-04 fs-h3">1ページ目:現在制作中です。</p>
+            試験的に公開されています。<br>
+            更新までしばらくお待ちください。
+        </div>
+        <div class="sen-h-1 color-r1-10 w-80 mt-03"></div>
+
+        <div class="box-shadow maxw-80 p-02 mt-05 fs-h8 fs-b10 color-r1-20 text-shadow in-img2 marukado">
+            <div class="color-b1-80">
+                <p class="sf-h5">ここに本文</p>
+                <p>ここにコメントを記述します。想定時数は150文字程度です。</p>
+            </div>
+            <div class="color-r1-60">
+                <p>ここに本文</p>
+                <p>ここにコメントを記述します。想定時数は150文字程度です。</p>
+            </div>
+            <div class="color-g1-60">
+                <p>ここに本文</p>
+                <p>ここにコメントを記述します。想定時数は150文字程度です。</p>
+            </div>
+            <div class="color-b1-60">
+                <p>ここに本文</p>
+                <p>ここにコメントを記述します。想定時数は150文字程度です。</p>
+            </div>
+            <div class="color-y1-60">
+                <p>ここに本文</p>
+                <p>ここにコメントを記述します。想定時数は150文字程度です。</p>
+            </div>
+            <div class="color-m1-60">
+                <p>ここに本文</p>
+                <p>ここにコメントを記述します。想定時数は150文字程度です。</p>
+            </div>
+            <div class="color-c1-60">
+                <p>ここに本文</p>
+                <p>ここにコメントを記述します。想定時数は150文字程度です。</p>
+            </div>
+            <div class="color-fff1-60">
+                <p>ここに本文</p>
+                <p>ここにコメントを記述します。想定時数は150文字程度です。</p>
+            </div>
+            <div class="color-0001-60">
+                <p>ここに本文</p>
+                <p>ここにコメントを記述します。想定時数は150文字程度です。</p>
+            </div>
+        </div>
+
+
+
+        <div class="w-80 mt-02">
+
+            <canvas class="animation-canvas mb-04 marukado"></canvas>
+
+            <div id="slideshow1" class="slideshow-container marukado">
+                <a href="#" class="slide">
+                    <div class="image-container">
+                        <img src="./img/image1.avif" alt="スライド1">
+                    </div>
+                    <div class="caption">キャプション1</div>
+                </a>
+                <a href="#" class="slide">
+                    <div class="image-container">
+                        <img src="./img/image2.avif" alt="スライド2">
+                    </div>
+                    <div class="caption">キャプション2</div>
+                </a>
+                <a href="#" class="slide">
+                    <div class="image-container">
+                        <img src="./img/image3.avif" alt="スライド3">
+                    </div>
+                    <div class="caption">キャプション3</div>
+                </a>
+                <a href="#" class="slide">
+                    <div class="image-container">
+                        <img src="./img/image4.avif" alt="スライド4">
+                    </div>
+                    <div class="caption">キャプション4</div>
+                </a>
+                <a href="#" class="slide">
+                    <div class="image-container">
+                        <img src="./img/image5.avif" oncontextmenu="alert('画像の保存は許可されていません！'); return false;" alt="スライド5" title="(^▽^)/＜やあ！">
+                    </div>
+                    <div class="caption">キャプション5</div>
+                </a>
+
+            <a class="prev" onclick="changeSlide(-1, 'slideshow1')">&#10094;</a>
+            <a class="next" onclick="changeSlide(1, 'slideshow1')">&#10095;</a>
+            </div>
+            <div class="dot-container">
+                <span class="dot" onclick="currentSlide(1, 'slideshow1')"></span>
+                <span class="dot" onclick="currentSlide(2, 'slideshow1')"></span>
+                <span class="dot" onclick="currentSlide(3, 'slideshow1')"></span>
+                <span class="dot" onclick="currentSlide(4, 'slideshow1')"></span>
+                <span class="dot" onclick="currentSlide(5, 'slideshow1')"></span>
+            </div>
+
+            <canvas class="animation-canvas  mb-04 marukado"></canvas>
+
+            <div id="slideshow2" class="slideshow-container marukado">
+                <a href="#" class="slide">
+                    <div class="image-container">
+                        <img src="./img/image1.avif" alt="スライド1">
+                    </div>
+                    <div class="caption">キャプション1</div>
+                </a>
+                <a href="#" class="slide">
+                    <div class="image-container">
+                        <img src="./img/image2.avif" alt="スライド2">
+                    </div>
+                    <div class="caption">キャプション2</div>
+                </a>
+                <a href="#" class="slide">
+                    <div class="image-container">
+                        <img src="./img/image3.avif" alt="スライド3">
+                    </div>
+                    <div class="caption">キャプション3</div>
+                </a>
+                <a href="#" class="slide">
+                    <div class="image-container">
+                        <img src="./img/image4.avif" alt="スライド4">
+                    </div>
+                    <div class="caption">キャプション4</div>
+                </a>
+                <a href="#" class="slide">
+                    <div class="image-container">
+                        <img src="./img/image5.avif" oncontextmenu="alert('画像の保存は許可されていません！'); return false;" alt="スライド5" title="(^▽^)/＜やあ！">
+                    </div>
+                    <div class="caption">キャプション5</div>
+                </a>
+
+            <a class="prev" onclick="changeSlide(-1, 'slideshow2')">&#10094;</a>
+            <a class="next" onclick="changeSlide(1, 'slideshow2')">&#10095;</a>
+            </div>
+
+            <div class="dot-container">
+                <span class="dot" onclick="currentSlide(1, 'slideshow2')"></span>
+                <span class="dot" onclick="currentSlide(2, 'slideshow2')"></span>
+                <span class="dot" onclick="currentSlide(3, 'slideshow2')"></span>
+                <span class="dot" onclick="currentSlide(4, 'slideshow2')"></span>
+                <span class="dot" onclick="currentSlide(5, 'slideshow2')"></span>
+            </div>
+
+            <div class="fs-h1">
+                <a href="#"><button class="button-red mt-02 mr-02 text-shadow"><span>ボタン </span></button></a>
+                <a href="#"><button class="button-red bgcolor-b1-60 mr-02 text-shadow"><span>ボタン </span></button></a>
+                <a href="#"><button class="button-red bgcolor-y1-80 color-0002-100 mr-02 text-shadow"><span>ボタン </span></button></a>
+                <a href="#"><button class="button-red bgcolor-g1-60 mr-02 text-shadow-0"><span>ボタン </span></button></a>
+            </div>
+        </div>
+
+        <div class="in-img4 maxw-80 mt-02 mb-02 text-shadow-f marukado">
+            <p>
+                neko
+            </p>
+            <h6 class="ml-02">
+                neko、<br>
+                それは<neko class="fs-b10 color-b1-30">世界最強</neko>の<neko class="fs-b10 color-r1-30">かわいい</neko>を象った存在です。
+            </h6>
+        </div>
+
+        <div class="in-img4 maxw-80 mt-02 mb-02 text-shadow-f marukado f-opa-80">
+            <p>
+                neko
+            </p>
+            <h6 class="ml-02">
+                neko、<br>
+                それは<neko class="fs-b10 color-b1-30">世界最強</neko>の<neko class="fs-b10 color-r1-30">かわいい</neko>を象った存在です。
+            </h6>
+        </div>
+
+        <div class="in-img4 maxw-80 mt-02 mb-02 text-shadow-f marukado f-opa-60">
+            <p>
+                neko
+            </p>
+            <h6 class="ml-02">
+                neko、<br>
+                それは<neko class="fs-b10 color-b1-30">世界最強</neko>の<neko class="fs-b10 color-r1-30">かわいい</neko>を象った存在です。
+            </h6>
+        </div>
+
+        <div class="in-img4 maxw-80 mt-02 mb-02 text-shadow-f marukado f-opa-40">
+            <p>
+                neko
+            </p>
+            <h6 class="ml-02">
+                neko、<br>
+                それは<neko class="fs-b10 color-b1-30">世界最強</neko>の<neko class="fs-b10 color-r1-30">かわいい</neko>を象った存在です。
+            </h6>
+        </div>
+    </main>
+
+
+    <div class="box-shadow m-02 fs-h6 fs-b10 text-shadow in-img5 marukado">
+        <ul class="m-02 ml-05">
+            <li class="mb-02"><a class="color-b1-30" href="./index-01.html">ホーム</a></li>
+            <li class="mb-02"><a class="color-r1-30" href="./index-02.html">概要</a></li>
+            <li class="mb-02"><a class="color-r1-30" href="./index-03.html">サービス</a></li>
+            <li><a class="color-r1-30" href="./index-04.html">お問い合わせ</a></li>
+        </ul>
+            <div class="accordion-header  fs-h3">
+                <span class="toggle-icon t-cc color-r1-30 fs-h8">+</span>
+            </div>
+            <div class="content_company">
+                <div class="outline">
+                    <div class="h-100 t-cc color-y1-60 fs-h8">開くと絶景</div>
+                    
+                </div>
+            </div>
+    </div>
+
+    <div class="parent sen-h-3 c m-04 p-02 marukado">
+        <div class="div1 sen-h-3 t-cc marukado-1">更新日</div>
+        <div class="div2 sen-h-3 t-cc">連絡先</div>
+        <div class="div3 sen-h-3 t-cc">3</div>
+        <div class="div4 sen-h-3 t-cc">何も考えずに</div>
+        <div class="div5 sen-h-3 t-cc marukado-4">枠が見事に</div>
+        <div class="div6 sen-h-3 t-cc">Ⓒ kotori_Lab</div>
+        <div class="div7 sen-h-3 t-cc marukado-2">2024/09/21</div>
+        <div class="div8 sen-h-3 t-cc"><small><small><small>kotori.lab.com@gmail.com</small></small></small></div>
+        <div class="div9 sen-h-3 t-cc">9</div>
+        <div class="div10 sen-h-3 t-cc">作ったので</div>
+        <div class="div11 sen-h-3 t-cc marukado-3">余りました</div>
+    </div>
+
+    <script src="./script/click.js"></script>
+    <script src="./script/stalker.js"></script>
+    <script src="./script/slideshow.js"></script>
+    <script src="./script/CanvasAnimation.js"></script>
+
+    <div class="container">
+        <aside class="sidebar left-sidebar">
+            <nav>
+                <ul>
+                    <li><a class="color-b1-30" href="./index-01.html">ホーム</a></li>
+                    <li><a class="color-r1-30" href="./index-02.html">概要</a></li>
+                    <li><a class="color-r1-30" href="./index-03.html">サービス</a></li>
+                    <li><a class="color-r1-30" href="./index-04.html">お問い合わせ</a></li>
+                </ul>
+            </nav>
+        </aside>
+    </div>
+    
+    <button id="left-toggle" class="toggle-button">≡</button>
+    <script src="script/sidebar.js"></script>
+</div>
+
+
+</body>
+
+</html>

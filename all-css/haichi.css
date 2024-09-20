@@ -1,0 +1,11 @@
+.df {
+    display: flex;
+}
+
+.pa{
+    position: absolute;
+}
+
+.ps{
+    position: sticky;
+}

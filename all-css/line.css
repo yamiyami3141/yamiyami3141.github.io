@@ -1,0 +1,9 @@
+.sen-on {
+    border-collapse: collapse;
+    border-color:#000000
+}
+
+.sen-out {
+    border-collapse: separate;
+    border-color:#000000
+}

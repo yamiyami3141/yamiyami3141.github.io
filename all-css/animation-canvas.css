@@ -1,0 +1,6 @@
+.animation-canvas {
+    margin: 2vw 0;
+    width: 100%;
+    height: clamp(10px, 5vw, 100px);
+    background: #04BBD355;
+}
