@@ -64,7 +64,7 @@ img {
 
 /*
     <div class="video-background">
-        <video webkit-playsinline playsinline muted autoplay loop>
+        <video webkit-playsinline playsinline muted autoplay loop oncontextmenu="alert('動画の保存は許可されていません！'); return false;">
             <source src="./img/K012-2.mp4" type="video/mp4">
             お使いのブラウザは動画タグに対応していません。
         </video>
