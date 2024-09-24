@@ -12,6 +12,7 @@ img {
     min-height: 5vh;
     display: flex;
     flex-direction: column;
+    z-index: 10;
 }
 
 .in-img2 {
@@ -24,6 +25,7 @@ img {
     min-height: 5vh;
     display: flex;
     flex-direction: column;
+    z-index: 10;
 }
 
 .in-img3 {
@@ -36,6 +38,7 @@ img {
     min-height: 5vh;
     display: flex;
     flex-direction: column;
+    z-index: 10;
 }
 
 .in-img4 {
@@ -48,6 +51,7 @@ img {
     min-height: 5vh;
     display: flex;
     flex-direction: column;
+    z-index: 10;
 }
 
 .in-img5 {
@@ -60,6 +64,7 @@ img {
     min-height: 5vh;
     display: flex;
     flex-direction: column;
+    z-index: 10;
 }
 
 /*

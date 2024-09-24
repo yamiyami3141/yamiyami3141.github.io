@@ -1,3 +1,5 @@
+/*button1*/
+
 .button {
     margin: 50px auto;
     align-items: center;
@@ -25,7 +27,10 @@
 }
 }
 
-.button-red {
+/*button1*/
+/*button2*/
+
+.btn-02 {
     display: inline-block;
     border-radius: 4px;
     background-color: #f4511e;
@@ -41,14 +46,14 @@
     margin: 5px;
 }
 
-.button-red span {
+.btn-02 span {
 cursor: pointer;
 display: inline-block;
 position: relative;
 transition: 0.5s;
 }
 
-.button-red span:after {
+.btn-02 span:after {
 content: '»';
 position: absolute;
 opacity: 0;
@@ -57,16 +62,248 @@ right: -20px;
 transition: 0.5s;
 }
 
-.button-red:hover span {
+.btn-02:hover span {
 padding-right: 25px;
 }
 
-.button-red:hover span:after {
+.btn-02:hover span:after {
 opacity: 1;
 right: 0;
 }
 
-.button-red:active {
+.btn-02:active {
 background-color: #ebebeb;
 box-shadow: inset 4px 4px 8px rgb(0 0 0 / 16%);
 }
+
+/*button2*/
+/*ssssssssssssssssssssssssssssssssssssssss*/
+/*:div:sssssssssssssssssssssssssssssssssss*/
+/*ssssssssssssssssssssssssssssssssssssssss*/
+
+/*body {
+    background: linear-gradient(135deg, #55efcb 0%, #1e5799 0%, #55efcb 0%, #5bcaff 100%);
+    color: #f7f7f7;
+    font-family: "Lato", sans-serif;
+    font-weight: 300;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    flex-wrap: wrap;
+    width: 60vw;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 100vh;
+}*/
+
+/*==//////////////////////////////////////*/
+
+.btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    flex-wrap: wrap;
+    width: 60vw;
+    max-width: 1200px;
+}
+
+.btn-s {
+    flex: 1 1 auto;
+    margin: 10px;
+    padding: 20px;
+    border: 2px solid #f7f7f7;
+    text-align: center;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s;
+}
+.btn-s:after {
+    position: absolute;
+    transition: 0.3s;
+    content: "";
+    width: 0;
+    left: 50%;
+    bottom: 0;
+    height: 3px;
+    background: #f7f7f7;
+}
+.btn-s:hover {
+    cursor: pointer;
+    color: #5bcaff;
+}
+.btn-s:hover:after {
+    width: 100%;
+    left: 0;
+}
+.btn-s span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+.btn-s span:after {
+    content: '»';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+}
+.btn-s:hover span:after {
+    opacity: 1;
+    right: 0;
+}
+
+/*==//////////////////////////////////////*/
+
+/*s1/////////////////////////////////////*/
+
+.btn-s1:after {
+    left: 0;
+}
+
+/*s1/////////////////////////////////////*/
+/*s2/////////////////////////////////////*/
+
+.btn-s2 {
+    flex: 1 1 auto;
+    margin: 10px;
+    padding: 20px;
+    border: 2px solid #f7f7f7;
+    text-align: center;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s;
+}
+.btn-s2:after {
+    position: absolute;
+    transition: 0.3s;
+    content: "";
+    width: 0;
+    left: 50%;
+    bottom: 0;
+    height: 3px;
+    background: #f7f7f7;
+    right: 0;
+    left: auto;
+}
+
+/*s2/////////////////////////////////////*/
+/*s3/////////////////////////////////////*/
+
+.btn-s3:after {
+    left: 0;
+    bottom: auto;
+    top: -3px;
+    width: 100%;
+}
+.btn-s3:hover::after {
+    top: calc(100% - 3px);
+}
+
+/*s3/////////////////////////////////////*/
+/*s4/////////////////////////////////////*/
+
+.btn-s4:after {
+    height: 140%;
+    left: -10%;
+    transform: skewX(15deg);
+    z-index: -1;
+}
+.btn-s4:hover::after {
+    left: -10%;
+    width: 120%;
+}
+
+/*in-img適応不可*/
+
+/*s4/////////////////////////////////////*/
+/*s5/////////////////////////////////////*/
+
+.btn-s5:hover {
+    border-radius: 30px;
+}
+.btn-s5:hover::after {
+    width: 0%;
+}
+
+/*s5/////////////////////////////////////*/
+/*s6/////////////////////////////////////*/
+
+.btn-s6:hover {
+    transform: scale(1.2);
+}
+.btn-s6:hover:after {
+    width: 0%;
+}
+
+/*s6/////////////////////////////////////*/
+/*s7/////////////////////////////////////*/
+
+.btn-s7:hover {
+    transform: scale(.8);
+}
+.btn-s7:hover:after {
+    width: 0%;
+}
+
+/*s7/////////////////////////////////////*/
+/*s8/////////////////////////////////////*/
+
+.btn-s8:hover {
+    box-shadow: inset 0px 0px 0px 3px #f7f7f7;
+}
+.btn-s8:hover::after {
+    width: 0%;
+}
+
+/*s8/////////////////////////////////////*/
+/*s9/////////////////////////////////////*/
+
+.btn-s9:hover {
+    box-shadow: 0px 0px 0px 3px #f7f7f7;
+}
+.btn-s9:hover::after {
+    width: 0%;
+}
+
+/*s9/////////////////////////////////////*/
+/*s10/////////////////////////////////////*/
+
+.btn-s10 {
+    flex: 1 1 auto;
+    margin: 10px;
+    padding: 20px;
+    border: 2px solid #f7f7f7;
+    text-align: center;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s;
+}
+.btn-s10:after {
+    position: absolute;
+    transition: 0.3s;
+    content: "";
+    width: 0;
+    left: 50%;
+    bottom: 0;
+    height: 100%;
+    background: #ffffff00;
+    right: 0;
+    left: auto;
+    z-index: -1;
+    backdrop-filter: blur(10px);
+}
+
+/*s10/////////////////////////////////////*/
+
+/*ssssssssssssssssssssssssssssssssssssssss*/
+/*ssssssssssssssssssssssssssssssssssssssss*/
+/*ssssssssssssssssssssssssssssssssssssssss*/
