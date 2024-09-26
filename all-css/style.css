@@ -39,6 +39,25 @@ p {
     border-left: solid clamp(2px, 1vw, 8px) #7db4e6;/*左線*/
 }
 
+.us-n {
+    user-select: none;
+}
+
+.sc-80:hover {
+    transition: 0.3s;
+    transform: scale(0.8);
+}
+
+.sc-100:hover {
+    transition: 0.3s;
+    transform: scale(1);
+}
+
+.sc-120:hover {
+    transition: 0.3s;
+    transform: scale(1.2);
+}
+
 a:hover {
     color: var(--hover);
 }

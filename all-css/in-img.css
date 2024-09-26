@@ -67,6 +67,31 @@ img {
     z-index: 10;
 }
 
+.in-img6 {
+    background-image: url(../img/image6.avif);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7);
+    min-height: 5vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+}
+
+.in-img7 {
+    background-image: url(../img/image7.avif);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7);
+    min-height: 5vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+}
 /*
     <div class="video-background">
         <video webkit-playsinline playsinline muted autoplay loop oncontextmenu="alert('動画の保存は許可されていません！'); return false;">
