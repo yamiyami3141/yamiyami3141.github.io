@@ -1,18 +1,18 @@
-table {
+.table {
     display: inline-table;
     margin: 1em;
     border: dashed clamp(0px, 0.4vw, 5px);
 }
 
-table th,
-table td {
+.table th,
+.table td {
     border: solid clamp(0px, 0.4vw, 5px);
     height: clamp(4px, 3.5vw, 45px);
 }
 
-table th {
+.table th {
     width: 30vw;
 }
-table td {
+.table td {
     width: 70vw;
 }
