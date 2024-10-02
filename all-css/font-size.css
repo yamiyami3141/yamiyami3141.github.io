@@ -94,3 +94,39 @@
         font-size: clamp(3.5px, 6vw, 11px);
     }
 }
+
+.fs-sss {
+    font-size: xx-small;
+}
+
+.fs-ss {
+    font-size: x-small;
+}
+
+.fs-s {
+    font-size: small;
+}
+
+.fs-sa {
+    font-size: smaller;
+}
+
+.fs-m {
+    font-size: medium;
+}
+
+.fs-la {
+    font-size: larger;
+}
+
+.fs-l {
+    font-size: large;
+}
+
+.fs-ll {
+    font-size: x-large;
+}
+
+.fs-lll {
+    font-size: xx-large;
+}

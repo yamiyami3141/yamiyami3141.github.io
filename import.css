@@ -6,6 +6,7 @@
 
 /*上書き用*/
 @import url("./all-css/animation-canvas.css");
+@import url("./all-css/bg-container.css");
 @import url("./all-css/border.css");
 @import url("./all-css/box.css");
 @import url("./all-css/button.css");
@@ -13,8 +14,10 @@
 @import url("./all-css/clamp.css");
 /*@import url("./all-css/color-min.css");*/
 @import url("./all-css/color.css");
+@import url("./all-css/deg.css");
 @import url("./all-css/filter.css");
 @import url("./all-css/font-size.css");
+@import url("./all-css/glitch-text.css");
 @import url("./all-css/haichi.css");
 @import url("./all-css/height.css");
 @import url("./all-css/in-img.css");

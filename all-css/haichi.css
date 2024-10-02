@@ -1,5 +1,6 @@
 .df {
     display: flex;
+    flex-wrap:wrap;
 }
 
 .pa{

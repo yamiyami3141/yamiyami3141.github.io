@@ -1,0 +1,275 @@
+.bg-container-1 {
+    width: 100%;
+    height: 100%;
+    --c1: #ffffff;
+    --c2: #00ffff41;
+    --c3: #f0a61100;
+    background: radial-gradient(
+        circle farthest-side at 0% 50%,
+        var(--c1) 23.5%,
+        var(--c3) 0
+        )
+        21px 30px,
+    radial-gradient(
+        circle farthest-side at 0% 50%,
+        var(--c2) 24%,
+        var(--c3) 0
+        )
+        19px 30px,
+    linear-gradient(
+        var(--c1) 14%,
+        var(--c3) 0,
+        var(--c3) 85%,
+        var(--c1) 0
+        )
+        0 0,
+    linear-gradient(
+        150deg,
+        var(--c1) 24%,
+        var(--c2) 0,
+        var(--c2) 26%,
+        var(--c3) 0,
+        var(--c3) 74%,
+        var(--c2) 0,
+        var(--c2) 76%,
+        var(--c1) 0
+        )
+        0 0,
+    linear-gradient(
+        30deg,
+        var(--c1) 24%,
+        var(--c2) 0,
+        var(--c2) 26%,
+        var(--c3) 0,
+        var(--c3) 74%,
+        var(--c2) 0,
+        var(--c2) 76%,
+        var(--c1) 0
+        )
+        0 0,
+    linear-gradient(90deg, var(--c2) 2%, var(--c1) 0, var(--c1) 98%, var(--c2) 0%) 0 0 var(--c1);
+    background-size: 40px 60px;
+}
+
+.bg-container-2 {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        45deg,
+        #3498db,
+        #2ecc71
+    );
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.bg-container-2::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.1) 1px,
+        transparent 1px
+    ),
+    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+}
+
+.bg-container-3 {
+    width: 100%;
+    height: 100%;
+    --c1: #aefaff;
+    --c2: #ffffff;
+    background: repeating-linear-gradient(135deg, var(--c1),var(--c1) 40px, var(--c2) 20px,var(--c2) 80px);
+}
+
+.bg-container-4 {
+    width: 100%;
+    height: 100%;
+    --c1: #ecf6ff;
+    --c2: #99f7ffbd;
+    background-color: var(--c1);
+    background-image: linear-gradient(
+        32deg,
+        var(--c2) 30px,
+        transparent
+    );
+    background-size: 60px 60px;
+    background-position: -5px -5px;
+}
+
+.bg-container-5 {
+    width: 100%;
+    height: 100%;
+    --c1: #ffffff;
+    --c2: #0051ff2c;
+    background-color: var(--c1);
+    background-image: radial-gradient(var(--c2) 2px, transparent 0);
+    background-size: 30px 30px;
+    background-position: -5px -5px;
+}
+
+.bg-container-6 {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    --c1: #ffffff;
+    --c2: #cff6ff;
+
+    background: var(--c1);
+    background: linear-gradient(
+        135deg,
+        var(--c1) 25%,
+        var(--c2) 25%,
+        var(--c2) 50%,
+        var(--c1) 50%,
+        var(--c1) 75%,
+        var(--c2) 75%,
+        var(--c2)
+    );
+    background-size: 40px 40px;
+
+    /* Animation */
+    animation: move 4s linear infinite;
+}
+
+@keyframes move {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 40px 40px;
+    }
+}
+
+.bg-container-7 {
+    width: 100%;
+    height: 100%;
+    --c1: radial-gradient(#a8e9ff 5%, #ffffff00 6%);
+    --size: 3rem;
+    background-image: var(--c1),
+    var(--c1);
+    background-position: 0 0, calc(var(--size) / 2) calc(var(--size) / 2);
+    background-size: var(--size) var(--size);
+    background-color: #ffffff;
+}
+
+.bg-container-8 {
+    width: 100%;
+    height: 100%;
+    --s: 37px; /* control the size */
+    --c1: #ffffff;
+    --c2: #dbfafa;
+    --c: #ffffff00, var(--c1) 0.5deg 119.5deg, #ffffff00 120deg;;
+    --g1: conic-gradient(from 60deg at 56.25% calc(425% / 6), var(--c));
+    --g2: conic-gradient(from 180deg at 43.75% calc(425% / 6), var(--c));
+    --g3: conic-gradient(from -60deg at 50% calc(175% / 12), var(--c));
+    background: var(--g1), var(--g1) var(--s) calc(1.73 * var(--s)), var(--g2),
+        var(--g2) var(--s) calc(1.73 * var(--s)), var(--g3) var(--s) 0,
+        var(--g3) 0 calc(1.73 * var(--s)) var(--c2);
+    background-size: calc(2 * var(--s)) calc(3.46 * var(--s));
+}
+
+.bg-container-9 {
+    width: 100%;
+    height: 100%;
+    --s: 200px; /* control the size */
+    --cf: #fff;
+    --c1: #cfdcff; /* control the color */
+    --c2: color-mix(in srgb, var(--c1)  100%, var(--cf) 100%);
+    --c3: color-mix(in srgb, var(--c1)  100%, var(--cf) 50%);
+
+    background: repeating-conic-gradient(
+        from 30deg,
+        #0000 0 120deg,
+        var(--c3) 0 180deg
+        )
+        calc(0.5 * var(--s)) calc(0.5 * var(--s) * 0.577),
+        repeating-conic-gradient(
+            from 30deg,
+            var(--c1) 0 60deg,
+            var(--c2) 0 120deg,
+            var(--c3) 0 180deg
+        );
+    background-size: var(--s) calc(var(--s) * 0.577);
+}
+
+.bg-container-10 {
+    width: 100%;
+    height: 100%;
+    --s: 60px;
+    --c1: #cfdcff;
+    /* Add your background pattern here */
+    background-image: radial-gradient(rgb(255, 255, 255) 30%, transparent 90%),
+    linear-gradient(45deg, var(--c1), var(--c1), var(--c1));
+    background-size: var(--s) var(--s);
+    /* background: lightblue; */
+}
+
+.bg-container-11 {
+    width: 100%;
+    height: 100%;
+    --s: 60px;
+    --c1: #cfdcff;
+    /* Add your background pattern here */
+    background-image: radial-gradient(rgb(255, 255, 255) 86%, transparent 99%),
+    linear-gradient(45deg, var(--c1), var(--c1), var(--c1));
+    background-size: var(--s) var(--s);
+    /* background: lightblue; */
+}
+
+.bg-container-img {
+    width: 100%;
+    height: 100%;
+    content: '';
+    background: url(/img/bg-pt.png);
+    z-index: -1;
+    background-size: 50px; /*粗さ*/
+    background-color: #fff;
+}
+
+.bg-container-img2 {
+    width: 100%;
+    height: 100%;
+    content: '';
+    background: url(/img/bg-pt-blue.png);
+    z-index: -1;
+    background-size: 50px; /*粗さ*/
+    background-color: #fff;
+}
+
+.bg-container-img3 {
+    width: 100%;
+    height: 100%;
+    content: '';
+    background: url(/img/bg-img.png);
+    z-index: -1;
+    background-size: 50px; /*粗さ*/
+    background-color: #fff;
+}
+
+.bg-container-img4 {
+    width: 100%;
+    height: 100%;
+    content: '';
+    background: url(/img/bg-pt2.png);
+    z-index: -1;
+    background-size: 50px; /*粗さ*/
+    background-color: #fff;
+}
+
+.bg-container-img5 {
+    width: 100%;
+    height: 100%;
+    content: '';
+    background: url(/img/bg-pt2.png),url(/img/bg-img.png);
+    z-index: -1;
+    background-size: 50px; /*粗さ*/
+    background-color: #fff;
+}

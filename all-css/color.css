@@ -53,6 +53,41 @@
     color: var(--sub-color03);
 }
 
+.bgcolor-r {
+    background-color: var(--maincolor-r);
+}
+.bgcolor-g {
+    background-color: var(--maincolor-g);
+}
+.bgcolor-b {
+    background-color: var(--maincolor-b);
+}
+.bgcolor-y {
+    background-color: var(--maincolor-y);
+}
+.bgcolor-m {
+    background-color: var(--maincolor-m);
+}
+.bgcolor-c {
+    background-color: var(--maincolor-c);
+}
+.bgcolor-fff {
+    background-color: var(--maincolor-fff);
+}
+.bgcolor-000 {
+    background-color: var(--maincolor-000);
+}
+.bgcolor-s1 {
+    background-color: var(--sub-color01);
+}
+.bgcolor-s2 {
+    background-color: var(--sub-color02);
+}
+.bgcolor-s3 {
+    background-color: var(--sub-color03);
+}
+
+
 .color-r1-01 { color: color-mix(in srgb, var(--maincolor-r)  1%, var(--sub-color01) 100%);}
 .color-r1-02 { color: color-mix(in srgb, var(--maincolor-r)  2%, var(--sub-color01) 100%);}
 .color-r1-03 { color: color-mix(in srgb, var(--maincolor-r)  3%, var(--sub-color01) 100%);}
@@ -2555,6 +2590,17 @@
 .bgcolor-fff1-80 { background-color: color-mix(in srgb, var(--maincolor-fff)  80%, var(--sub-color01) 100%);}
 .bgcolor-fff1-90 { background-color: color-mix(in srgb, var(--maincolor-fff)  90%, var(--sub-color01) 100%);}
 .bgcolor-fff1-100 { background-color: color-mix(in srgb, var(--maincolor-fff)  100%, var(--sub-color01) 100%);}
+
+.bgcolor-0001-10 { background-color: color-mix(in srgb, var(--maincolor-000)  10%, var(--sub-color01) 100%);}
+.bgcolor-0001-20 { background-color: color-mix(in srgb, var(--maincolor-000)  20%, var(--sub-color01) 100%);}
+.bgcolor-0001-30 { background-color: color-mix(in srgb, var(--maincolor-000)  30%, var(--sub-color01) 100%);}
+.bgcolor-0001-40 { background-color: color-mix(in srgb, var(--maincolor-000)  40%, var(--sub-color01) 100%);}
+.bgcolor-0001-50 { background-color: color-mix(in srgb, var(--maincolor-000)  50%, var(--sub-color01) 100%);}
+.bgcolor-0001-60 { background-color: color-mix(in srgb, var(--maincolor-000)  60%, var(--sub-color01) 100%);}
+.bgcolor-0001-70 { background-color: color-mix(in srgb, var(--maincolor-000)  70%, var(--sub-color01) 100%);}
+.bgcolor-0001-80 { background-color: color-mix(in srgb, var(--maincolor-000)  80%, var(--sub-color01) 100%);}
+.bgcolor-0001-90 { background-color: color-mix(in srgb, var(--maincolor-000)  90%, var(--sub-color01) 100%);}
+.bgcolor-0001-100 { background-color: color-mix(in srgb, var(--maincolor-000)  100%, var(--sub-color01) 100%);}
 
 /*//////赤///////*/
 .c {

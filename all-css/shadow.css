@@ -6,6 +6,30 @@
     box-shadow: -4px -4px 8px #fff, 4px 4px 8px rgb(0 0 0 / 24%);
 }
 
+.box-shadow-1w {
+    box-shadow: 0px 0px 8px #fff;
+}
+
+.box-shadow-2w {
+    box-shadow: 0px 0px 16px #fff,0px 0px 8px #fff;
+}
+
+.box-shadow-3w {
+    box-shadow: 0px 0px 24px #fff,0px 0px 16px #fff,0px 0px 8px #fff;
+}
+
+.box-shadow-1b {
+    box-shadow: 0px 0px 8px #000;
+}
+
+.box-shadow-2b {
+    box-shadow: 0px 0px 16px #000,0px 0px 8px #000;
+}
+
+.box-shadow-3b {
+    box-shadow: 0px 0px 24px #000,0px 0px 16px #000,0px 0px 8px #000;
+}
+
 .text-shadow {
     text-shadow: 1px 1px 2px pink;
 }
