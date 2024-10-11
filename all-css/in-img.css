@@ -121,3 +121,17 @@ img {
     z-index: -1;
     transform: translate(-50%, -50%);
 }
+
+.on-img1 {
+    background-image: url(../img/image6.avif);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 5vh;
+    flex-direction: column;
+    z-index: 10;
+}
+
+/*
+<img class="sen-h-1" src="./img/image6.avif" oncontextmenu="alert('画像の保存は許可されていません！'); return false;" alt="スライド5" title="小鳥Lab" width="100%">
+*/

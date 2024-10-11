@@ -6,6 +6,12 @@
     z-index: 999;
 }
 
+.dark-mod-c {
+    background-size: cover;
+    filter: invert(100%);
+    z-index: 999;
+}
+
 .accordion-header {
     cursor: pointer;
 }
