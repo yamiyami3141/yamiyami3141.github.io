@@ -123,7 +123,7 @@ img {
 }
 
 .on-img1 {
-    background-image: url(../img/image8.png);
+    background-image: url(../img/image8.avif);
     background-size: cover;
     background-position: 9% -8%; /*画像の位置調整*/
     background-repeat: no-repeat;
