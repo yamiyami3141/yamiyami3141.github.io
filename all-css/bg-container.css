@@ -680,7 +680,7 @@
 
 .mask-28 {
     height: 100%;
-    --url: url(/img/mask-20.png),url(/img/mask-26.png),url(/img/mask-27.png);
+    --url: url(/img/mask-13.png),url(/img/mask-25.png),url(/img/mask-26.png),url(/img/mask-27.png);
     -webkit-mask-image: var(--url);
     mask-image: var(--url);
     -webkit-mask-repeat: space;

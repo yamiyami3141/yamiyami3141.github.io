@@ -111,7 +111,6 @@ box-shadow: inset 4px 4px 8px rgb(0 0 0 / 16%);
     width: 60vw;
     max-width: 1200px;
 }
-
 .btn-s {
     flex: 1 1 auto;
     margin: 10px;
@@ -300,6 +299,75 @@ box-shadow: inset 4px 4px 8px rgb(0 0 0 / 16%);
     left: auto;
     z-index: -1;
     backdrop-filter: blur(10px);
+}
+
+/*s10/////////////////////////////////////*/
+/*s10/////////////////////////////////////*/
+
+.btn-s11 {
+    flex: 1 1 auto;
+    text-align: center;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s;
+    flex: 1 1 auto;
+    border: 2px solid #f7f7f7;
+    text-align: center;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s;
+}
+.btn-s11:after {
+    position: absolute;
+    transition: 0.3s;
+    content: "";
+    width: 0;
+    left: 50%;
+    bottom: 0;
+    height: 3px;
+    background: #f7f7f7;
+}
+.btn-s11:hover {
+    cursor: pointer;
+    color: #5bcaff;
+}
+.btn-s11:hover:after {
+    width: 100%;
+    left: 0;
+}
+.btn-s11 span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+.btn-s11 span:after {
+    content: '»';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+}
+.btn-s11:hover span:after {
+    opacity: 1;
+    right: 0;
+}
+
+.btn-s11:after {
+    position: absolute;
+    transition: 0.3s;
+    content: "";
+    width: 0;
+    left: 50%;
+    bottom: 0;
+    height: 100%;
+    background: #ffffff00;
+    right: 0;
+    left: auto;
+    z-index: -1;
+    backdrop-filter: blur(10px) saturate(300%);
 }
 
 /*s10/////////////////////////////////////*/
