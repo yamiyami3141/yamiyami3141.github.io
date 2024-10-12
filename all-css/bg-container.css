@@ -368,8 +368,8 @@
 .mask-1 {
     height: 100%;
     --url: url(/img/mask-1.png);
-    -webkit-mask-image: var(--url);
-    mask-image: var(--url);
+    -webkit-mask-image: url(/img/mask-1.png);
+    mask-image: url(/img/mask-1.png);
     -webkit-mask-repeat: space;
     mask-repeat: space;
     mask-size: 100% 100%;
@@ -382,8 +382,8 @@
     max-width: 100%;
     height: auto;
     --url: url(/img/mask-1.png);
-    -webkit-mask-image: var(--url);
-    mask-image: var(--url);
+    -webkit-mask-image: url(/img/mask-1.png);
+    mask-image: url(/img/mask-1.png);
     -webkit-mask-repeat: space;
     mask-repeat: space;
     -webkit-mask-size: 100px 100px;
