@@ -590,4 +590,103 @@
     aspect-ratio: 1/1;
 }
 
+.mask-20 {
+    height: 100%;
+    --url: url(/img/mask-20.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-21 {
+    height: 100%;
+    --url: url(/img/mask-21.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-22 {
+    height: 100%;
+    --url: url(/img/mask-22.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-23 {
+    height: 100%;
+    --url: url(/img/mask-23.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-24 {
+    height: 100%;
+    --url: url(/img/mask-24.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-25 {
+    height: 100%;
+    --url: url(/img/mask-25.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-26 {
+    height: 100%;
+    --url: url(/img/mask-26.png),url(/img/mask-27.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-27 {
+    height: 100%;
+    --url: url(/img/mask-14.png),url(/img/mask-15.png),url(/img/mask-13.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-28 {
+    height: 100%;
+    --url: url(/img/mask-20.png),url(/img/mask-26.png),url(/img/mask-27.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
 
