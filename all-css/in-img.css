@@ -125,7 +125,8 @@ img {
 .on-img1 {
     background-image: url(../img/image8.avif);
     background-size: cover;
-    background-position: 9% -8%; /*画像の位置調整*/
+    background-position: 1vw -12%; /*画像の位置調整*/
+    background-color: #fff; /*位置調整で足りなくなった時用*/
     background-repeat: no-repeat;
     min-height: 5vh;
     flex-direction: column;

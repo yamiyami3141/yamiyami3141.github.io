@@ -365,16 +365,7 @@
     height: 100%;
 }
 
-.mask-1 {
-    height: 100%;
-    --url: url(/img/mask-1.png);
-    -webkit-mask-image: var(--url);
-    mask-image: var(--url);
-    -webkit-mask-repeat: space;
-    mask-repeat: space;
-    mask-size: 100% 100%;
-    aspect-ratio: 1/1;
-}
+/*mask*/
 
 .bg-mask {
     margin: 20px auto;
@@ -389,3 +380,214 @@
     -webkit-mask-size: 100px 100px;
     mask-size: 100px 100px;
 }
+
+.mask-1 {
+    height: 100%;
+    --url: url(/img/mask-1.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-2 {
+    height: 100%;
+    --url: url(/img/mask-2.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-3 {
+    height: 100%;
+    --url: url(/img/mask-3.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-4 {
+    height: 100%;
+    --url: url(/img/mask-4.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-5 {
+    height: 100%;
+    --url: url(/img/mask-5.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-6 {
+    height: 100%;
+    --url: url(/img/mask-6.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-7 {
+    height: 100%;
+    --url: url(/img/mask-7.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-8 {
+    height: 100%;
+    --url: url(/img/mask-8.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-9 {
+    height: 100%;
+    --url: url(/img/mask-9.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-10 {
+    height: 100%;
+    --url: url(/img/mask-10.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-11 {
+    height: 100%;
+    --url: url(/img/mask-11.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-12 {
+    height: 100%;
+    --url: url(/img/mask-12.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-13 {
+    height: 100%;
+    --url: url(/img/mask-13.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-14 {
+    height: 100%;
+    --url: url(/img/mask-14.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-15 {
+    height: 100%;
+    --url: url(/img/mask-15.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-16 {
+    height: 100%;
+    --url: url(/img/mask-16.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-17 {
+    height: 100%;
+    --url: url(/img/mask-17.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-18 {
+    height: 100%;
+    --url: url(/img/mask-18.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+.mask-19 {
+    height: 100%;
+    --url: url(/img/mask-19.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
+
