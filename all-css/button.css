@@ -367,7 +367,8 @@ box-shadow: inset 4px 4px 8px rgb(0 0 0 / 16%);
     right: 0;
     left: auto;
     z-index: -1;
-    backdrop-filter: blur(10px) saturate(300%);
+    backdrop-filter: blur(15px) saturate(300%);
+    background-color: #ffffff25;
 }
 
 /*s10/////////////////////////////////////*/
