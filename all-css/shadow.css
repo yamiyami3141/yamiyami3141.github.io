@@ -1,9 +1,5 @@
-.box-shadow {
-    box-shadow: -9px -3px 30px rgba(0, 0, 0, 0.07);
-}
-
-.box-shadow-2 {
-    box-shadow: -4px -4px 8px #fff, 4px 4px 8px rgb(0 0 0 / 24%);
+.shadow {
+    filter: drop-shadow(16px 16px 20px blue);
 }
 
 .box-shadow-1w {
@@ -28,22 +24,6 @@
 
 .box-shadow-3b {
     box-shadow: 0px 0px 24px #000,0px 0px 16px #000,0px 0px 8px #000;
-}
-
-.text-shadow {
-    text-shadow: 1px 1px 2px pink;
-}
-
-.text-shadow-f {
-    text-shadow: 1px 1px 5px rgb(255, 255, 255);
-}
-
-.text-shadow-0 {
-    text-shadow: 1px 1px 5px rgb(0, 0, 0);
-}
-
-.text-rgb {
-    text-shadow: #ff000060 1px 2px, #000060 -1px -2px, yellow 0 0 4px;
 }
 
 .text-shadow-1w {
@@ -71,3 +51,27 @@
 }
 
 
+
+.box-shadow {
+    box-shadow: -9px -3px 30px rgba(0, 0, 0, 0.07);
+}
+
+.box-shadow-2 {
+    box-shadow: -4px -4px 8px #fff, 4px 4px 8px rgb(0 0 0 / 24%);
+}
+
+.text-shadow {
+    text-shadow: 1px 1px 2px pink;
+}
+
+.text-shadow-f {
+    text-shadow: 1px 1px 5px rgb(255, 255, 255);
+}
+
+.text-shadow-0 {
+    text-shadow: 1px 1px 5px rgb(0, 0, 0);
+}
+
+.text-rgb {
+    text-shadow: #ff000060 1px 2px, #000060 -1px -2px, yellow 0 0 4px;
+}
