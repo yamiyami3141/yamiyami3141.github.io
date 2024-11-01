@@ -506,3 +506,43 @@
 .ml-98 {margin-left: 98vw;}
 .ml-99 {margin-left: 99vw;}
 .ml-100 {margin-left: 100vw;}
+
+/**/
+
+.m-2-1 {
+    margin: calc(100%/2);
+}
+
+.m-3-1 {
+    margin: calc(100%/3);
+}
+
+.m-4-1 {
+    margin: calc(100%/4);
+}
+
+.m-5-1 {
+    margin: calc(100%/5);
+}
+
+.m6-1 {
+    margin: calc(100%/6);
+}
+
+.m-7-1 {
+    margin: calc(100%/7);
+}
+
+.m-8-1 {
+    margin: calc(100%/8);
+}
+
+.m-9-1 {
+    margin: calc(100%/9);
+}
+
+.m-10-1 {
+    margin: calc(100%/10);
+}
+
+/**/

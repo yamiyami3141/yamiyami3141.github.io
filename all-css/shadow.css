@@ -1,5 +1,25 @@
-.shadow {
-    filter: drop-shadow(4px 4px 8px rgb(128, 128, 128));
+.shadow-0 {
+    filter: drop-shadow(4px 4px 0px rgb(128, 128, 128));
+}
+
+.shadow-1 {
+    filter: drop-shadow(4px 4px 1px rgb(128, 128, 128));
+}
+
+.shadow-2 {
+    filter: drop-shadow(4px 4px 4px rgb(128, 128, 128));
+}
+
+.shadow-3 {
+    filter: drop-shadow(4px 4px 9px rgb(128, 128, 128));
+}
+
+.shadow-4 {
+    filter: drop-shadow(4px 4px 16px rgb(128, 128, 128));
+}
+
+.shadow-5 {
+    filter: drop-shadow(4px 4px 25px rgb(128, 128, 128));
 }
 
 .box-shadow-1w {

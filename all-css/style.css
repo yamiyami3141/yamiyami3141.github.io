@@ -1,159 +1,70 @@
-/**/
+/*
+<div class="preview">
+        <div class="preview_image">
+            <div class="src on-img1"></div>
+        </div> 
+        <h2 class="preview_title">kotori_Lab <br>HTML/CSS Codes</h2>
+</div>
+*/
 
-.w-2-1 {
-    width: calc(100%/2);
+.preview {
+    --size: 6.6vw; /*背景サイズ*/
+    max-width: 800px; /*最大サイズ*/
+    max-height: 800px; /*最大サイズ*/
+    z-index: 1;
+    right: 0;
+    top: 0;
+    margin: 0 0 0 auto;
+    width: calc(var(--size) * 8 + 90px);
+    height: calc(var(--size) * 8 + 90px);
+    perspective: 500px;
+    transition-property: opacity;
+    transition-duration: .3s;
+    transition-timing-function: cubic-bezier(.3,.1,.1,1);
 }
 
-.w-3-1 {
-    width: calc(100%/3);
+.preview_image {
+    --size: 6.6vw; /*要素サイズ*/
+    transform: rotateY(-16deg) translateY(-50%); /*要素角度*/
+    position: absolute;
+    right: var(--size);
+    top: 50%;
+    width: calc(var(--size) * 6 + 50px);
+    max-width: 600px;
+    aspect-ratio: 1;
+    background-image: url(../img/ptn.png);
+    background-size: 8px 8px;
+    background-repeat: repeat;
+    border: 1px solid #1a1a1a;
+    transform-origin: right center;
 }
 
-.w-4-1 {
-    width: calc(100%/4);
+.preview_title {
+    transform: rotateY(8deg) translateY(-50%); /*要素角度*/
+    font-size: clamp(0px,3vw + 5px, 50px); /*テキストサイズ*/
+    right: calc(20vw + 50px); /*テキスト位置*/
+    top: calc(50% + 30px); /*テキスト位置*/
+    position: absolute;
+    transform-origin: left center;
+    text-transform: uppercase;
+    letter-spacing: -.04em;
+    white-space: pre-line;
+    filter: drop-shadow(0px 0px 4px #909090) invert(100%);
 }
 
-.w-5-1 {
-    width: calc(100%/5);
+.src {
+    width: 90%;
+    height: 90%;
+    margin: 5%;
 }
 
-.w-6-1 {
-    width: calc(100%/6);
-}
 
-.w-7-1 {
-    width: calc(100%/7);
-}
 
-.w-8-1 {
-    width: calc(100%/8);
-}
 
-.w-9-1 {
-    width: calc(100%/9);
-}
 
-.w-10-1 {
-    width: calc(100%/10);
-}
 
-/**/
-/**/
 
-.h-2-1 {
-    height: calc(100%/2);
-}
 
-.h-3-1 {
-    height: calc(100%/3);
-}
-
-.h-4-1 {
-    height: calc(100%/4);
-}
-
-.h-5-1 {
-    height: calc(100%/5);
-}
-
-.h-6-1 {
-    height: calc(100%/6);
-}
-
-.h-7-1 {
-    height: calc(100%/7);
-}
-
-.h-8-1 {
-    height: calc(100%/8);
-}
-
-.h-9-1 {
-    height: calc(100%/9);
-}
-
-.h-10-1 {
-    height: calc(100%/10);
-}
-
-/**/
-/**/
-
-.m-2-1 {
-    margin: calc(100%/2);
-}
-
-.m-3-1 {
-    margin: calc(100%/3);
-}
-
-.m-4-1 {
-    margin: calc(100%/4);
-}
-
-.m-5-1 {
-    margin: calc(100%/5);
-}
-
-.m6-1 {
-    margin: calc(100%/6);
-}
-
-.m-7-1 {
-    margin: calc(100%/7);
-}
-
-.m-8-1 {
-    margin: calc(100%/8);
-}
-
-.m-9-1 {
-    margin: calc(100%/9);
-}
-
-.m-10-1 {
-    margin: calc(100%/10);
-}
-
-/**/
-/**/
-
-.p-2-1 {
-    padding: calc(100%/2);
-}
-
-.p-3-1 {
-    padding: calc(100%/3);
-}
-
-.p-4-1 {
-    padding: calc(100%/4);
-}
-
-.p-5-1 {
-    padding: calc(100%/5);
-}
-
-.p-6-1 {
-    padding: calc(100%/6);
-}
-
-.p-7-1 {
-    padding: calc(100%/7);
-}
-
-.p-8-1 {
-    padding: calc(100%/8);
-}
-
-.p-9-1 {
-    padding: calc(100%/9);
-}
-
-.p-10-1 {
-    padding: calc(100%/10);
-}
-
-/**/
 
 
 .dark-mod {
@@ -286,6 +197,7 @@ p {
     z-index: 9999;
     display: grid;
     place-items: center;
+    pointer-events: none; 
 }
 
 .loaded {

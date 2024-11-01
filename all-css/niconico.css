@@ -1,0 +1,130 @@
+/*
+    <div class="niconico_top nico-21 fs-05 fs-b7 t-20 ml-06 color-y1-80" data-text="こんな時代に誂えた 見て呉れの脆弱性 本当の芝居で騙される やたらと煩い心臓の鼓動 賛美はもう意味ないなっている；； 偽のカリスマ性 現実を直視しすぎると 失明しちゃうんだ！ こんな時代に誂えた 見て呉れの脆弱性 本当の芝居で騙される やたらと煩い心臓の鼓動 賛美はもう意味ないなっている；； 偽のカリスマ性 現実を直視しすぎると 失明しちゃうんだ！ &nbsp;"></div>
+    <div class="niconico_top nico-12 fs-12 fs-b7 t-45 ml-01 color-fff1-01" data-text="言の葉と初の音が交わる この日々と 音をヒビカセ 言の葉と初の音が交わる この日々と 音をヒビカセ&nbsp;"></div>
+    <div class="niconico_bg nico-12 fs-12 fs-b7 mt-02 ml-02 t-45">言の葉と初の音が交わる この日々と 音をヒビカセ 言の葉と初の音が交わる この日々と 音をヒビカセ&nbsp;</div>
+    <div class="niconico_bg nico-12 fs-12 fs-b7 mt-02 ml-02 t-72">メルト 溶けてしまいそう 好きだなんて 絶対に言えない… メルト 溶けてしまいそう 好きだなんて 絶対に言えない…&nbsp;</div>
+*/
+
+.niconico_top,.niconico_bg {
+    position: absolute;
+    left: 0;
+    line-height: .9;
+    white-space: nowrap;
+    animation-name: scroll-text;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+.niconico_top {
+    z-index: 2;
+}
+
+.niconico_top:before {
+    content: attr(data-text);
+    display: inline-block;
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    top: 0;
+    filter: blur(6px);
+}
+
+.niconico_top:after {
+    content: attr(data-text);
+    display: inline-block;
+    mask-image: linear-gradient(to bottom,#0d0d0d 0% 50%,#07080880 50% 100%);
+    mask-repeat: repeat-y;
+    mask-size: 100% 2px;
+}
+
+.niconico_bg {
+    z-index: 4;
+    color: transparent;
+    -webkit-text-stroke: 1px #ffffff40;
+}
+
+@keyframes scroll-text {
+    0% {
+        /* transform:translate(0); */
+    }
+
+    to {
+        transform: translate(-50%);
+    }
+}
+
+.nico-06 {
+    animation-duration: 6s;
+}
+.nico-07 {
+    animation-duration: 7s;
+}
+.nico-08 {
+    animation-duration: 8s;
+}
+.nico-09 {
+    animation-duration: 9s;
+}
+.nico-10 {
+    animation-duration: 10s;
+}
+.nico-11 {
+    animation-duration: 11s;
+}
+.nico-12 {
+    animation-duration: 12s;
+}
+.nico-13 {
+    animation-duration: 13s;
+}
+.nico-14 {
+    animation-duration: 14s;
+}
+.nico-15 {
+    animation-duration: 15s;
+}
+.nico-16{
+    animation-duration: 16s;
+}
+.nico-17 {
+    animation-duration: 17s;
+}
+.nico-18 {
+    animation-duration: 18s;
+}
+.nico-19 {
+    animation-duration: 19s;
+}
+.nico-20 {
+    animation-duration: 20s;
+}
+.nico-21 {
+    animation-duration: 21s;
+}
+.nico-22 {
+    animation-duration: 22s;
+}
+.nico-23 {
+    animation-duration: 23s;
+}
+.nico-24 {
+    animation-duration: 24s;
+}
+.nico-25 {
+    animation-duration: 25s;
+}
+.nico-26 {
+    animation-duration: 26s;
+}
+.nico-27 {
+    animation-duration: 27s;
+}
+.nico-28 {
+    animation-duration: 28s;
+}
+.nico-29 {
+    animation-duration: 29s;
+}
+.nico-30 {
+    animation-duration: 30s;
+}

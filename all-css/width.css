@@ -101,6 +101,46 @@
 .w-99 {width: 99vw;}
 .w-100 {width: 100vw;}
 
+/**/
+
+.w-2-1 {
+    width: calc(100%/2);
+}
+
+.w-3-1 {
+    width: calc(100%/3);
+}
+
+.w-4-1 {
+    width: calc(100%/4);
+}
+
+.w-5-1 {
+    width: calc(100%/5);
+}
+
+.w-6-1 {
+    width: calc(100%/6);
+}
+
+.w-7-1 {
+    width: calc(100%/7);
+}
+
+.w-8-1 {
+    width: calc(100%/8);
+}
+
+.w-9-1 {
+    width: calc(100%/9);
+}
+
+.w-10-1 {
+    width: calc(100%/10);
+}
+
+/**/
+
 .maxw-00 {max-width: 0vw;}
 .maxw-01 {max-width: 1vw;}
 .maxw-02 {max-width: 2vw;}

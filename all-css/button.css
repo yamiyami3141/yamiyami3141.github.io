@@ -311,13 +311,8 @@ box-shadow: inset 4px 4px 8px rgb(0 0 0 / 16%);
     position: relative;
     overflow: hidden;
     transition: 0.3s;
-    flex: 1 1 auto;
     border: 2px solid #f7f7f7;
     text-align: center;
-    text-transform: uppercase;
-    position: relative;
-    overflow: hidden;
-    transition: 0.3s;
 }
 .btn-s11:after {
     position: absolute;
@@ -372,7 +367,7 @@ box-shadow: inset 4px 4px 8px rgb(0 0 0 / 16%);
 }
 
 /*s11/////////////////////////////////////*/
-/*s11/////////////////////////////////////*/
+/*s11-2/////////////////////////////////////*/
 
 .btn-s11-2 {
     flex: 1 1 auto;
@@ -381,13 +376,8 @@ box-shadow: inset 4px 4px 8px rgb(0 0 0 / 16%);
     position: relative;
     overflow: hidden;
     transition: 0.3s;
-    flex: 1 1 auto;
     border: 2px solid #f7f7f7;
     text-align: center;
-    text-transform: uppercase;
-    position: relative;
-    overflow: hidden;
-    transition: 0.3s;
 }
 .btn-s11-2:after {
     position: absolute;
@@ -436,7 +426,6 @@ box-shadow: inset 4px 4px 8px rgb(0 0 0 / 16%);
     background: #ffffff00;
     right: 0;
     left: auto;
-    z-index: -1;
     filter: blur(15px) saturate(300%);
     background-color: #ffffff25;
     background-image: url(../img/tx2.avif);
@@ -449,7 +438,7 @@ box-shadow: inset 4px 4px 8px rgb(0 0 0 / 16%);
     z-index: 10;
 }
 
-/*s11/////////////////////////////////////*/
+/*s11-2/////////////////////////////////////*/
 
 /*ssssssssssssssssssssssssssssssssssssssss*/
 /*ssssssssssssssssssssssssssssssssssssssss*/

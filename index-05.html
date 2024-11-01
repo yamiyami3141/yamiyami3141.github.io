@@ -16,16 +16,10 @@
     <meta property="og:description" content="webサイト体験をもっと楽しく簡単に!!">
 </head>
 
-<div id="stalker"></div>
 <body class="fs-h6 us-n bg-container-img5" oncontextmenu="return false;">
+    <div id="stalker"></div>
+    <div id="loading"></div>
     <div class="dark-mod h-100"></div>
-    <div id="loading">
-        <div class="spinner-box">
-            <div class="circle-border">
-                <div class="circle-core"></div>
-            </div>  
-        </div>
-    </div>
 
     <div class="hero-container h-100 t-cc bgcolor-000">
         <div class="environment"></div>
@@ -62,6 +56,9 @@
         <div class="w-20 h-20w bg-container-img3"></div>
         <div class="w-20 h-20w bg-container-img4"></div>
         <div class="w-20 h-20w bg-container-img5"></div>
+        <div class="w-20 h-20w bg-container-img6"></div>
+        <div class="w-20 h-20w bg-container-img7"></div>
+        <div class="w-40 h-20w bg-container-img8"></div>
     </div>
 
     <div class=" m-10 w-80 h-80 marukado bgcolor-c1-80 t-cc">
@@ -88,7 +85,7 @@
     </div>
 
     <div class="color-0001-50 t-cc">- 画像の変形(処理が重いため改良中) -</div>
-    <div class="shadow w-90 ml-05">
+    <div class="shadow-3 w-90 ml-05">
         <div class="df mb-02">
             <div class="w-4-1 mask-1 on-img1"></div>
             <div class="w-4-1 mask-2 on-img1"></div>
@@ -151,14 +148,6 @@
 
     <div class="mt-04 pt-02 bg-container-2"><div id="footer"></div></div>
 
-    <script src="./script/click.js"></script>
-    <script src="./script/stalker.js"></script>
-    <script src="./script/slideshow.js"></script>
-    <script src="./script/CanvasAnimation.js"></script>
-    <script src="./script/import.js"></script>
-    <script src="./script/first.js" defer></script>
-    <script src="./script/load.js"></script>
-
     <div class="container">
         <aside class="sidebar left-sidebar">
             <nav>
@@ -174,7 +163,16 @@
     </div>
     
     <button id="left-toggle" class="toggle-button">≡</button>
-    <script src="script/sidebar.js"></script>
+
+    <script src="./script/click.js"></script>
+    <script src="./script/stalker.js"></script>
+    <script src="./script/slideshow.js"></script>
+    <script src="./script/CanvasAnimation.js"></script>
+    <script src="./script/import.js"></script>
+    <!--<script src="./script/first.js" defer></script>-->
+    <script src="./script/clipboad.js"></script>
+    <script src="./script/load.js"></script>
+    <script src="./script/sidebar.js"></script>
 </div>
 
 

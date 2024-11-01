@@ -309,50 +309,18 @@
 }
 
 .bg-container-img6 {
-    position: relative;
-    width: 100%;
-    padding: 100px 0 84px;
-}
-
-.bg-container-img6:before {
-    z-index: -2;
-    background: repeating-linear-gradient(-45deg, #2d9fff, #2d9fff 10px, rgba(45, 159, 255, .98) 0, rgba(45, 159, 255, .98) 20px);
-}
-
-.bg-container-img6-in {
-    width: 90%;
-    max-width: 1240px;
-    margin: 0 auto;
-    position: relative;
-}
-
-.bg-container-img6-in:after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 1400 / 800;
-    content: "";
-    background-image: url(/img/ptn.png);
-    background-repeat: repeat;
-    background-position: center -100px;
-    background-size: 1400px 800px;
-}
-
-.bg-container-img7 {
     padding: 100px 0;
     background-image: url(/img/bg_gray.jpg);
     background-repeat: repeat;
     background-size: 400px 400px;
 }
 
-.bg-container-img8 {
+.bg-container-img7 {
     position: relative;
+    background-color: #000000;
 }
 
-.bg-container-img8:before {
+.bg-container-img7:before {
     display: block;
     pointer-events: none;
     content: "";
@@ -364,6 +332,35 @@
     width: 100%;
     height: 100%;
 }
+
+.bg-container-img8 {
+    --m: 10px;
+    --c: #0d0d0d;
+    background-color: var(--c);
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-image: url(../img/ptn.png);
+    background-size: 8px 8px;
+    background-repeat: repeat;
+    border: 1px solid var(--c);
+    pointer-events: none;
+}
+
+.bg-container-img9 {
+    --m: 10px;
+    --c: #000000;
+    background-color: var(--c);
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-image: url(../img/scanline.png);
+    background-size: 8px 8px;
+    background-repeat: repeat;
+    border: 1px solid var(--c);
+    pointer-events: none;
+}
+
 
 /*mask*/
 
@@ -658,7 +655,7 @@
 
 .mask-26 {
     height: 100%;
-    --url: url(/img/mask-26.png),url(/img/mask-27.png);
+    --url: url(/img/mask-20.png),url(/img/mask-26.png),url(/img/mask-27.png);
     -webkit-mask-image: var(--url);
     mask-image: var(--url);
     -webkit-mask-repeat: space;
@@ -688,5 +685,17 @@
     mask-size: 100% 100%;
     aspect-ratio: 1/1;
 }
+
+.mask-29 {
+    height: 100%;
+    --url: url(/img/mask-22.png),url(/img/mask-20.png);
+    -webkit-mask-image: var(--url);
+    mask-image: var(--url);
+    -webkit-mask-repeat: space;
+    mask-repeat: space;
+    mask-size: 100% 100%;
+    aspect-ratio: 1/1;
+}
+
 
 

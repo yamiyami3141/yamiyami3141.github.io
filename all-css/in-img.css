@@ -133,6 +133,17 @@ img {
     z-index: 10;
 }
 
+.on-img1 {
+    background-image: url(../img/image8.avif);
+    background-size: cover;
+    background-position:  0 22%; /*画像の位置調整*/
+    background-color: #fff; /*位置調整で足りなくなった時用*/
+    background-repeat: no-repeat;
+    min-height: 5vh;
+    flex-direction: column;
+    z-index: 10;
+}
+
 .net-on-img1 {
     background-image: url(../img/ap.avif);
     background-size: cover;

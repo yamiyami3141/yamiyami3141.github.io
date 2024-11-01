@@ -506,3 +506,43 @@
 .pl-98 {padding-left: 98vw;}
 .pl-99 {padding-left: 99vw;}
 .pl-100 {padding-left: 100vw;}
+
+/**/
+
+.p-2-1 {
+    padding: calc(100%/2);
+}
+
+.p-3-1 {
+    padding: calc(100%/3);
+}
+
+.p-4-1 {
+    padding: calc(100%/4);
+}
+
+.p-5-1 {
+    padding: calc(100%/5);
+}
+
+.p-6-1 {
+    padding: calc(100%/6);
+}
+
+.p-7-1 {
+    padding: calc(100%/7);
+}
+
+.p-8-1 {
+    padding: calc(100%/8);
+}
+
+.p-9-1 {
+    padding: calc(100%/9);
+}
+
+.p-10-1 {
+    padding: calc(100%/10);
+}
+
+/**/

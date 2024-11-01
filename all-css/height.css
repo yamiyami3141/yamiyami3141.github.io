@@ -202,6 +202,46 @@
 .h-99w {height:99vw;}
 .h-100w {height:100vw;}
 
+/**/
+
+.h-2-1 {
+    height: calc(100%/2);
+}
+
+.h-3-1 {
+    height: calc(100%/3);
+}
+
+.h-4-1 {
+    height: calc(100%/4);
+}
+
+.h-5-1 {
+    height: calc(100%/5);
+}
+
+.h-6-1 {
+    height: calc(100%/6);
+}
+
+.h-7-1 {
+    height: calc(100%/7);
+}
+
+.h-8-1 {
+    height: calc(100%/8);
+}
+
+.h-9-1 {
+    height: calc(100%/9);
+}
+
+.h-10-1 {
+    height: calc(100%/10);
+}
+
+/**/
+
 .maxh-00 {max-height: 0vw;}
 .maxh-01 {max-height: 1vw;}
 .maxh-02 {max-height: 2vw;}

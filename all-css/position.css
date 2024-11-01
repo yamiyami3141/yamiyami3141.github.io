@@ -6,7 +6,9 @@
 .pa{
     position: absolute;
 }
-
+.pr{
+    position: relative;
+}
 .ps{
     position: sticky;
 }
