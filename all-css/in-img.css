@@ -177,6 +177,17 @@ img {
     z-index: 10;
 }
 
+.net-on-img3-2 {
+    background-image: url(../img/yt-web.avif);
+    background-size: cover;
+    background-position: 0; /*画像の位置調整*/
+    background-color: #fff; /*位置調整で足りなくなった時用*/
+    background-repeat: no-repeat;
+    min-height: 5vh;
+    flex-direction: column;
+    z-index: 10;
+}
+
 .net-on-img4 {
     background-image: url(../img/tx.avif);
     background-size: cover;

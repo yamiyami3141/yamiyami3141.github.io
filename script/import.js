@@ -13,3 +13,7 @@ fetch("parts/loading.html")
 fetch("parts/script.html")
     .then((response) => response.text())
     .then((data) => document.querySelector("#script").innerHTML = data);
+
+fetch("parts/web-service.html")
+    .then((response) => response.text())
+    .then((data) => document.querySelector("#web-service").innerHTML = data);
