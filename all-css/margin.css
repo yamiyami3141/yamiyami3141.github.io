@@ -509,6 +509,10 @@
 
 /**/
 
+.m-1-1 {
+    margin: calc(100%/1);
+}
+
 .m-2-1 {
     margin: calc(100%/2);
 }
@@ -525,7 +529,7 @@
     margin: calc(100%/5);
 }
 
-.m6-1 {
+.m-6-1 {
     margin: calc(100%/6);
 }
 
@@ -545,4 +549,171 @@
     margin: calc(100%/10);
 }
 
+/**/
+
+.mt-1-1 {
+    margin-top: calc(100%/1);
+}
+
+.mt-2-1 {
+    margin-top: calc(100%/2);
+}
+
+.mt-3-1 {
+    margin-top: calc(100%/3);
+}
+
+.mt-4-1 {
+    margin-top: calc(100%/4);
+}
+
+.mt-5-1 {
+    margin-top: calc(100%/5);
+}
+
+.mt-6-1 {
+    margin-top: calc(100%/6);
+}
+
+.mt-7-1 {
+    margin-top: calc(100%/7);
+}
+
+.mt-8-1 {
+    margin-top: calc(100%/8);
+}
+
+.mt-9-1 {
+    margin-top: calc(100%/9);
+}
+
+.mt-10-1 {
+    margin-top: calc(100%/10);
+}
+
+/**/
+
+.mr-1-1 {
+    margin-right: calc(100%/1);
+}
+
+.mr-2-1 {
+    margin-right: calc(100%/2);
+}
+
+.mr-3-1 {
+    margin-right: calc(100%/3);
+}
+
+.mr-4-1 {
+    margin-right: calc(100%/4);
+}
+
+.mr-5-1 {
+    margin-right: calc(100%/5);
+}
+
+.mr-6-1 {
+    margin-right: calc(100%/6);
+}
+
+.mr-7-1 {
+    margin-right: calc(100%/7);
+}
+
+.mr-8-1 {
+    margin-right: calc(100%/8);
+}
+
+.mr-9-1 {
+    margin-right: calc(100%/9);
+}
+
+.mr-10-1 {
+    margin-right: calc(100%/10);
+}
+
+/**/
+
+.mb-1-1 {
+    margin-bottom: calc(100%/1);
+}
+
+.mb-2-1 {
+    margin-bottom: calc(100%/2);
+}
+
+.mb-3-1 {
+    margin-bottom: calc(100%/3);
+}
+
+.mb-4-1 {
+    margin-bottom: calc(100%/4);
+}
+
+.mb-5-1 {
+    margin-bottom: calc(100%/5);
+}
+
+.mb-6-1 {
+    margin-bottom: calc(100%/6);
+}
+
+.mb-7-1 {
+    margin-bottom: calc(100%/7);
+}
+
+.mb-8-1 {
+    margin-bottom: calc(100%/8);
+}
+
+.mb-9-1 {
+    margin-bottom: calc(100%/9);
+}
+
+.mb-10-1 {
+    margin-bottom: calc(100%/10);
+}
+
+/**/
+
+.ml-1-1 {
+    margin-left: calc(100%/1);
+}
+
+.ml-2-1 {
+    margin-left: calc(100%/2);
+}
+
+.ml-3-1 {
+    margin-left: calc(100%/3);
+}
+
+.ml-4-1 {
+    margin-left: calc(100%/4);
+}
+
+.ml-5-1 {
+    margin-left: calc(100%/5);
+}
+
+.ml-6-1 {
+    margin-left: calc(100%/6);
+}
+
+.ml-7-1 {
+    margin-left: calc(100%/7);
+}
+
+.ml-8-1 {
+    margin-left: calc(100%/8);
+}
+
+.ml-9-1 {
+    margin-left: calc(100%/9);
+}
+
+.ml-10-1 {
+    margin-left: calc(100%/10);
+}
 /**/
