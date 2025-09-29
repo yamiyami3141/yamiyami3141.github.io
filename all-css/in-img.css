@@ -253,6 +253,50 @@ img {
     flex-direction: column;
     z-index: 10;
 }
+
+.net-on-img10 {
+    background-image: url(../img/sb.avif);
+    background-size: cover;
+    background-position: 0; /*画像の位置調整*/
+    background-color: #fff; /*位置調整で足りなくなった時用*/
+    background-repeat: no-repeat;
+    min-height: 5vh;
+    flex-direction: column;
+    z-index: 10;
+}
+
+.net-on-img11 {
+    background-image: url(../img/pr.avif);
+    background-size: cover;
+    background-position: 0; /*画像の位置調整*/
+    background-color: #fff; /*位置調整で足りなくなった時用*/
+    background-repeat: no-repeat;
+    min-height: 5vh;
+    flex-direction: column;
+    z-index: 10;
+}
+
+.net-on-img12 {
+    background-image: url(../img/fh.avif);
+    background-size: cover;
+    background-position: 0; /*画像の位置調整*/
+    background-color: #fff; /*位置調整で足りなくなった時用*/
+    background-repeat: no-repeat;
+    min-height: 5vh;
+    flex-direction: column;
+    z-index: 10;
+}
+
+.net-on-img13 {
+    background-image: url(../img/te.avif);
+    background-size: cover;
+    background-position: 0; /*画像の位置調整*/
+    background-color: #fff; /*位置調整で足りなくなった時用*/
+    background-repeat: no-repeat;
+    min-height: 5vh;
+    flex-direction: column;
+    z-index: 10;
+}
 /*
 <img class="sen-h-1" src="./img/image6.avif" oncontextmenu="alert('画像の保存は許可されていません！'); return false;" alt="スライド5" title="小鳥Lab" width="100%">
 */
