@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小鳥Lab</title>
+    <link rel="stylesheet" href="import.css">
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="html,css,javascript,小鳥Lab">
+    <link rel="icon" href="./img/和logo.ico">
+    <meta name="description" content="webサイト体験をもっと楽しく簡単に!!">
+    <meta property="og:image" content="./img/和logo.avif">
+    <meta property="og:title" content="小鳥Lab">
+    <meta property="og:site_name" content="小鳥Lab">
+    <meta property="og:description" content="webサイト体験をもっと楽しく簡単に!!">
+</head>
+
+<body class="fs-h6 us-n bg-container-img5" oncontextmenu="return false;">
+    <div id="stalker"></div>
+    <div id="loading"></div>
+
+<!--/////-->
+
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; background: #f0f0f0; }
+        
+        /* プレビューエリア */
+        #canvas-container {
+            position: relative;
+            width: 800px;
+            height: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            background: #ccc;
+        }
+        #bg-image { width: 100%; height: 100%; object-fit: cover; }
+
+        /* テキストの配置 */
+        .overlay {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: rgb(0, 0, 0);
+            font-weight: bold;
+            /*text-shadow: 2px 2px 4px rgba(0,0,0,0.7);*/
+            z-index: 10;
+        }
+        #text-out-1 { top: 20px; font-size: 24px; }
+        #text-out-2 { top: 45%; font-size: 32px; }
+        #text-out-3 { bottom: 20px; font-size: 18px; }
+
+        /* 追加画像の配置（右中央） */
+        #uploaded-image {
+            position: absolute;
+            right: 32.5px;
+            top: 55%;
+            transform: translateY(-50%);
+            width: 220px;
+            height: 273px;
+            display: none; /* 最初は非表示 */
+            z-index: 5;
+        }
+
+        /* 入力フォーム */
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 460px;
+        }
+        input { padding: 8px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
+        .file-label { font-weight: bold; margin-top: 10px; color: #333; }
+        button {
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover { background: #218838; }
+    </style>
+
+    <div id="canvas-container">
+        <img id="bg-image" src="img/免許-resize.avif" crossorigin="anonymous">
+        
+        <div id="text-out-1" class="overlay">タイトル</div>
+        <div id="text-out-2" class="overlay">メインメッセージ</div>
+        <div id="text-out-3" class="overlay">サブ情報</div>
+        
+        <img id="uploaded-image" src="#" alt="自由画像">
+    </div>
+
+    <div class="controls">
+        <label>テキスト 1 (名前):</label>
+        <input type="text" id="input-1" placeholder="名前を入力">
+        
+        <label>テキスト 2 (生年月日):</label>
+        <input type="text" id="input-2" placeholder="00年 00月 00日">
+        
+        <label>テキスト 3 (お約束):</label>
+        <input type="text" id="input-3" placeholder="お約束などを入力">
+        
+        <div class="file-label">追加画像 (右中央):</div>
+        <input type="file" id="image-upload" accept="image/*">
+        
+        <button id="download-btn">画像を書き出す</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // テキスト反映の処理
+        const inputs = [document.getElementById('input-1'), document.getElementById('input-2'), document.getElementById('input-3')];
+        const outputs = [document.getElementById('text-out-1'), document.getElementById('text-out-2'), document.getElementById('text-out-3')];
+
+        inputs.forEach((input, i) => {
+            input.addEventListener('input', () => {
+                outputs[i].innerText = input.value;
+            });
+        });
+
+        // 画像アップロードの処理
+        const imageUpload = document.getElementById('image-upload');
+        const uploadedImg = document.getElementById('uploaded-image');
+
+        imageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    uploadedImg.src = event.target.result;
+                    uploadedImg.style.display = 'block'; // 画像を表示
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 画像として保存
+        document.getElementById('download-btn').addEventListener('click', function() {
+            const target = document.getElementById('canvas-container');
+            html2canvas(target, { useCORS: true, scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'composite-image.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        });
+    </script>
+
+<!--/////-->
+
+    <script src="./script/click.js"></script>
+    <script src="./script/stalker.js"></script>
+    <script src="./script/slideshow.js"></script>
+    <script src="./script/CanvasAnimation.js"></script>
+    <script src="./script/import.js"></script>
+    <!--<script src="./script/first.js" defer></script>-->
+    <script src="./script/clipboad.js"></script>
+    <script src="./script/load.js"></script>
+    <script src="./script/sidebar.js"></script>
+</div>
+
+</body>
+
+</html>

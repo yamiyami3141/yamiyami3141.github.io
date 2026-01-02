@@ -300,3 +300,13 @@ img {
 /*
 <img class="sen-h-1" src="./img/image6.avif" oncontextmenu="alert('画像の保存は許可されていません！'); return false;" alt="スライド5" title="小鳥Lab" width="100%">
 */
+
+.img-menkyo {
+    background-image: url(../img/免許-resize.avif);
+    background-size: 1000px 634px;
+    background-color: #fff; /*位置調整で足りなくなった時用*/
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    flex-direction: column;
+    z-index: 10;
+}
