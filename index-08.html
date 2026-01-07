@@ -47,7 +47,7 @@
         }
         #text-out-1 { top: 28px; left: 110px; font-size: 24px; }
         #text-out-2 { 
-            top: 28px; 
+            top: 25px; 
             left: 66.7%; 
             font-size: 26px; 
             letter-spacing: 0.12rem; 
@@ -55,11 +55,21 @@
             align-items: baseline;
         }
         #text-out-3 { top: 43%; left: 100px; font-size: 24px; }
+        #text-out-4 { top: 98px; left: 110px; font-size: 24px; }
 
+        .date-num {
+            font-size: 0.8em;      /* 1.2倍大きく */
+            font-weight: 500;      /* 極太に */
+            font-family: sans-serif; /* 数字を見やすくするためにゴシック系を指定 */
+            margin: 0 2px;         /* 数字の左右の微調整 */
+        }
+
+        /* 漢字部分（年・月・日）の微調整 */
         .unit {
-            font-size: 0.65em;
+            font-size: 0.7em;
             font-weight: bold;
-            margin: 0 4px;
+            margin-left: 2px;
+            margin-right: 4.5px;
         }
 
         /* 写真枠の設定 */
@@ -120,10 +130,16 @@
         <div id="text-out-1" class="overlay">山田　太郎</div>
         <div id="text-out-2" class="overlay">0000<span class="unit">年</span>00<span class="unit">月</span>00<span class="unit">日生</span></div>
         <div id="text-out-3" class="overlay">サブ情報</div>
+        <div id="text-out-4" class="overlay">pipopark</div>
         
         <div id="photo-frame">
             <img id="uploaded-image" src="" alt="自由画像">
         </div>
+
+        <div id="text-expire" class="overlay" style="top: 155px; left: 45px; color: rgb(0, 0, 0); font-size: 44px; letter-spacing: 0.12rem; "></div>
+        <div id="text-kofu" class="overlay" style="top: 127px; left: 138px; font-size: 30px; letter-spacing: 0.12rem;"></div>
+        <div id="text-walk" class="overlay" style="top: 376px; left: 84px; font-size: 27px; letter-spacing: 0.03rem;"></div>
+        <div id="text-other" class="overlay" style="top: 408px; left: 84px; font-size: 27px; letter-spacing: 0.03rem;"></div>
     </div>
 
     <div class="controls">
@@ -159,6 +175,50 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
     <script>
+        // ページ読み込み時に日付を自動設定
+        window.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            
+            // 数字を装飾付きで返す関数
+            const formatWithSpan = (date) => {
+                const y = `<span class="date-num">${date.getFullYear()}</span>`;
+                const m = `<span class="date-num">${String(date.getMonth() + 1).padStart(2, '0')}</span>`;
+                const d = `<span class="date-num">${String(date.getDate()).padStart(2, '0')}</span>`;
+                return { y, m, d };
+            };
+
+            const today = formatWithSpan(now);
+            
+            // 1年後の計算
+            const nextYearDate = new Date();
+            nextYearDate.setFullYear(now.getFullYear() + 1);
+            const nextYear = formatWithSpan(nextYearDate);
+
+            // 有効期限の反映
+            const expireEl = document.getElementById('text-expire');
+            if (expireEl) {
+                expireEl.innerHTML = `${nextYear.y}<span class="unit">年</span>${nextYear.m}<span class="unit">月</span>${nextYear.d}<span class="unit">日まで有効</span>`;
+            }
+
+            // 交付日などの反映
+            const kofuEl = document.getElementById('text-kofu');
+            if (kofuEl) {
+                kofuEl.innerHTML = `${today.y}<span class="unit">年</span>${today.m}<span class="unit">月</span>${today.d}<span class="unit">日</span>`;
+            }
+            
+            // 徒歩・他などの項目（必要であれば同様に反映）
+            const walkEl = document.getElementById('text-walk');
+            if (walkEl) {
+                walkEl.innerHTML = `${today.y}<span class="unit">年</span>${today.m}<span class="unit">月</span>${today.d}<span class="unit">日</span>`;
+            }
+
+            // 4. 他（text-other） 
+            const otherEl = document.getElementById('text-other');
+            if (otherEl) {
+                otherEl.innerHTML = `${today.y}<span class="unit">年</span>${today.m}<span class="unit">月</span>${today.d}<span class="unit">日</span>`;
+            }
+        });
+
         // 1. 要素の取得
         const input1 = document.getElementById('input-1');
         const input2 = document.getElementById('input-2');
