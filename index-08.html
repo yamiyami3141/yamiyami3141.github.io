@@ -68,7 +68,7 @@
             right: 35px;
             top: 49.5%;
             transform: translateY(-50%);
-            width: 212px;
+            width: 210px;
             height: 283px;
             overflow: hidden;
             background: rgba(255,255,255,0.3);
@@ -80,7 +80,9 @@
         #uploaded-image {
             position: absolute;
             display: none;
-            cursor: move;
+            max-width: none; /* 100%制限を外す */
+            max-height: none; /* 100%制限を外す */
+            object-fit: contain;
         }
 
         /* 入力フォーム */
@@ -155,9 +157,9 @@
         <button id="download-btn">画像を書き出す</button>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
     <script>
-        // 1. テキスト反映処理
+        // 1. 要素の取得
         const input1 = document.getElementById('input-1');
         const input2 = document.getElementById('input-2');
         const input3 = document.getElementById('input-3');
@@ -165,8 +167,15 @@
         const out2 = document.getElementById('text-out-2');
         const out3 = document.getElementById('text-out-3');
 
-        input1.addEventListener('input', () => { out1.innerText = input1.value || "山田　太郎"; });
-        input3.addEventListener('input', () => { out3.innerText = input3.value || "サブ情報"; });
+        const imageUpload = document.getElementById('image-upload');
+        const uploadedImg = document.getElementById('uploaded-image');
+        const hSlider = document.getElementById('h-slider');
+        const vSlider = document.getElementById('v-slider');
+        const sizeSlider = document.getElementById('size-slider');
+
+        // 2. テキスト反映（空の状態から入力できるように修正）
+        input1.addEventListener('input', () => { out1.innerText = input1.value; });
+        input3.addEventListener('input', () => { out3.innerText = input3.value; });
 
         input2.addEventListener('input', () => {
             let val = input2.value.replace(/\D/g, '');
@@ -180,24 +189,20 @@
             }
         });
 
-        // 2. 画像アップロードとスライダー制御
-        const imageUpload = document.getElementById('image-upload');
-        const uploadedImg = document.getElementById('uploaded-image');
-        const hSlider = document.getElementById('h-slider');
-        const vSlider = document.getElementById('v-slider');
-        const sizeSlider = document.getElementById('size-slider');
-
+        // 3. 画像のスタイル更新（見切れ防止ロジック）
         function updateImageStyle() {
             const scale = sizeSlider.value / 100;
             const x = hSlider.value;
             const y = vSlider.value;
-            // 枠内での位置を調整（中央基準）
+            
+            // 見切れを防ぐため、widthを直接操作するように変更
             uploadedImg.style.height = (100 * scale) + "%";
             uploadedImg.style.left = `calc(50% + ${x}px)`;
             uploadedImg.style.top = `calc(50% + ${y}px)`;
             uploadedImg.style.transform = "translate(-50%, -50%)";
         }
 
+        // 4. 画像アップロードイベント
         imageUpload.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -205,7 +210,8 @@
                 reader.onload = (event) => {
                     uploadedImg.src = event.target.result;
                     uploadedImg.style.display = 'block';
-                    updateImageStyle();
+                    // 読み込み完了後にスタイルを適用
+                    setTimeout(updateImageStyle, 50);
                 };
                 reader.readAsDataURL(file);
             }
@@ -215,7 +221,7 @@
             slider.addEventListener('input', updateImageStyle);
         });
 
-        // 3. 画像として保存
+        // 5. 保存処理（html-to-image版）
         document.getElementById('download-btn').addEventListener('click', function() {
             const target = document.getElementById('canvas-container');
             const frame = document.getElementById('photo-frame');
@@ -224,17 +230,28 @@
             const originalBorder = frame.style.border;
             frame.style.border = "none";
 
-            html2canvas(target, {
-                useCORS: true, 
-                scale: 2, // 高解像度で保存
-                backgroundColor: null
-            }).then(canvas => {
+            // htmlToImageが読み込まれているかチェック
+            if (typeof htmlToImage === 'undefined') {
+                alert("ライブラリが読み込まれていません。head内のスクリプトタグを確認してください。");
+                frame.style.border = originalBorder;
+                return;
+            }
+
+            htmlToImage.toPng(target, {
+                width: 800,
+                height: 500,
+                pixelRatio: 2
+            })
+            .then(function (dataUrl) {
                 const link = document.createElement('a');
                 link.download = 'my-license-card.png';
-                link.href = canvas.toDataURL('image/png');
+                link.href = dataUrl;
                 link.click();
-                
-                // 枠線を戻す
+                frame.style.border = originalBorder;
+            })
+            .catch(function (error) {
+                console.error('保存エラー:', error);
+                alert("画像の保存に失敗しました。");
                 frame.style.border = originalBorder;
             });
         });
