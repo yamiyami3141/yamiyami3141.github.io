@@ -45,21 +45,25 @@
             z-index: 10;
             pointer-events: none; /* 操作の邪魔にならないように */
         }
-        #text-out-1 { top: 28px; left: 110px; font-size: 24px; }
+        #text-out-1 { top: 27px; left: 110px; font-size: 24px; }
         #text-out-2 { 
-            top: 25px; 
+            top: 27px; 
             left: 66.7%; 
             font-size: 26px; 
             letter-spacing: 0.12rem; 
             display: flex;
             align-items: baseline;
         }
-        #text-out-3 { top: 43%; left: 100px; font-size: 24px; }
+        #text-out-3 { top: 43%; left: 100px; font-size: 24px; transform: scale(0.7, 1); /* 横を0.7倍に凝縮 */
+    transform-origin: left center; /* 左端を起点に変形させることでズレを解消 */
+    
+    display: inline-block; /* scaleを正しく適用するために必要 */
+    white-space: nowrap;}
         #text-out-4 { top: 98px; left: 110px; font-size: 24px; }
 
         .date-num {
             font-size: 0.8em;      /* 1.2倍大きく */
-            font-weight: 500;      /* 極太に */
+            font-weight: 400;      /* 極太に */
             font-family: sans-serif; /* 数字を見やすくするためにゴシック系を指定 */
             margin: 0 2px;         /* 数字の左右の微調整 */
         }
@@ -67,7 +71,7 @@
         /* 漢字部分（年・月・日）の微調整 */
         .unit {
             font-size: 0.7em;
-            font-weight: bold;
+            font-weight: 400;
             margin-left: 2px;
             margin-right: 4.5px;
         }
@@ -130,7 +134,7 @@
         <div id="text-out-1" class="overlay">山田　太郎</div>
         <div id="text-out-2" class="overlay">0000<span class="unit">年</span>00<span class="unit">月</span>00<span class="unit">日生</span></div>
         <div id="text-out-3" class="overlay">サブ情報</div>
-        <div id="text-out-4" class="overlay">pipopark</div>
+        <div id="text-out-4" class="overlay">ピポパークカインズ前橋みなみモール店</div>
         
         <div id="photo-frame">
             <img id="uploaded-image" src="" alt="自由画像">
