@@ -127,10 +127,14 @@ p {
 
 .us-n {
     user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
 }
 
 .us-o {
     user-select: all;
+    -webkit-user-select: all;
 }
 
 /*user-select*/
