@@ -62,6 +62,7 @@
             transform-origin: left center; /* 左端を起点に変形させることでズレを解消 */
             display: inline-block; /* scaleを正しく適用するために必要 */
             white-space: nowrap;
+            line-height: 25px;
         }
         #text-out-4 { 
             top: 98px; 
@@ -146,7 +147,7 @@
         
         <div id="text-out-1" class="overlay">山田　太郎</div>
         <div id="text-out-2" class="overlay">0000<span class="unit">年</span>00<span class="unit">月</span>00<span class="unit">日生</span></div>
-        <div id="text-out-3" class="overlay">サブ情報</div>
+        <div id="text-out-3" class="overlay" style="margin-top: 12px;">サブ情報</div>
         <div id="text-out-4" class="overlay">ピポパークカインズ前橋みなみモール店</div>
         
         <div id="photo-frame">
@@ -166,8 +167,43 @@
         <label>生年月日 (8桁):</label>
         <input type="text" id="input-2" maxlength="8" placeholder="例: 20000101">
         
-        <label>お約束:</label>
-        <input type="text" id="input-3" placeholder="お約束などを入力">
+        <div class="input-item">
+            <label>お約束（最大4項目まで）</label>
+            
+            <div id="checkbox-area" style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 10px; background: #f9f9f9; padding: 10px; border-radius: 8px;">
+                <label><input type="checkbox" class="preset-check" value="まいにち ハミガキを する。"> ハミガキ</label>
+                <label><input type="checkbox" class="preset-check" value="ごはんを のこさず たべる。"> ごはん</label>
+                <label><input type="checkbox" class="preset-check" value="お外から帰ったら 手を洗う。"> 手洗い</label>
+                <label><input type="checkbox" class="preset-check" value="しゅくだいを すぐにやる。"> しゅくだい</label>
+                <label><input type="checkbox" class="preset-check" value="あしたの じゅんびを する。"> じゅんび</label>
+                <label><input type="checkbox" class="preset-check" value="お友だちに やさしくする。"> やさしく</label>
+                <label><input type="checkbox" class="preset-check" value="お父さんお母さんの言うことを聞くこと"> 1.お父さん</label>
+                <label><input type="checkbox" class="preset-check" value="おとうさんおかあさんのいうことをきくこと"> 2.おとうさ</label>
+                <label><input type="checkbox" class="preset-check" value="好き嫌いなく何でも食べること"> ハミガキ</label>
+                <label><input type="checkbox" class="preset-check" value="すききらいなくなんでもたべること"> ごはん</label>
+                <label><input type="checkbox" class="preset-check" value="お手伝いをすること"> 手洗い</label>
+                <label><input type="checkbox" class="preset-check" value="おてつだいをすること"> しゅくだい</label>
+                <label><input type="checkbox" class="preset-check" value="いつも笑顔であいさつすること"> じゅんび</label>
+                <label><input type="checkbox" class="preset-check" value="いつもえがおであいさつすること"> やさしく</label>
+                <label><input type="checkbox" class="preset-check" value="お勉強を頑張ること"> 1.お父さん</label>
+                <label><input type="checkbox" class="preset-check" value="おべんきょうをがんばること"> 2.おとうさ</label>
+                <label><input type="checkbox" class="preset-check" value="ゲームをやりすぎないこと"> ハミガキ</label>
+                <label><input type="checkbox" class="preset-check" value="交通ルールを守ること"> ごはん</label>
+                <label><input type="checkbox" class="preset-check" value="こうつうルールをまもること"> 手洗い</label>
+                <label><input type="checkbox" class="preset-check" value="お友達と仲良くすること"> しゅくだい</label>
+                <label><input type="checkbox" class="preset-check" value="こうつうルールをまもること"> じゅんび</label>
+                <label><input type="checkbox" class="preset-check" value="約束を守ること"> やさしく</label>
+                <label><input type="checkbox" class="preset-check" value="やくそくをまもること"> 1.お父さん</label>
+                <label><input type="checkbox" class="preset-check" value="ウソをつかないこと"> 2.おとうさ</label>
+            </div>
+
+            <div id="free-input-area" style="display: flex; flex-direction: column; gap: 5px;">
+                <input type="text" class="line-input" maxlength="24" placeholder="自由入力 1行目">
+                <input type="text" class="line-input" maxlength="24" placeholder="自由入力 2行目">
+                <input type="text" class="line-input" maxlength="24" placeholder="自由入力 3行目">
+                <input type="text" class="line-input" maxlength="24" placeholder="自由入力 4行目">
+            </div>
+        </div>
         
         <label>追加画像:</label>
         <input type="file" id="image-upload" accept="image/*">
@@ -249,10 +285,11 @@
         const hSlider = document.getElementById('h-slider');
         const vSlider = document.getElementById('v-slider');
         const sizeSlider = document.getElementById('size-slider');
+        const checkboxes = document.querySelectorAll('.preset-check');
+        const lineInputs = document.querySelectorAll('.line-input');
 
         // 2. テキスト反映（空の状態から入力できるように修正）
         input1.addEventListener('input', () => { out1.innerText = input1.value; });
-        input3.addEventListener('input', () => { out3.innerText = input3.value; });
 
         input2.addEventListener('input', () => {
             let val = input2.value.replace(/\D/g, '');
@@ -266,7 +303,58 @@
             }
         });
 
-        // 3. 画像のスタイル更新（見切れ防止ロジック）
+        // 3. テキスト反映（チェックボックス or 自由文）
+        function updateLicenseText() {
+            let selectedPresets = [];
+            
+            //3-1. チェックされた定型文を取得
+            checkboxes.forEach(cb => {
+                if (cb.checked) selectedPresets.push(cb.value);
+            });
+
+            // 3-2. チェックボックスの数に応じて自由入力欄の有効/無効を切り替え
+            // 定型文で埋まった行以降のみ入力可能にする
+            lineInputs.forEach((input, index) => {
+                if (index < selectedPresets.length) {
+                    input.disabled = true;
+                    input.style.backgroundColor = "#eee";
+                    input.value = ""; // 無効化されたら中身を消す
+                } else {
+                    input.disabled = false;
+                    input.style.backgroundColor = "#fff";
+                }
+            });
+
+            // 3-3. 表示用の配列を作成（定型文 + 自由入力）
+            let finalLines = [...selectedPresets];
+            lineInputs.forEach((input) => {
+                if (!input.disabled && input.value !== "") {
+                    finalLines.push(input.value);
+                }
+            });
+
+            // 3-4. 最大4行でカットして表示
+            out3.innerText = finalLines.slice(0, 4).join('\n');
+        }
+
+        // チェックボックスのイベント設定
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                const checkedCount = document.querySelectorAll('.preset-check:checked').length;
+                if (checkedCount > 4) {
+                    cb.checked = false; // 4つを超えたらチェックさせない
+                    alert("お約束は最大4つまでです。");
+                }
+                updateLicenseText();
+            });
+        });
+
+        // 自由入力欄のイベント設定
+        lineInputs.forEach(input => {
+            input.addEventListener('input', updateLicenseText);
+        });
+
+        // 4. 画像のスタイル更新（見切れ防止ロジック）
         function updateImageStyle() {
             const scale = sizeSlider.value / 100;
             const x = hSlider.value;
@@ -279,7 +367,7 @@
             uploadedImg.style.transform = "translate(-50%, -50%)";
         }
 
-        // 4. 画像アップロードイベント
+        // 5. 画像アップロードイベント
         imageUpload.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -298,7 +386,7 @@
             slider.addEventListener('input', updateImageStyle);
         });
 
-        // 5. 保存処理（html-to-image版）
+        // 6. 保存処理（html-to-image版）
         document.getElementById('download-btn').addEventListener('click', function() {
             const target = document.getElementById('canvas-container');
             const frame = document.getElementById('photo-frame');
