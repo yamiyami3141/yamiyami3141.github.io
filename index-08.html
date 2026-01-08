@@ -89,6 +89,13 @@
             margin-right: 4.5px;
         }
 
+        .date-hatena {
+            font-size: 0.8em;      /* 0.8倍に縮小 */
+            font-weight: 400;      /* 極太に */
+            font-family: sans-serif; /* 数字を見やすくするためにゴシック系を指定 */
+            margin: 0 4px;         /* 数字の左右の微調整 */
+        }
+
         /* 写真枠の設定 */
         #photo-frame {
             position: absolute;
@@ -147,7 +154,7 @@
         
         <div id="text-out-1" class="overlay">山田　太郎</div>
         <div id="text-out-2" class="overlay">0000<span class="unit">年</span>00<span class="unit">月</span>00<span class="unit">日生</span></div>
-        <div id="text-out-3" class="overlay" style="margin-top: 12px;">サブ情報</div>
+        <div id="text-out-3" class="overlay" style="margin-top: 12px;">免許の条件等</div>
         <div id="text-out-4" class="overlay">ピポパークカインズ前橋みなみモール店</div>
         
         <div id="photo-frame">
@@ -157,7 +164,8 @@
         <div id="text-expire" class="overlay" style="top: 155px; left: 45px; color: rgb(0, 0, 0); font-size: 44px; letter-spacing: 0.12rem; "></div>
         <div id="text-kofu" class="overlay" style="top: 127px; left: 138px; font-size: 30px; letter-spacing: 0.12rem;"></div>
         <div id="text-walk" class="overlay" style="top: 376px; left: 84px; font-size: 27px; letter-spacing: 0.03rem;"></div>
-        <div id="text-other" class="overlay" style="top: 408px; left: 84px; font-size: 27px; letter-spacing: 0.03rem;"></div>
+        <div id="text-other" class="overlay" style="top: 407px; left: 84px; font-size: 27px; letter-spacing: 0.03rem;"></div>
+        <div id="text-car" class="overlay" style="top: 438px; left: 86px; font-size: 27px; letter-spacing: 0.03rem;"></div>
     </div>
 
     <div class="controls">
@@ -269,6 +277,12 @@
             const otherEl = document.getElementById('text-other');
             if (otherEl) {
                 otherEl.innerHTML = `${today.y}<span class="unit">年</span>${today.m}<span class="unit">月</span>${today.d}<span class="unit">日</span>`;
+            }
+
+            // 4. 他（text-other） 
+            const carEl = document.getElementById('text-car');
+            if (carEl) {
+                carEl.innerHTML = `<span class="date-hatena">????</span><span class="unit">年</span><span class="date-hatena">??</span><span class="unit">月</span><span class="date-hatena">??</span><span class="unit">日</span>`;
             }
         });
 
