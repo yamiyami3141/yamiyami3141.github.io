@@ -1,0 +1,15 @@
+#stalker {
+    pointer-events: none;
+    position: fixed;
+    top: -10vw;
+    left: -10vw;
+    width: 20vw;
+    height: 20vw;
+    background:radial-gradient(#ffffff, #000000);
+    border-radius: 50%;
+    transform: translate(0,0);
+    transition: transform 0.28s;
+    transition-timing-function: ease-out;
+    z-index: 999;
+    mix-blend-mode: difference;
+}
