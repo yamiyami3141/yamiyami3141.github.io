@@ -144,6 +144,14 @@
             -webkit-appearance: none;
         }
         button:hover { background: #218838; }
+
+        /* Firefox向けの微調整 */
+        @-moz-document url-prefix() {
+            .overlay {
+                /* Firefoxで3px上にズレる分、下に補正 */
+                margin-top: 3px;
+            }
+        }
     </style>
 </head>
 
