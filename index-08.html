@@ -65,7 +65,7 @@
             line-height: 25px;
         }
         #text-out-4 { 
-            top: 98px; 
+            top: 99px; 
             left: 110px; 
             font-size: 24px; 
             transform: scale(0.7, 1); /* 横を0.7倍に凝縮 */
@@ -415,39 +415,76 @@
             slider.addEventListener('input', updateImageStyle);
         });
 
-        // 6. 保存処理（html-to-image版）
+        // 6. 保存処理（Safari対応 html-to-image版）
         document.getElementById('download-btn').addEventListener('click', function() {
             const target = document.getElementById('canvas-container');
             const frame = document.getElementById('photo-frame');
-            
-            // 保存時のみ枠線を消す
             const originalBorder = frame.style.border;
-            frame.style.border = "none";
 
-            // htmlToImageが読み込まれているかチェック
+            // htmlToImageの読み込みチェック
             if (typeof htmlToImage === 'undefined') {
-                alert("ライブラリが読み込まれていません。head内のスクリプトタグを確認してください。");
-                frame.style.border = originalBorder;
+                alert("ライブラリが読み込まれていません。");
                 return;
             }
 
-            htmlToImage.toPng(target, {
-                width: 800,
-                height: 500,
-                pixelRatio: 2
-            })
-            .then(function (dataUrl) {
-                const link = document.createElement('a');
-                link.download = 'my-license-card.png';
-                link.href = dataUrl;
-                link.click();
-                frame.style.border = originalBorder;
-            })
-            .catch(function (error) {
-                console.error('保存エラー:', error);
-                alert("画像の保存に失敗しました。");
-                frame.style.border = originalBorder;
-            });
+            // Safariブラウザかどうかの判定
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+            // --- 画像書き出しのメイン処理 ---
+            const executeCapture = () => {
+                frame.style.border = "none"; // 保存時のみ枠線を消す
+
+                htmlToImage.toPng(target, {
+                    width: 800,
+                    height: 500,
+                    pixelRatio: 2,
+                    cacheBust: true // Safariのキャッシュバグ対策
+                })
+                .then(function (dataUrl) {
+                    // Safariで稀に発生する「短すぎるデータ（失敗）」をチェック
+                    if (dataUrl.length < 2000) {
+                        throw new Error("生成された画像が不完全です。");
+                    }
+                    const link = document.createElement('a');
+                    link.download = 'my-license-card.png';
+                    link.href = dataUrl;
+                    link.click();
+                    frame.style.border = originalBorder; // 枠線を戻す
+                })
+                .catch(function (error) {
+                    console.error('保存エラー:', error);
+                    alert("画像の生成に失敗しました。もう一度お試しください。");
+                    frame.style.border = originalBorder;
+                });
+            };
+
+            // --- 分岐処理 ---
+            if (isSafari) {
+                // Safariのみ：背景画像とアップロード画像を個別に再ロード（プリロード）
+                const bgImg = document.getElementById('bg-image');
+                const userImg = document.getElementById('uploaded-image');
+                
+                const preload = (imgEl) => {
+                    return new Promise((resolve) => {
+                        if (!imgEl || !imgEl.src || imgEl.src === "") return resolve();
+                        const i = new Image();
+                        i.crossOrigin = "anonymous";
+                        // キャッシュを無視させるためのクエリを付与
+                        i.src = imgEl.src + (imgEl.src.includes('?') ? '&' : '?') + "s_fix=" + new Date().getTime();
+                        i.onload = resolve;
+                        i.onerror = resolve; // エラー時も止まらないようにresolve
+                    });
+                };
+
+                // 両方の画像がロードされるのを待ってから実行
+                Promise.all([preload(bgImg), preload(userImg)]).then(() => {
+                    // Safariの描画が安定するまで少しだけ待機
+                    setTimeout(executeCapture, 300);
+                });
+            } else {
+                // Safari以外は即時実行
+                executeCapture();
+            }
         });
     </script>
 
