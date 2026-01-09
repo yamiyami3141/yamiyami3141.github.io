@@ -415,74 +415,89 @@
             slider.addEventListener('input', updateImageStyle);
         });
 
-        // 6. 保存処理（Safari対応 html-to-image版）
-        document.getElementById('download-btn').addEventListener('click', function() {
+        // 6. 保存処理（iOS全体/WebKit対応版）
+        document.getElementById('download-btn').addEventListener('click', async function() {
             const target = document.getElementById('canvas-container');
             const frame = document.getElementById('photo-frame');
             const originalBorder = frame.style.border;
 
-            // htmlToImageの読み込みチェック
             if (typeof htmlToImage === 'undefined') {
                 alert("ライブラリが読み込まれていません。");
                 return;
             }
 
-            // Safariブラウザかどうかの判定
-            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            // iOS判定（iPhone/iPad/iPod）
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-            // --- 画像書き出しのメイン処理 ---
-            const executeCapture = () => {
-                frame.style.border = "none"; // 保存時のみ枠線を消す
-
-                htmlToImage.toPng(target, {
-                    width: 800,
-                    height: 500,
-                    pixelRatio: 2,
-                    cacheBust: true // Safariのキャッシュバグ対策
-                })
-                .then(function (dataUrl) {
-                    // Safariで稀に発生する「短すぎるデータ（失敗）」をチェック
-                    if (dataUrl.length < 2000) {
-                        throw new Error("生成された画像が不完全です。");
+            // 画像をBase64に変換する関数（iOSの消失対策）
+            const toBase64 = (imgEl) => {
+                return new Promise((resolve) => {
+                    if (!imgEl || !imgEl.src || imgEl.src.startsWith('data:')) return resolve();
+                    const canvas = document.createElement('canvas');
+                    canvas.width = imgEl.naturalWidth;
+                    canvas.height = imgEl.naturalHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(imgEl, 0, 0);
+                    try {
+                        const dataUrl = canvas.toDataURL('image/png');
+                        imgEl.src = dataUrl; // 元の要素のソースをBase64に置き換える
+                        resolve();
+                    } catch (e) {
+                        console.error("Base64変換失敗:", e);
+                        resolve();
                     }
-                    const link = document.createElement('a');
-                    link.download = 'my-license-card.png';
-                    link.href = dataUrl;
-                    link.click();
-                    frame.style.border = originalBorder; // 枠線を戻す
-                })
-                .catch(function (error) {
-                    console.error('保存エラー:', error);
-                    alert("画像の生成に失敗しました。もう一度お試しください。");
-                    frame.style.border = originalBorder;
                 });
             };
 
-            // --- 分岐処理 ---
-            if (isSafari) {
-                // Safariのみ：背景画像とアップロード画像を個別に再ロード（プリロード）
+            const executeCapture = () => {
+                frame.style.border = "none";
+
+                // iOSでは生成に時間がかかる場合があるため、少し待機してから実行
+                setTimeout(() => {
+                    htmlToImage.toPng(target, {
+                        width: 800,
+                        height: 500,
+                        pixelRatio: 2,
+                        cacheBust: true,
+                        backgroundColor: '#ffffff'
+                    })
+                    .then(function (dataUrl) {
+                        if (dataUrl.length < 5000) throw new Error("画像生成失敗");
+                        
+                        const link = document.createElement('a');
+                        link.download = 'my-license-card.png';
+                        link.href = dataUrl;
+                        link.click();
+                        frame.style.border = originalBorder;
+                    })
+                    .catch(function (error) {
+                        console.error('保存エラー:', error);
+                        alert("画像の生成に失敗しました。もう一度ボタンを押してください。");
+                        frame.style.border = originalBorder;
+                    });
+                }, isIOS ? 500 : 0);
+            };
+
+            if (isIOS) {
+                // iOSの場合：全画像をBase64に変換してからキャプチャ
                 const bgImg = document.getElementById('bg-image');
                 const userImg = document.getElementById('uploaded-image');
                 
-                const preload = (imgEl) => {
-                    return new Promise((resolve) => {
-                        if (!imgEl || !imgEl.src || imgEl.src === "") return resolve();
-                        const i = new Image();
-                        i.crossOrigin = "anonymous";
-                        // キャッシュを無視させるためのクエリを付与
-                        i.src = imgEl.src + (imgEl.src.includes('?') ? '&' : '?') + "s_fix=" + new Date().getTime();
-                        i.onload = resolve;
-                        i.onerror = resolve; // エラー時も止まらないようにresolve
-                    });
-                };
+                // ローディング通知（任意）
+                const btn = document.getElementById('download-btn');
+                const originalText = btn.innerText;
+                btn.innerText = "作成中...";
+                btn.disabled = true;
 
-                // 両方の画像がロードされるのを待ってから実行
-                Promise.all([preload(bgImg), preload(userImg)]).then(() => {
-                    // Safariの描画が安定するまで少しだけ待機
-                    setTimeout(executeCapture, 300);
-                });
+                await Promise.all([toBase64(bgImg), toBase64(userImg)]);
+                
+                executeCapture();
+                
+                // ボタンを戻す
+                btn.innerText = originalText;
+                btn.disabled = false;
             } else {
-                // Safari以外は即時実行
                 executeCapture();
             }
         });
