@@ -25,7 +25,16 @@
 
     <style>
         body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; background: #f0f0f0; -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%;}
-        
+        body {
+            /* PC表示時に横スクロールを可能にする */
+            overflow-x: auto;
+            min-width: 320px; /* 最小幅は維持 */
+        }
+
+        /* PCモード時はコンテナが潰れないようにする */
+        [data-mode='desktop'] #canvas-container {
+            margin: 0 auto;
+        }
         /* プレビューエリア */
         #canvas-container {
             position: relative;
@@ -159,6 +168,14 @@
 </head>
 
 <body>
+    <div class="input-item">
+        <button id="desktop-mode-btn" style="background-color: #6c757d; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; width: 100%;">
+            💻 PC版表示に切り替える
+        </button>
+        <p style="font-size: 11px; color: #666; margin-top: 5px;">
+            ※保存時に画像がズレる場合は、こちらを押してから保存してください。
+        </p>
+    </div>
 
     <div id="canvas-container">
         <img id="bg-image" src="img/免許-resize.avif" crossorigin="anonymous">
@@ -448,6 +465,37 @@
                 alert("画像の保存に失敗しました。");
                 frame.style.border = originalBorder;
             });
+        });
+
+        //PC版表示用スクリプト
+        document.getElementById('desktop-mode-btn').addEventListener('click', function() {
+            // metaタグ（viewport）を探す
+            let viewport = document.querySelector('meta[name="viewport"]');
+            
+            if (!viewport) {
+                // もしmetaタグがなければ新しく作る
+                viewport = document.createElement('meta');
+                viewport.name = "viewport";
+                document.head.appendChild(viewport);
+            }
+
+            // 現在の状態を判定して切り替え
+            if (this.dataset.mode === 'desktop') {
+                // スマホ版に戻す
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+                this.innerText = "💻 PC版表示に切り替える";
+                this.style.backgroundColor = "#6c757d";
+                this.dataset.mode = 'mobile';
+            } else {
+                // PC版に強制
+                // 免許証の幅に合わせて 800 (もしくは少し余裕を持って 850) に固定
+                viewport.setAttribute('content', 'width=800');
+                this.innerText = "📱 スマホ版表示に戻す";
+                this.style.backgroundColor = "#28a745"; // 切り替わったことがわかるように緑に
+                this.dataset.mode = 'desktop';
+                
+                alert("PC版表示モードにしました。画面が小さく見える場合はピンチアウト（拡大）して操作してください。");
+            }
         });
     </script>
 
