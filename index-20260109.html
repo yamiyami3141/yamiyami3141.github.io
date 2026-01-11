@@ -77,7 +77,6 @@
             top: 99px; 
             left: 110px; 
             font-size: 24px; 
-            transform: scale(0.7, 1); /* 横を0.7倍に凝縮 */
             transform-origin: left center; /* 左端を起点に変形させることでズレを解消 */
             display: inline-block; /* scaleを正しく適用するために必要 */
             white-space: nowrap;
@@ -126,6 +125,21 @@
             max-width: none; /* 100%制限を外す */
             max-height: none; /* 100%制限を外す */
             object-fit: contain;
+        }
+        /* スライダー制御*/
+        .slider-group {
+            margin-bottom: 10px;
+        }
+        .slider-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .slider-group input[type="range"] {
+            width: 100%;
+        }
+        #reset-image-btn:hover {
+            background-color: #d32f2f; /* ホバー時に少し暗く */
         }
 
         /* 入力フォーム */
@@ -180,7 +194,7 @@
         <div id="text-out-1" class="overlay">山田　太郎</div>
         <div id="text-out-2" class="overlay">0000<span class="unit">年</span>00<span class="unit">月</span>00<span class="unit">日生</span></div>
         <div id="text-out-3" class="overlay" style="margin-top: 12px;">免許の条件等</div>
-        <div id="text-out-4" class="overlay">ピポパークカインズ前橋みなみモール店</div>
+        <div id="text-out-4" class="overlay">こども免許センター</div>
         
         <div id="photo-frame">
             <img id="uploaded-image" src="" alt="自由画像">
@@ -194,10 +208,50 @@
     </div>
 
     <div class="controls">
-        <label>名前:</label>
+        <div class="input-item">
+            <label>発行店舗名</label>
+            <select id="select-4" style="padding: 10px; margin-bottom: 5px; border-radius: 6px; width: 100%;">
+                <option value="">-- 店舗を選択（または下に入力） --</option>
+                <option value="ピポパークカインズ前橋みなみモール店">ピポパークカインズ前橋みなみモール店</option>
+                <option value="ピポパーク伊勢崎店">ピポパーク伊勢崎店</option>
+                <option value="ピポパーク桐生店">ピポパーク桐生店</option>
+                <option value="ピポパーク太田店">ピポパーク太田店</option>
+                <option value="ピポパーク足利店">ピポパーク足利店</option>
+                <option value="ピポパーク武蔵小山店">ピポパーク武蔵小山店</option>
+                <option value="こども免許センター ソフトバンク支店">こども免許センター ソフトバンク支店</option>
+                <option value="こども免許センター ワイモバイル支店">こども免許センター ワイモバイル支店</option>
+            </select>
+            <input type="text" id="input-4" maxlength="25" placeholder="店舗名を入力してください" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        
+        <label>追加画像</label>
+        <input type="file" id="image-upload" accept="image/*">
+
+        <div class="slider-group">
+            <label>左右の位置</label>
+            <input type="range" id="h-slider" min="-100" max="100" value="0">
+        </div>
+
+        <div class="slider-group">
+            <label>上下の位置</label>
+            <input type="range" id="v-slider" min="-100" max="100" value="0">
+        </div>
+
+        <div class="slider-group">
+            <label>大きさ（％）</label>
+            <input type="range" id="size-slider" min="10" max="200" value="100">
+        </div>
+
+        <div class="slider-group" style="margin-top: 15px;">
+            <button id="reset-image-btn" type="button" style="width: 100%; padding: 8px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                写真の位置と大きさをリセット
+            </button>
+        </div>
+
+        <label>名前</label>
         <input type="text" id="input-1" placeholder="名前を入力">
         
-        <label>生年月日 (8桁):</label>
+        <label>生年月日 (8桁)</label>
         <input type="text" id="input-2" maxlength="8" placeholder="例: 20000101">
         
         <div class="input-item">
@@ -224,14 +278,14 @@
                 <label><input type="checkbox" class="preset-check" value="いつもえがおであいさつすること"> 08.いつもえ</label>
                 <label><input type="checkbox" class="preset-check" value="お勉強を頑張ること"> 09.お勉強を</label>
                 <label><input type="checkbox" class="preset-check" value="おべんきょうをがんばること"> 10.おべんき</label>
-                <label><input type="checkbox" class="preset-check" value="ゲームをやりすぎないこと"> 11.ゲームを</label>
-                <label><input type="checkbox" class="preset-check" value="交通ルールを守ること"> 12.交通ルー</label>
-                <label><input type="checkbox" class="preset-check" value="こうつうルールをまもること"> 13.こうつう</label>
-                <label><input type="checkbox" class="preset-check" value="お友達と仲良くすること"> 14.お友達と</label>
-                <label><input type="checkbox" class="preset-check" value="おともだちとなかよくすること"> 15.おともだ</label>
-                <label><input type="checkbox" class="preset-check" value="約束を守ること"> 16.約束を守</label>
-                <label><input type="checkbox" class="preset-check" value="やくそくをまもること"> 17.やくそく</label>
-                <label><input type="checkbox" class="preset-check" value="ウソをつかないこと"> 18.ウソをつ</label>
+                <label><input type="checkbox" class="preset-check" value="交通ルールを守ること"> 11.交通ルー</label>
+                <label><input type="checkbox" class="preset-check" value="こうつうルールをまもること"> 12.こうつう</label>
+                <label><input type="checkbox" class="preset-check" value="お友達と仲良くすること"> 13.お友達と</label>
+                <label><input type="checkbox" class="preset-check" value="おともだちとなかよくすること"> 14.おともだ</label>
+                <label><input type="checkbox" class="preset-check" value="約束を守ること"> 15.約束を守</label>
+                <label><input type="checkbox" class="preset-check" value="やくそくをまもること"> 16.やくそく</label>
+                <label><input type="checkbox" class="preset-check" value="ウソをつかないこと"> 17.ウソをつ</label>
+                <label><input type="checkbox" class="preset-check" value="ゲームをやりすぎないこと"> 18.ゲームを</label>
             </div>
 
             <div id="free-input-area" style="display: flex; flex-direction: column; gap: 5px;">
@@ -240,24 +294,6 @@
                 <input type="text" class="line-input" maxlength="24" placeholder="自由入力 3行目">
                 <input type="text" class="line-input" maxlength="24" placeholder="自由入力 4行目">
             </div>
-        </div>
-        
-        <label>追加画像:</label>
-        <input type="file" id="image-upload" accept="image/*">
-
-        <div class="slider-group">
-            <label>左右の位置</label>
-            <input type="range" id="h-slider" min="-100" max="100" value="0">
-        </div>
-
-        <div class="slider-group">
-            <label>上下の位置</label>
-            <input type="range" id="v-slider" min="-100" max="100" value="0">
-        </div>
-
-        <div class="slider-group">
-            <label>大きさ（％）</label>
-            <input type="range" id="size-slider" min="10" max="200" value="100">
         </div>
         
         <button id="download-btn">画像を書き出す</button>
@@ -319,9 +355,11 @@
         const input1 = document.getElementById('input-1');
         const input2 = document.getElementById('input-2');
         const input3 = document.getElementById('input-3');
+        const input4 = document.getElementById('input-4');
         const out1 = document.getElementById('text-out-1');
         const out2 = document.getElementById('text-out-2');
         const out3 = document.getElementById('text-out-3');
+        const out4 = document.getElementById('text-out-4');
 
         const imageUpload = document.getElementById('image-upload');
         const uploadedImg = document.getElementById('uploaded-image');
@@ -330,6 +368,13 @@
         const sizeSlider = document.getElementById('size-slider');
         const checkboxes = document.querySelectorAll('.preset-check');
         const lineInputs = document.querySelectorAll('.line-input');
+        const select4 = document.getElementById('select-4');
+        const resetImgBtn = document.getElementById('reset-image-btn');
+
+        //画像位置初期値定義
+        const DEF_H = 0;
+        const DEF_V = 0;
+        const DEF_SIZE = 100;
 
         // 2. テキスト反映（空の状態から入力できるように修正）
         input1.addEventListener('input', () => { out1.innerText = input1.value; });
@@ -397,17 +442,68 @@
             input.addEventListener('input', updateLicenseText);
         });
 
+        //　店舗名
+        function updateStoreDisplay(value) {
+            out4.innerText = value;
+
+            if (value.length === 0) {
+                out4.style.transform = "scale(1, 1)";
+            } else if (value.length <= 12) {
+                // 12文字以内
+                out4.style.transform = "scale(1, 1)";
+            } else {
+                // 13文字以上
+                out4.style.transform = "scale(0.7, 1)";
+            }
+        }
+
+        // 自由入力欄のイベント
+        input4.addEventListener('input', () => {
+            updateStoreDisplay(input4.value);
+            select4.value = ""; // 直接入力したらセレクトボックスをリセット
+        });
+
+        // セレクトボックスのイベント
+        select4.addEventListener('change', () => {
+            if (select4.value !== "") {
+                input4.value = select4.value;
+                updateStoreDisplay(select4.value);
+            }
+        });
+
         // 4. 画像のスタイル更新（見切れ防止ロジック）
         function updateImageStyle() {
+            if (!uploadedImg) return; // 画像がない場合は処理しない
+
             const scale = sizeSlider.value / 100;
             const x = hSlider.value;
             const y = vSlider.value;
             
-            // 見切れを防ぐため、widthを直接操作するように変更
+            // 【見切れ防止ロジック】
+            // heightで大きさを変え、left/topのcalcで位置を調整し、
+            // translate(-50%, -50%) で中央基準を維持する
             uploadedImg.style.height = (100 * scale) + "%";
             uploadedImg.style.left = `calc(50% + ${x}px)`;
             uploadedImg.style.top = `calc(50% + ${y}px)`;
             uploadedImg.style.transform = "translate(-50%, -50%)";
+        }
+
+        // 3. スライダーへのイベント登録（updateImageStyleを呼ぶように統一）
+        [hSlider, vSlider, sizeSlider].forEach(slider => {
+            slider.addEventListener('input', updateImageStyle);
+        });
+
+        // 4. リセットボタンの処理
+        if (resetImgBtn) {
+            resetImgBtn.addEventListener('click', () => {
+                // スライダーの値を戻す
+                hSlider.value = DEF_H;
+                vSlider.value = DEF_V;
+                sizeSlider.value = DEF_SIZE;
+                
+                // 画面上の表示を更新
+                updateImageStyle();
+            });
         }
 
         // 5. 画像アップロードイベント
@@ -493,6 +589,20 @@
                 
                 alert("PC版表示モードにしました。画面が小さく見える場合はピンチアウト（拡大）して操作してください。");
             }
+        });
+
+        // ページを離れる（リロード・閉じる）前に警告を表示する
+        window.addEventListener('beforeunload', (event) => {
+            // フォームに入力がある場合のみ警告を出す、といった制御も可能ですが、
+            // 基本的には以下の1行でブラウザ標準のダイアログが起動します。
+
+            // 標準的なブラウザでは、以下のメッセージは無視され、
+            // ブラウザ独自の「このサイトを離れますか？」という文言が表示されます。
+            const confirmationMessage = 'ページをリセットすると入力した内容が初期化されます。';
+
+            event.preventDefault(); // 標準の動作を制限
+            event.returnValue = confirmationMessage; // Chrome / Firefox 対策
+            return confirmationMessage; // Safari 対策
         });
     </script>
 
