@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小鳥Lab</title>
+    <link rel="stylesheet" href="import.css">
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="html,css,javascript,小鳥Lab">
+    <link rel="icon" href="./img/和logo.ico">
+    <meta name="description" content="webサイト体験をもっと楽しく簡単に!!">
+    <meta property="og:image" content="./img/和logo.avif">
+    <meta property="og:title" content="小鳥Lab">
+    <meta property="og:site_name" content="小鳥Lab">
+    <meta property="og:description" content="webサイト体験をもっと楽しく簡単に!!">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+<body class="fs-h6 us-n bg-container-img5" oncontextmenu="return false;">
+    <div id="stalker"></div>
+    <div id="loading"></div>
+
+<!--/////-->
+
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; background: #f0f0f0; -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%;}
+        body {
+            /* PC表示時に横スクロールを可能にする */
+            overflow-x: auto;
+            min-width: 320px; /* 最小幅は維持 */
+        }
+
+        /* PCモード時はコンテナが潰れないようにする */
+        [data-mode='desktop'] #canvas-container {
+            margin: 0 auto;
+        }
+        /* プレビューエリア */
+        #canvas-container {
+            position: relative;
+            width: 800px;
+            height: 500px; /* 背景画像のサイズに合わせて調整してください */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            background: #ccc;
+            overflow: hidden;
+        }
+        #bg-image { width: 100%; height: 100%; object-fit: cover; }
+
+        /* テキストの配置 */
+        .overlay {
+            position: absolute;
+            color: rgb(0, 0, 0);
+            z-index: 10;
+            pointer-events: none; /* 操作の邪魔にならないように */
+        }
+        #text-out-1 { top: 27px; left: 110px; font-size: 24px; }
+        #text-out-2 { 
+            top: 27px; 
+            left: 66.7%; 
+            font-size: 26px; 
+            letter-spacing: 0.12rem; 
+            display: flex;
+            align-items: baseline;
+        }
+        #text-out-3 { 
+            top: 43%; 
+            left: 100px; 
+            font-size: 24px; 
+            transform: scale(0.7, 1); /* 横を0.7倍に凝縮 */
+            transform-origin: left center; /* 左端を起点に変形させることでズレを解消 */
+            display: inline-block; /* scaleを正しく適用するために必要 */
+            white-space: nowrap;
+            line-height: 25px;
+        }
+        #text-out-4 { 
+            top: 99px; 
+            left: 110px; 
+            font-size: 24px; 
+            transform-origin: left center; /* 左端を起点に変形させることでズレを解消 */
+            display: inline-block; /* scaleを正しく適用するために必要 */
+            white-space: nowrap;
+        }
+
+        .date-num {
+            font-size: 0.8em;      /* 0.8倍に縮小 */
+            font-weight: 400;      /* 極太に */
+            font-family: sans-serif; /* 数字を見やすくするためにゴシック系を指定 */
+            margin: 0 2px;         /* 数字の左右の微調整 */
+        }
+
+        /* 漢字部分（年・月・日）の微調整 */
+        .unit {
+            font-size: 0.7em;
+            font-weight: 400;
+            margin-left: 2px;
+            margin-right: 4.5px;
+        }
+
+        .date-hatena {
+            font-size: 0.8em;      /* 0.8倍に縮小 */
+            font-weight: 400;      /* 極太に */
+            font-family: sans-serif; /* 数字を見やすくするためにゴシック系を指定 */
+            margin: 0 4px;         /* 数字の左右の微調整 */
+        }
+
+        /* 写真枠の設定 */
+        #photo-frame {
+            position: absolute;
+            right: 35px;
+            top: 49.5%;
+            transform: translateY(-50%);
+            width: 210px;
+            height: 283px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.3);
+            border: 1px dashed rgba(0,0,0,0.2);
+            z-index: 5;
+        }
+
+        /* アップロード画像のスタイル（JSで制御） */
+        #uploaded-image {
+            position: absolute;
+            display: none;
+            max-width: none; /* 100%制限を外す */
+            max-height: none; /* 100%制限を外す */
+            object-fit: contain;
+        }
+        /* スライダー制御*/
+        .slider-group {
+            margin-bottom: 10px;
+        }
+        .slider-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .slider-group input[type="range"] {
+            width: 100%;
+        }
+        #reset-image-btn:hover {
+            background-color: #d32f2f; /* ホバー時に少し暗く */
+        }
+
+        /* 入力フォーム */
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 460px;
+        }
+        input[type="text"] { padding: 8px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
+        .slider-group { display: flex; flex-direction: column; margin-top: 5px; }
+        .slider-group label { font-size: 12px; color: #664949; }
+        button {
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            -webkit-appearance: none;
+        }
+        button:hover { background: #218838; }
+
+        /* Firefox向けの微調整 */
+        @-moz-document url-prefix() {
+            .overlay {
+                /* Firefoxで3px上にズレる分、下に補正 */
+                margin-top: 3px;
+            }
+            #text-expire {
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="input-item">
+        <button id="desktop-mode-btn" style="background-color: #28a745; color: rgb(0, 0, 0); padding: 10px; border: none; border-radius: 5px; cursor: pointer; width: 100%; margin-bottom: 20px; font-weight: bold;">
+            配置がずれている場合はここを押してください
+        </button>
+    </div>
+
+    <div id="canvas-container">
+        <img id="bg-image" src="img/免許-3.avif" crossorigin="anonymous">
+        
+        <div id="text-out-1" class="overlay">山田　太郎</div>
+        <div id="text-out-2" class="overlay">0000<span class="unit">年</span>00<span class="unit">月</span>00<span class="unit">日生</span></div>
+        <div id="text-out-3" class="overlay" style="margin-top: 12px;">免許の条件等</div>
+        <div id="text-out-4" class="overlay">こども免許センター</div>
+        
+        <div id="photo-frame">
+            <img id="uploaded-image" src="" alt="自由画像">
+        </div>
+
+        <div id="text-expire" class="overlay" style="top: 155px; left: 45px; color: rgb(0, 0, 0); font-size: 44px; letter-spacing: 0.12rem; "></div>
+        <div id="text-kofu" class="overlay" style="top: 127px; left: 138px; font-size: 30px; letter-spacing: 0.12rem;"></div>
+        <div id="text-walk" class="overlay" style="top: 376px; left: 84px; font-size: 27px; letter-spacing: 0.03rem;"></div>
+        <div id="text-other" class="overlay" style="top: 407px; left: 84px; font-size: 27px; letter-spacing: 0.03rem;"></div>
+        <div id="text-car" class="overlay" style="top: 438px; left: 86px; font-size: 27px; letter-spacing: 0.03rem;"></div>
+    </div>
+
+    <div class="controls">
+        <div class="input-item">
+            <label>発行店舗名</label>
+            <select id="select-4" style="padding: 10px; margin-bottom: 5px; border-radius: 6px; width: 100%;">
+                <option value="">-- 店舗を選択（または下に入力） --</option>
+                <option value="ピポパークカインズ前橋みなみモール店">ピポパークカインズ前橋みなみモール店</option>
+                <option value="ピポパーク伊勢崎店">ピポパーク伊勢崎店</option>
+                <option value="ピポパーク桐生店">ピポパーク桐生店</option>
+                <option value="ピポパーク太田店">ピポパーク太田店</option>
+                <option value="ピポパーク足利店">ピポパーク足利店</option>
+                <option value="ピポパーク武蔵小山店">ピポパーク武蔵小山店</option>
+                <option value="こども免許センター ソフトバンク支店">こども免許センター ソフトバンク支店</option>
+                <option value="こども免許センター ワイモバイル支店">こども免許センター ワイモバイル支店</option>
+            </select>
+            <input type="text" id="input-4" maxlength="25" placeholder="店舗名を入力してください" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        
+        <label>追加画像</label>
+        <input type="file" id="image-upload" accept="image/*">
+
+        <div class="slider-group">
+            <label>左右の位置</label>
+            <input type="range" id="h-slider" min="-100" max="100" value="0">
+        </div>
+
+        <div class="slider-group">
+            <label>上下の位置</label>
+            <input type="range" id="v-slider" min="-100" max="100" value="0">
+        </div>
+
+        <div class="slider-group">
+            <label>大きさ（％）</label>
+            <input type="range" id="size-slider" min="10" max="200" value="100">
+        </div>
+
+        <div class="slider-group" style="margin-top: 15px;">
+            <button id="reset-image-btn" type="button" style="width: 100%; padding: 8px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                写真の位置と大きさをリセット
+            </button>
+        </div>
+
+        <label>名前</label>
+        <input type="text" id="input-1" placeholder="名前を入力">
+        
+        <label>生年月日 (8桁)</label>
+        <input type="text" id="input-2" maxlength="8" placeholder="例: 20000101">
+        
+        <div class="input-item">
+            <label>お約束（最大4項目まで）</label>
+            
+            <div id="checkbox-area" style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 10px; background: #f9f9f9; padding: 10px; border-radius: 8px;">
+                <!--
+                <label><input type="checkbox" class="preset-check" value="斜め77度の並びで泣く泣く嘶くナナハン7台難なく並べて長眺め"> 限界文字数test</label>
+                <label><input type="checkbox" class="preset-check" value="次回、城之内死す。　デュエルスタンバイ!!!"> 城之内</label>
+                <label><input type="checkbox" class="preset-check" value="↲"> 誠1</label>
+                <label><input type="checkbox" class="preset-check" value="↲"> 誠2</label>
+                <label><input type="checkbox" class="preset-check" value="↲"> 誠3</label>
+                <label><input type="checkbox" class="preset-check" value="さよなら"> 誠4</label>
+                <label><input type="checkbox" class="preset-check" value="俺は止まんねぇからよ、"> オルガ1</label>
+                <label><input type="checkbox" class="preset-check" value="前らが止まんねぇかぎり、"> オルガ2</label>
+                <label><input type="checkbox" class="preset-check" value="その先に俺はいるぞ！...だからよ、"> オルガ3</label>
+                <label><input type="checkbox" class="preset-check" value="止まるんじゃねぇぞ…。"> オルガ4</label>
+                -->
+                <label><input type="checkbox" class="preset-check" value="お父さんお母さんの言うことを聞くこと"> 01.お父さん</label>
+                <label><input type="checkbox" class="preset-check" value="おとうさんおかあさんのいうことをきくこと"> 02.おとうさ</label>
+                <label><input type="checkbox" class="preset-check" value="好き嫌いなく何でも食べること"> 03.好き嫌い</label>
+                <label><input type="checkbox" class="preset-check" value="すききらいなくなんでもたべること"> 04.すききら</label>
+                <label><input type="checkbox" class="preset-check" value="お手伝いをすること"> 05.お手伝い</label>
+                <label><input type="checkbox" class="preset-check" value="おてつだいをすること"> 06.おてつだ</label>
+                <label><input type="checkbox" class="preset-check" value="いつも笑顔であいさつすること"> 07.いつも笑</label>
+                <label><input type="checkbox" class="preset-check" value="いつもえがおであいさつすること"> 08.いつもえ</label>
+                <label><input type="checkbox" class="preset-check" value="お勉強を頑張ること"> 09.お勉強を</label>
+                <label><input type="checkbox" class="preset-check" value="おべんきょうをがんばること"> 10.おべんき</label>
+                <label><input type="checkbox" class="preset-check" value="交通ルールを守ること"> 11.交通ルー</label>
+                <label><input type="checkbox" class="preset-check" value="こうつうルールをまもること"> 12.こうつう</label>
+                <label><input type="checkbox" class="preset-check" value="お友達と仲良くすること"> 13.お友達と</label>
+                <label><input type="checkbox" class="preset-check" value="おともだちとなかよくすること"> 14.おともだ</label>
+                <label><input type="checkbox" class="preset-check" value="約束を守ること"> 15.約束を守</label>
+                <label><input type="checkbox" class="preset-check" value="やくそくをまもること"> 16.やくそく</label>
+                <label><input type="checkbox" class="preset-check" value="ウソをつかないこと"> 17.ウソをつ</label>
+                <label><input type="checkbox" class="preset-check" value="ゲームをやりすぎないこと"> 18.ゲームを</label>
+            </div>
+
+            <div id="free-input-area" style="display: flex; flex-direction: column; gap: 5px;">
+                <input type="text" class="line-input" maxlength="24" placeholder="自由入力 1行目">
+                <input type="text" class="line-input" maxlength="24" placeholder="自由入力 2行目">
+                <input type="text" class="line-input" maxlength="24" placeholder="自由入力 3行目">
+                <input type="text" class="line-input" maxlength="24" placeholder="自由入力 4行目">
+            </div>
+        </div>
+        
+        <button id="download-btn">画像を書き出す</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+    <script>
+        // ページ読み込み時に日付を自動設定
+        window.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            
+            // 数字を装飾付きで返す関数
+            const formatWithSpan = (date) => {
+                const y = `<span class="date-num">${date.getFullYear()}</span>`;
+                const m = `<span class="date-num">${String(date.getMonth() + 1).padStart(2, '0')}</span>`;
+                const d = `<span class="date-num">${String(date.getDate()).padStart(2, '0')}</span>`;
+                return { y, m, d };
+            };
+
+            const today = formatWithSpan(now);
+            
+            // 1年後の計算
+            const nextYearDate = new Date();
+            nextYearDate.setFullYear(now.getFullYear() + 1);
+            const nextYear = formatWithSpan(nextYearDate);
+
+            // 有効期限の反映
+            const expireEl = document.getElementById('text-expire');
+            if (expireEl) {
+                expireEl.innerHTML = `${nextYear.y}<span class="unit">年</span>${nextYear.m}<span class="unit">月</span>${nextYear.d}<span class="unit">日まで有効</span>`;
+            }
+
+            // 交付日などの反映
+            const kofuEl = document.getElementById('text-kofu');
+            if (kofuEl) {
+                kofuEl.innerHTML = `${today.y}<span class="unit">年</span>${today.m}<span class="unit">月</span>${today.d}<span class="unit">日</span>`;
+            }
+            
+            // 徒歩・他などの項目（必要であれば同様に反映）
+            const walkEl = document.getElementById('text-walk');
+            if (walkEl) {
+                walkEl.innerHTML = `${today.y}<span class="unit">年</span>${today.m}<span class="unit">月</span>${today.d}<span class="unit">日</span>`;
+            }
+
+            // 4. 他（text-other） 
+            const otherEl = document.getElementById('text-other');
+            if (otherEl) {
+                otherEl.innerHTML = `${today.y}<span class="unit">年</span>${today.m}<span class="unit">月</span>${today.d}<span class="unit">日</span>`;
+            }
+
+            // 4. 他（text-other） 
+            const carEl = document.getElementById('text-car');
+            if (carEl) {
+                carEl.innerHTML = `<span class="date-hatena">????</span><span class="unit">年</span><span class="date-hatena">??</span><span class="unit">月</span><span class="date-hatena">??</span><span class="unit">日</span>`;
+            }
+        });
+
+        // 1. 要素の取得
+        const input1 = document.getElementById('input-1');
+        const input2 = document.getElementById('input-2');
+        const input3 = document.getElementById('input-3');
+        const input4 = document.getElementById('input-4');
+        const out1 = document.getElementById('text-out-1');
+        const out2 = document.getElementById('text-out-2');
+        const out3 = document.getElementById('text-out-3');
+        const out4 = document.getElementById('text-out-4');
+
+        const imageUpload = document.getElementById('image-upload');
+        const uploadedImg = document.getElementById('uploaded-image');
+        const hSlider = document.getElementById('h-slider');
+        const vSlider = document.getElementById('v-slider');
+        const sizeSlider = document.getElementById('size-slider');
+        const checkboxes = document.querySelectorAll('.preset-check');
+        const lineInputs = document.querySelectorAll('.line-input');
+        const select4 = document.getElementById('select-4');
+        const resetImgBtn = document.getElementById('reset-image-btn');
+
+        //画像位置初期値定義
+        const DEF_H = 0;
+        const DEF_V = 0;
+        const DEF_SIZE = 100;
+
+        // 2. テキスト反映（空の状態から入力できるように修正）
+        input1.addEventListener('input', () => { out1.innerText = input1.value; });
+
+        input2.addEventListener('input', () => {
+            let val = input2.value.replace(/\D/g, '');
+            if (val.length === 8) {
+                const y = val.substring(0, 4);
+                const m = val.substring(4, 6);
+                const d = val.substring(6, 8);
+                out2.innerHTML = `${y}<span class="unit">年</span>${m}<span class="unit">月</span>${d}<span class="unit">日生</span>`;
+            } else {
+                out2.innerText = val;
+            }
+        });
+
+        // 3. テキスト反映（チェックボックス or 自由文）
+        function updateLicenseText() {
+            let selectedPresets = [];
+            
+            //3-1. チェックされた定型文を取得
+            checkboxes.forEach(cb => {
+                if (cb.checked) selectedPresets.push(cb.value);
+            });
+
+            // 3-2. チェックボックスの数に応じて自由入力欄の有効/無効を切り替え
+            // 定型文で埋まった行以降のみ入力可能にする
+            lineInputs.forEach((input, index) => {
+                if (index < selectedPresets.length) {
+                    input.disabled = true;
+                    input.style.backgroundColor = "#eee";
+                    input.value = ""; // 無効化されたら中身を消す
+                } else {
+                    input.disabled = false;
+                    input.style.backgroundColor = "#fff";
+                }
+            });
+
+            // 3-3. 表示用の配列を作成（定型文 + 自由入力）
+            let finalLines = [...selectedPresets];
+            lineInputs.forEach((input) => {
+                if (!input.disabled && input.value !== "") {
+                    finalLines.push(input.value);
+                }
+            });
+
+            // 3-4. 最大4行でカットして表示
+            out3.innerText = finalLines.slice(0, 4).join('\n');
+        }
+
+        // チェックボックスのイベント設定
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                const checkedCount = document.querySelectorAll('.preset-check:checked').length;
+                if (checkedCount > 4) {
+                    cb.checked = false; // 4つを超えたらチェックさせない
+                    alert("お約束は最大4つまでです。");
+                }
+                updateLicenseText();
+            });
+        });
+
+        // 自由入力欄のイベント設定
+        lineInputs.forEach(input => {
+            input.addEventListener('input', updateLicenseText);
+        });
+
+        //　店舗名
+        function updateStoreDisplay(value) {
+            out4.innerText = value;
+
+            if (value.length === 0) {
+                out4.style.transform = "scale(1, 1)";
+            } else if (value.length <= 12) {
+                // 12文字以内
+                out4.style.transform = "scale(1, 1)";
+            } else {
+                // 13文字以上
+                out4.style.transform = "scale(0.7, 1)";
+            }
+        }
+
+        // 自由入力欄のイベント
+        input4.addEventListener('input', () => {
+            updateStoreDisplay(input4.value);
+            select4.value = ""; // 直接入力したらセレクトボックスをリセット
+        });
+
+        // セレクトボックスのイベント
+        select4.addEventListener('change', () => {
+            if (select4.value !== "") {
+                input4.value = select4.value;
+                updateStoreDisplay(select4.value);
+            }
+        });
+
+        // 4. 画像のスタイル更新（見切れ防止ロジック）
+        function updateImageStyle() {
+            if (!uploadedImg) return; // 画像がない場合は処理しない
+
+            const scale = sizeSlider.value / 100;
+            const x = hSlider.value;
+            const y = vSlider.value;
+            
+            // 【見切れ防止ロジック】
+            // heightで大きさを変え、left/topのcalcで位置を調整し、
+            // translate(-50%, -50%) で中央基準を維持する
+            uploadedImg.style.height = (100 * scale) + "%";
+            uploadedImg.style.left = `calc(50% + ${x}px)`;
+            uploadedImg.style.top = `calc(50% + ${y}px)`;
+            uploadedImg.style.transform = "translate(-50%, -50%)";
+        }
+
+        // 3. スライダーへのイベント登録（updateImageStyleを呼ぶように統一）
+        [hSlider, vSlider, sizeSlider].forEach(slider => {
+            slider.addEventListener('input', updateImageStyle);
+        });
+
+        // 4. リセットボタンの処理
+        if (resetImgBtn) {
+            resetImgBtn.addEventListener('click', () => {
+                // スライダーの値を戻す
+                hSlider.value = DEF_H;
+                vSlider.value = DEF_V;
+                sizeSlider.value = DEF_SIZE;
+                
+                // 画面上の表示を更新
+                updateImageStyle();
+            });
+        }
+
+        // 5. 画像アップロードイベント
+        imageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    uploadedImg.src = event.target.result;
+                    uploadedImg.style.display = 'block';
+                    // 読み込み完了後にスタイルを適用
+                    setTimeout(updateImageStyle, 50);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        [hSlider, vSlider, sizeSlider].forEach(slider => {
+            slider.addEventListener('input', updateImageStyle);
+        });
+
+        // 6. 保存処理（html-to-image版）
+        document.getElementById('download-btn').addEventListener('click', function() {
+            const target = document.getElementById('canvas-container');
+            const frame = document.getElementById('photo-frame');
+            
+            // 保存時のみ枠線を消す
+            const originalBorder = frame.style.border;
+            frame.style.border = "none";
+
+            // htmlToImageが読み込まれているかチェック
+            if (typeof htmlToImage === 'undefined') {
+                alert("ライブラリが読み込まれていません。head内のスクリプトタグを確認してください。");
+                frame.style.border = originalBorder;
+                return;
+            }
+
+            htmlToImage.toPng(target, {
+                width: 800,
+                height: 500,
+                pixelRatio: 2
+            })
+            .then(function (dataUrl) {
+                // --- ここから日付ファイル名の生成 ---
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+
+                // YYYYMMDDHHMMSS形式のファイル名
+                const fileName = `こども免許-${year}-${month}.${day}-${hours}.${minutes}.${seconds}.png`;
+                // --- ここまで ---
+
+                const link = document.createElement('a');
+                link.download = fileName;
+                link.href = dataUrl;
+                link.click();
+                
+                frame.style.border = originalBorder;
+            })
+            .catch(function (error) {
+                console.error('保存エラー:', error);
+                alert("画像の保存に失敗しました。");
+                frame.style.border = originalBorder;
+            });
+});
+        
+        //PC版表示用スクリプト
+        document.getElementById('desktop-mode-btn').addEventListener('click', function() {
+            // metaタグ（viewport）を探す
+            let viewport = document.querySelector('meta[name="viewport"]');
+            
+            if (!viewport) {
+                // もしmetaタグがなければ新しく作る
+                viewport = document.createElement('meta');
+                viewport.name = "viewport";
+                document.head.appendChild(viewport);
+            }
+
+            // 現在の状態を判定して切り替え
+            if (this.dataset.mode === 'desktop') {
+                // スマホ版に戻す
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+                this.innerText = "配置がずれている場合はここを押してください";
+                this.style.backgroundColor = "#28a745";
+                this.dataset.mode = 'mobile';
+            } else {
+                // PC版に強制
+                // 免許証の幅に合わせて 800 (もしくは少し余裕を持って 850) に固定
+                viewport.setAttribute('content', 'width=800');
+                this.innerText = "元の表示に戻す";
+                this.style.backgroundColor = "#6c757d"; // 切り替わったことがわかるように緑に
+                this.dataset.mode = 'desktop';
+                
+                alert("PC版表示モードにしました。画面が小さく見える場合はピンチアウト（拡大）して操作してください。");
+            }
+        });
+
+        
+        // ページを離れる（リロード・閉じる）前に警告を表示する
+        window.addEventListener('beforeunload', (event) => {
+            // フォームに入力がある場合のみ警告を出す、といった制御も可能ですが、
+            // 基本的には以下の1行でブラウザ標準のダイアログが起動します。
+
+            // 標準的なブラウザでは、以下のメッセージは無視され、
+            // ブラウザ独自の「このサイトを離れますか？」という文言が表示されます。
+            const confirmationMessage = 'ページをリセットすると入力した内容が初期化されます。';
+
+            event.preventDefault(); // 標準の動作を制限
+            event.returnValue = confirmationMessage; // Chrome / Firefox 対策
+            return confirmationMessage; // Safari 対策
+            
+        });
+        
+    </script>
+
+<!--/////-->
+
+    <script src="./script/click.js"></script>
+    <script src="./script/stalker.js"></script>
+    <script src="./script/slideshow.js"></script>
+    <script src="./script/CanvasAnimation.js"></script>
+    <script src="./script/import.js"></script>
+    <!--<script src="./script/first.js" defer></script>-->
+    <script src="./script/clipboad.js"></script>
+    <script src="./script/load.js"></script>
+    <script src="./script/sidebar.js"></script>
+</div>
+
+    <div class="hero-container2">
+        <div class="environment"></div>
+        <div class="hero glitch layers fs-b5 fs-h8 text-shadow-2b" data-text="© 小鳥Lab研究所"><span class="color-000">© 小鳥Lab研究所</span></div>
+    </div>
+</body>
+
+</html>
