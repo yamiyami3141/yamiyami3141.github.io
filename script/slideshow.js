@@ -22,12 +22,12 @@ class Slideshow {
 
     showSlides() {
         for (let i = 0; i < this.slides.length; i++) {
-            this.slides[i].classList.remove("active");
-            this.dots[i].classList.remove("active");
+            this.slides[i].classList.remove("slideshow-active");
+            this.dots[i].classList.remove("slideshow-active");
         }
         
-        this.slides[this.slideIndex].classList.add("active");
-        this.dots[this.slideIndex].classList.add("active");
+        this.slides[this.slideIndex].classList.add("slideshow-active");
+        this.dots[this.slideIndex].classList.add("slideshow-active");
     }
 
     startSlideShow() {

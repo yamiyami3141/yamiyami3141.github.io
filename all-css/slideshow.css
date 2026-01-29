@@ -127,7 +127,7 @@ body {
     display: block; /* ブロック要素として表示 */
 }
 
-.slide.active {
+.slide.slideshow-active {
     opacity: 1;
 }
 
@@ -200,7 +200,7 @@ body {
     transition: background-color 0.6s ease;
 }
 
-.active, .dot:hover {
+.slideshow-active, .dot:hover {
     background-color: #717171;
 }
 

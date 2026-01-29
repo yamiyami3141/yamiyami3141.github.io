@@ -115,7 +115,7 @@ box-shadow: 0 12px 16px 0 rgba(0,0,0,0.08);
 
 /*p*/
 
-p {
+.p-line {
     padding: 0.25em 0.5em;/*上下 左右の余白*/
     background: transparent;/*背景透明に*/
     border-left: solid clamp(2px, 1vw, 8px) #7db4e6;/*左線*/

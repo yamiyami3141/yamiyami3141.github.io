@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Store Header Replica</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="import.css">
+</head>
+<body>
+
+    <header class="gs-header">
+        <div class="header-container">
+            <div class="header-left">
+                <button class="icon-btn hamburger-btn" id="menuOpenBtn" aria-label="メニューを開く">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <a href="#" class="logo">
+                    <img src="/img/和logo.avif" alt="Google Logo">
+                </a>
+            </div>
+
+            <nav class="header-center">
+                <ul class="nav-links">
+                    <li><a href="#" class="link-active">スマートフォン</a></li>
+                    <li><a href="#">ウォッチ</a></li>
+                    <li><a href="#">イヤホン</a></li>
+                    <li><a href="#">タブレット</a></li>
+                    <li><a href="#">スマートホーム</a></li>
+                    <li><a href="#">アクセサリ</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-right">
+                <button class="icon-btn search-trigger" aria-label="検索">
+                    <span class="material-symbols-outlined">search</span>
+                </button>
+                <button class="icon-btn" aria-label="ヘルプ">
+                    <span class="material-symbols-outlined">help</span>
+                </button>
+                <button class="icon-btn" aria-label="カート">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                </button>
+                <button class="user-btn" aria-label="アカウント">
+                    <div class="user-avatar">U</div>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+    <aside class="mobile-menu-fullscreen" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <div class="header-left">
+                <button class="icon-btn close-btn" id="menuCloseBtn" aria-label="メニューを閉じる">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+                <a href="#" class="logo">
+                    <img src="/img/和logo.avif" alt="Google Logo">
+                </a>
+            </div>
+        </div>
+        <nav class="mobile-nav-full">
+            <ul>
+                <li><a class="btn-s btn-s2" href="#">スマートフォン</a></li>
+                <li><a class="btn-s btn-s2" href="#">ウォッチ</a></li>
+                <li><a class="btn-s btn-s2" href="#">イヤホン</a></li>
+                <li><a class="btn-s btn-s2" href="#">タブレット</a></li>
+                <li><a class="btn-s btn-s2" href="#">スマートホーム</a></li>
+                <li><a class="btn-s btn-s2" href="#">アクセサリ</a></li>
+                <li><a class="btn-s btn-s2" href="#">キャンペーン</a></li>
+                <li class="separator"></li>
+                <li><a class="btn-s btn-s2" href="#">注文履歴</a></li>
+                <li><a class="btn-s btn-s2" href="#">設定</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main style="padding: 20px; height: 200vh;">
+        <h1>Google Pixel 10 Pro</h1>
+        <p>ここにメインコンテンツが入ります。</p>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
