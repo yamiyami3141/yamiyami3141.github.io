@@ -15,7 +15,6 @@
     <meta property="og:site_name" content="小鳥Lab">
     <meta property="og:description" content="webサイト体験をもっと楽しく簡単に!!">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body class="fs-h6 us-n bg-container-img5" oncontextmenu="return false;">
@@ -225,8 +224,11 @@
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
 <script>
     const { jsPDF } = window.jspdf;
+    const { PDFDocument } = PDFLib;
     
     // DOM要素の取得
     const dom = {
