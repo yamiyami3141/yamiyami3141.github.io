@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小鳥Lab</title>
+    <link rel="stylesheet" href="import.css">
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="html,css,javascript,小鳥Lab">
+    <link rel="icon" href="./img/和logo.ico">
+    <meta name="description" content="webサイト体験をもっと楽しく簡単に!!">
+    <meta property="og:image" content="./img/和logo.avif">
+    <meta property="og:title" content="小鳥Lab">
+    <meta property="og:site_name" content="小鳥Lab">
+    <meta property="og:description" content="webサイト体験をもっと楽しく簡単に!!">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+
+<body class="fs-h6 us-n bg-container-img5" oncontextmenu="return false;">
+    <div id="stalker"></div>
+    <div id="loading"></div>
+
+    <div class="mt-02 color-b1-20 t-cc fs-h2 fs-b5">- 便利ツール PDF to IMG -</div>
+
+<main class="pdf-tool-wrapper">
+    <span class="section-title">1. PDFファイルの選択</span>
+    <div id="drop-zone" class="drop-zone-v2">
+        <p class="fs-h6">クリックして<samp class="fs-b10 color-r1-100">PDF</samp>を選択<samp class="fs-b10 color-r1-100">(複数選択可)</samp></p>
+        <span class="fs-b7">ページごとに画像化してZIP保存します</span>
+        <input type="file" id="file-input" accept="application/pdf" multiple hidden>
+    </div>
+
+    <span class="section-title">2. 画像変換設定</span>
+    <div class="settings-grid">
+        <div class="setting-item">
+            <label class="fs-b7 fs-b10">画像形式</label>
+            <select id="format-select" class="custom-select">
+                <option value="image/jpeg" selected>JPG</option>
+                <option value="image/png">PNG</option>
+                <option value="image/webp">WebP</option>
+                <option value="image/avif">AVIF</option>
+            </select>
+        </div>
+
+        <div class="setting-item">
+            <label class="fs-b7 fs-b10">解像度 (スケール)</label>
+            <select id="scale-select" class="custom-select">
+                <option value="1.0" selected>等倍 (画面表示用)</option>
+                <option value="2.0">2倍 (高画質)</option>
+                <option value="3.0">3倍 (印刷・拡大用)</option>
+            </select>
+        </div>
+
+        <div class="setting-item">
+            <label class="checkbox-label">
+                <input class="checkbox_icon" type="checkbox" id="rename-check"> 名前を指定
+            </label>
+            <input type="text" id="custom-filename" class="custom-input hidden" placeholder="例: sample_image" autocomplete="off">
+            <span class="fs-b7" style="color:#666; margin-top:4px;">未選択時は元の名前を使用</span>
+        </div>
+
+        <div class="setting-item">
+            <label class="fs-b7 fs-b10">画質 / モノクロ設定</label>
+            <select id="quality-select" class="custom-select" style="margin-bottom: 8px;">
+                <option value="1.0">最高画質 (100%)</option>
+                <option value="0.8" selected>標準画質 (80%)</option>
+                <option value="0.5">低容量 (50%)</option>
+            </select>
+            <label class="checkbox-label">
+                <input class="checkbox_icon" type="checkbox" id="grayscale-check"> モノクロで出力
+            </label>
+        </div>
+
+        <div class="setting-item">
+            <label class="fs-b7 fs-b10">表示形式</label>
+            <div style="display: flex; gap: 10px; margin-top: 5px;">
+                <label class="fs-b7"><input type="radio" name="view-mode" value="grid" checked onchange="updateUI()"> グリッド</label>
+                <label class="fs-b7"><input type="radio" name="view-mode" value="list" onchange="updateUI()"> リスト</label>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span id="file-count" class="fs-b7">PDF未選択</span>
+        <button id="clear-btn" class="btn-clear-all hidden">リセット</button>
+    </div>
+
+    <div id="file-list" class="file-grid"></div>
+
+    <div id="progress-container">
+        <div id="progress-bar"><div id="progress-fill"></div></div>
+        <div id="progress-text">準備中...</div>
+    </div>
+
+    <button id="convert-btn" class="btn-merge hidden">画像を抽出してZIPで保存</button>
+</main>
+
+<script>
+    // PDF.jsのワーカー設定
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    const dom = {
+        dropZone: document.getElementById('drop-zone'),
+        fileInput: document.getElementById('file-input'),
+        fileList: document.getElementById('file-list'),
+        fileCount: document.getElementById('file-count'),
+        clearBtn: document.getElementById('clear-btn'),
+        convertBtn: document.getElementById('convert-btn'),
+        renameCheck: document.getElementById('rename-check'),
+        nameInput: document.getElementById('custom-filename'),
+        formatSelect: document.getElementById('format-select'),
+        qualitySelect: document.getElementById('quality-select'),
+        scaleSelect: document.getElementById('scale-select'),
+        grayscaleCheck: document.getElementById('grayscale-check'),
+        progressContainer: document.getElementById('progress-container'),
+        progressFill: document.getElementById('progress-fill'),
+        progressText: document.getElementById('progress-text')
+    };
+
+    let selectedFiles = [];
+
+    dom.dropZone.onclick = () => dom.fileInput.click();
+    dom.fileInput.onchange = (e) => {
+        const pdfs = Array.from(e.target.files).filter(f => f.type === 'application/pdf');
+        selectedFiles = [...selectedFiles, ...pdfs];
+        updateUI();
+    };
+
+    dom.renameCheck.onchange = (e) => dom.nameInput.classList.toggle('hidden', !e.target.checked);
+    dom.clearBtn.onclick = () => { selectedFiles = []; dom.fileInput.value = ''; updateUI(); };
+
+    function updateUI() {
+        const hasFiles = selectedFiles.length > 0;
+        dom.convertBtn.classList.toggle('hidden', !hasFiles);
+        dom.clearBtn.classList.toggle('hidden', !hasFiles);
+        dom.fileCount.innerText = hasFiles ? `${selectedFiles.length} 件選択中` : 'PDF未選択';
+
+        const viewMode = document.querySelector('input[name="view-mode"]:checked').value;
+        dom.fileList.className = viewMode === 'grid' ? 'file-grid' : 'file-list-mode';
+
+        dom.fileList.innerHTML = selectedFiles.map((f, i) => `
+            <div class="file-item">
+                <div class="btn-remove" onclick="removeFile(${i})">×</div>
+                ${viewMode === 'grid' ? '<div style="font-size:20px;margin-bottom:4px;">📄</div>' : '📄 '}
+                <span title="${f.name}" style="display:inline-block; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                    ${f.name}
+                </span>
+            </div>
+        `).join('');
+    }
+
+    window.removeFile = (i) => { selectedFiles.splice(i, 1); updateUI(); };
+
+    dom.convertBtn.onclick = async () => {
+        dom.convertBtn.disabled = true;
+        dom.progressContainer.style.display = 'block';
+        
+        const zip = new JSZip();
+        const format = dom.formatSelect.value;
+        const quality = parseFloat(dom.qualitySelect.value);
+        const scale = parseFloat(dom.scaleSelect.value);
+        const isGrayscale = dom.grayscaleCheck.checked;
+        const ext = format.split('/')[1].replace('jpeg', 'jpg');
+
+        try {
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i];
+                // ここを pdfjsLib.getDocument に修正
+                const loadingTask = pdfjsLib.getDocument(await file.arrayBuffer());
+                const pdfDoc = await loadingTask.promise;
+                
+                let baseName = (dom.renameCheck.checked && dom.nameInput.value.trim()) 
+                               ? (selectedFiles.length > 1 ? `${dom.nameInput.value.trim()}_${i+1}` : dom.nameInput.value.trim())
+                               : file.name.replace(/\.[^/.]+$/, "");
+                
+                const folder = zip.folder(baseName);
+
+                for (let p = 1; p <= pdfDoc.numPages; p++) {
+                    const totalProgress = Math.round(((i / selectedFiles.length) + (p / pdfDoc.numPages / selectedFiles.length)) * 100);
+                    dom.progressFill.style.width = `${totalProgress}%`;
+                    dom.progressText.innerText = `${file.name} (${p}/${pdfDoc.numPages}) を処理中...`;
+
+                    const page = await pdfDoc.getPage(p);
+                    const viewport = page.getViewport({ scale: scale });
+                    
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    // レンダリング
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+                    // モノクロ処理
+                    if (isGrayscale) {
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        const data = imageData.data;
+                        for (let j = 0; j < data.length; j += 4) {
+                            const avg = (data[j] + data[j + 1] + data[j + 2]) / 3;
+                            data[j] = avg;     // R
+                            data[j + 1] = avg; // G
+                            data[j + 2] = avg; // B
+                        }
+                        ctx.putImageData(imageData, 0, 0);
+                    }
+
+                    const blob = await new Promise(res => canvas.toBlob(res, format, quality));
+                    folder.file(`${baseName}_${String(p).padStart(3, '0')}.${ext}`, blob);
+                    
+                    canvas.width = 0; canvas.height = 0;
+                }
+            }
+
+            dom.progressText.innerText = "ZIPを作成中...";
+            const zipBlob = await zip.generateAsync({ type: "blob" });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(zipBlob);
+            link.download = (dom.renameCheck.checked && dom.nameInput.value ? dom.nameInput.value : "converted_images") + ".zip";
+            link.click();
+            dom.progressText.innerText = "ダウンロード完了！";
+        } catch (e) {
+            console.error(e);
+            alert("エラーが発生しました: " + e.message);
+        } finally {
+            dom.convertBtn.disabled = false;
+            setTimeout(() => { dom.progressContainer.style.display = 'none'; }, 3000);
+        }
+    };
+</script>
+
+    <script src="./script/click.js"></script>
+    <script src="./script/stalker.js"></script>
+    <script src="./script/slideshow.js"></script>
+    <script src="./script/CanvasAnimation.js"></script>
+    <script src="./script/import.js"></script>
+    <!--<script src="./script/first.js" defer></script>-->
+    <script src="./script/clipboad.js"></script>
+    <script src="./script/load.js"></script>
+    <script src="./script/sidebar.js"></script>
+    <script src="./script/topdf.js"></script>
+</div>
+
+    <div class="hero-container2">
+        <div class="environment"></div>
+        <div class="hero glitch layers fs-b5 fs-h8 text-shadow-2b" data-text="© 小鳥Lab研究所"><span class="color-000">© 小鳥Lab研究所</span></div>
+    </div>
+</body>
+
+</html>

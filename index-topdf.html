@@ -36,10 +36,12 @@
         <span class="section-title">2. PDF出力設定</span>
         <div class="settings-grid">
             <div class="setting-item">
-                <label class="checkbox-label">
-                    <input class="checkbox_icon" type="checkbox" id="rename-check"> 名前を指定
-                </label>
-                <input type="text" id="custom-filename-input" class="custom-input hidden" placeholder="ファイル名を入力" autocomplete="off">
+                <label class="fs-b7" style="font-weight:bold;">並び替え</label>
+                <select id="sort-order" class="custom-select">
+                    <option value="name-asc">名前順 (昇順)</option>
+                    <option value="name-desc">名前順 (降順)</option>
+                    <option value="date-new">新しい順</option>
+                </select>
             </div>
 
             <div class="setting-item">
@@ -60,14 +62,19 @@
                     <option value="50">たっぷりあける</option>
                 </select>
             </div>
+
+            <div class="setting-item">
+                <label class="checkbox-label">
+                    <input class="checkbox_icon" type="checkbox" id="grayscale-check"> モノクロ変換
+                </label>
+                <span class="fs-b7" style="color:#666; margin-top:4px;">インク節約・白黒版への自動変換</span>
+            </div>
             
             <div class="setting-item">
-                <label class="fs-b7" style="font-weight:bold;">並び替え</label>
-                <select id="sort-order" class="custom-select">
-                    <option value="name-asc">名前順 (昇順)</option>
-                    <option value="name-desc">名前順 (降順)</option>
-                    <option value="date-new">新しい順</option>
-                </select>
+                <label class="checkbox-label">
+                    <input class="checkbox_icon" type="checkbox" id="rename-check"> 保存名を指定
+                </label>
+                <input type="text" id="custom-filename-input" class="custom-input hidden" placeholder="ファイル名を入力" autocomplete="off">
             </div>
 
             <div class="setting-item">
@@ -75,13 +82,6 @@
                     <input class="checkbox_icon" type="checkbox" id="password-check"> パスワード保護(仮実装のため使用不可)
                 </label>
                 <input type="password" id="pdf-password-input" class="custom-input hidden" placeholder="パスワードを入力" autocomplete="new-password">
-            </div>
-
-            <div class="setting-item">
-                <label class="checkbox-label">
-                    <input class="checkbox_icon" type="checkbox" id="grayscale-check"> モノクロ変換
-                </label>
-                <span class="fs-b7" style="color:#666; margin-top:4px;">インク節約・白黒版への自動変換</span>
             </div>
 
             <div class="setting-item">
