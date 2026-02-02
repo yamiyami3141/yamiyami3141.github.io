@@ -180,8 +180,8 @@
         <div class="setting-item">
             <label class="fs-b7" style="font-weight:bold;">画質（圧縮率）</label>
             <select id="compression-level" class="custom-select">
-                <option value="1.0">オリジナル (圧縮なし)</option>
-                <option value="0.8" selected>高画質 (80%)</option>
+                <option value="1.0" selected>オリジナル (圧縮なし)</option>
+                <option value="0.8">高画質 (80%)</option>
                 <option value="0.5">中画質 (50%)</option>
                 <option value="0.3">低画質 (30% - 軽量)</option>
             </select>
@@ -207,9 +207,16 @@
 
         <div class="setting-item">
             <label class="checkbox-label">
-                <input class="checkbox_icon" type="checkbox" id="password-check"> パスワード保護
+                <input class="checkbox_icon" type="checkbox" id="password-check"> パスワード保護(仮実装のため使用不可)
             </label>
             <input type="password" id="pdf-password-input" class="custom-input hidden" placeholder="パスワードを入力" autocomplete="new-password">
+        </div>
+
+        <div class="setting-item">
+            <label class="checkbox-label">
+                <input class="checkbox_icon" type="checkbox" id="grayscale-check"> モノクロ変換
+            </label>
+            <span class="fs-b7" style="color:#666; margin-top:4px;">インク節約・白黒版への自動変換</span>
         </div>
     </div>
 
@@ -309,7 +316,7 @@
         dom.fileList.innerHTML = selectedFiles.map((f, i) => `
             <div class="file-item">
                 <div class="btn-remove" onclick="removeFile(${i})">×</div>
-                <div style="margin-bottom:4px;">🖼</div>
+                <div style="margin-bottom:4px;">🖼img</div>
                 ${f.name.length > 15 ? f.name.slice(0,12)+'...' : f.name}
             </div>
         `).join('');
@@ -335,6 +342,12 @@
                     canvas.width = img.width;
                     canvas.height = img.height;
                     const ctx = canvas.getContext('2d');
+
+                    // モノクロ変換処理
+                    if (document.getElementById('grayscale-check').checked) {
+                        ctx.filter = 'grayscale(100%)';
+                    }
+
                     ctx.drawImage(img, 0, 0, img.width, img.height);
                     
                     const finalFormat = (quality < 1.0) ? 'image/jpeg' : file.type;
@@ -401,7 +414,8 @@
                             );
                         } else {
                             console.warn("暗号化モジュールがロードされていません。");
-                            alert("パスワード機能は現在の環境で利用できません。通常保存します。");
+                            /*alert("パスワード機能は現在の環境で利用できません。通常保存します。");*/
+                            alert("パスワード機能は現在仮実装のため利用できません。通常保存します。");
                         }
                     }
                 } else {
