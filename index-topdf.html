@@ -81,6 +81,14 @@
                 </label>
                 <span class="fs-b7" style="color:#666; margin-top:4px;">インク節約・白黒版への自動変換</span>
             </div>
+
+            <div class="setting-item">
+                <label class="fs-b7" style="font-weight:bold;">プレビュー表示形式</label>
+                <div style="display: flex; gap: 10px; margin-top: 5px;">
+                    <label class="fs-b7"><input type="radio" name="view-mode" value="grid" checked onchange="updateUI()"> グリッド</label>
+                    <label class="fs-b7"><input type="radio" name="view-mode" value="list" onchange="updateUI()"> リスト</label>
+                </div>
+            </div>
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">

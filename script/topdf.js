@@ -78,13 +78,29 @@ function updateUI() {
         return;
     }
 
-    dom.fileList.innerHTML = selectedFiles.map((f, i) => `
-        <div class="file-item">
-            <div class="btn-remove" onclick="removeFile(${i})">×</div>
-            <div style="margin-bottom:4px;">🖼img</div>
-            ${f.name.length > 15 ? f.name.slice(0,12)+'...' : f.name}
-        </div>
-    `).join('');
+    const viewMode = document.querySelector('input[name="view-mode"]:checked').value;
+    
+    if (viewMode === 'grid') {
+        dom.fileList.classList.remove('file-list-mode');
+        dom.fileList.innerHTML = selectedFiles.map((f, i) => `
+            <div class="file-item">
+                <div class="btn-remove" onclick="removeFile(${i})">×</div>
+                <div style="margin-bottom:4px;">🖼</div>
+                ${f.name.length > 15 ? f.name.slice(0,12)+'...' : f.name}
+            </div>
+        `).join('');
+    } else {
+        dom.fileList.classList.add('file-list-mode');
+        dom.fileList.innerHTML = selectedFiles.map((f, i) => `
+            <div class="file-item">
+                <div class="btn-remove" onclick="removeFile(${i})">×</div>
+                <div style="font-size: 14px; flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    🖼 ${f.name}
+                </div>
+                <div class="fs-b7" style="color: #888;">${(f.size / 1024).toFixed(1)} KB</div>
+            </div>
+        `).join('');
+    }
     
     dom.fileCount.innerText = `${selectedFiles.length} 枚選択中`;
     dom.mergeBtn.classList.remove('hidden');

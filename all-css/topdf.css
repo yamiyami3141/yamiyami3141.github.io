@@ -100,6 +100,28 @@
     word-break: break-all;
 }
 
+/* リスト表示用のスタイル */
+.file-list-mode {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.file-list-mode .file-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 8px 15px;
+    text-align: left;
+    width: 100%;
+}
+
+.file-list-mode .btn-remove {
+    position: static; /* 右上固定を解除 */
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
 .btn-remove {
     position: absolute; top: -5px; right: -5px;
     width: 18px; height: 18px; background: #000; color: #fff;
