@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小鳥Lab</title>
+    <link rel="stylesheet" href="import.css">
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="html,css,javascript,小鳥Lab">
+    <link rel="icon" href="./img/和logo.ico">
+    <meta name="description" content="webサイト体験をもっと楽しく簡単に!!">
+    <meta property="og:image" content="./img/和logo.avif">
+    <meta property="og:title" content="小鳥Lab">
+    <meta property="og:site_name" content="小鳥Lab">
+    <meta property="og:description" content="webサイト体験をもっと楽しく簡単に!!">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+</head>
+
+<body class="fs-h6 us-n bg-container-img5" oncontextmenu="return false;">
+    <div id="stalker"></div>
+    <div id="loading"></div>
+
+    <main class="pdf-tool-wrapper">
+        <span class="section-title">1. 画像の読み込み</span>
+        <div id="drop-zone" class="drop-zone-v2">
+            <p class="fs-h6">クリックして<samp class="fs-b10">フォルダごと</samp>アップロード</p>
+            <span class="fs-b7">JPG, PNG, WebP, AVIF 対応</span>
+            <input type="file" id="file-input" webkitdirectory directory multiple hidden>
+        </div>
+
+        <span class="section-title">2. PDF出力設定</span>
+        <div class="settings-grid">
+            <div class="setting-item">
+                <label class="checkbox-label">
+                    <input class="checkbox_icon" type="checkbox" id="rename-check"> 名前を指定
+                </label>
+                <input type="text" id="custom-filename-input" class="custom-input hidden" placeholder="ファイル名を入力" autocomplete="off">
+            </div>
+
+            <div class="setting-item">
+                <label class="fs-b7" style="font-weight:bold;">画質（圧縮率）</label>
+                <select id="compression-level" class="custom-select">
+                    <option value="1.0" selected>オリジナル (圧縮なし)</option>
+                    <option value="0.8">高画質 (80%)</option>
+                    <option value="0.5">中画質 (50%)</option>
+                    <option value="0.3">低画質 (30% - 軽量)</option>
+                </select>
+            </div>
+
+            <div class="setting-item">
+                <label class="fs-b7" style="font-weight:bold;">余白（マージン）</label>
+                <select id="margin-size" class="custom-select">
+                    <option value="0">余白なし (フルサイズ)</option>
+                    <option value="20">少しあける (標準)</option>
+                    <option value="50">たっぷりあける</option>
+                </select>
+            </div>
+            
+            <div class="setting-item">
+                <label class="fs-b7" style="font-weight:bold;">並び替え</label>
+                <select id="sort-order" class="custom-select">
+                    <option value="name-asc">名前順 (昇順)</option>
+                    <option value="name-desc">名前順 (降順)</option>
+                    <option value="date-new">新しい順</option>
+                </select>
+            </div>
+
+            <div class="setting-item">
+                <label class="checkbox-label">
+                    <input class="checkbox_icon" type="checkbox" id="password-check"> パスワード保護(仮実装のため使用不可)
+                </label>
+                <input type="password" id="pdf-password-input" class="custom-input hidden" placeholder="パスワードを入力" autocomplete="new-password">
+            </div>
+
+            <div class="setting-item">
+                <label class="checkbox-label">
+                    <input class="checkbox_icon" type="checkbox" id="grayscale-check"> モノクロ変換
+                </label>
+                <span class="fs-b7" style="color:#666; margin-top:4px;">インク節約・白黒版への自動変換</span>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span id="file-count" class="fs-b7">画像未選択</span>
+            <button id="clear-all-btn" class="btn-clear-all hidden">すべて削除</button>
+        </div>
+        
+        <div id="file-list" class="file-grid"></div>
+        
+        <button id="merge-btn" class="btn-merge hidden">PDFを作成して保存</button>
+    </main>
+
+    <script src="./script/click.js"></script>
+    <script src="./script/stalker.js"></script>
+    <script src="./script/slideshow.js"></script>
+    <script src="./script/CanvasAnimation.js"></script>
+    <script src="./script/import.js"></script>
+    <!--<script src="./script/first.js" defer></script>-->
+    <script src="./script/clipboad.js"></script>
+    <script src="./script/load.js"></script>
+    <script src="./script/sidebar.js"></script>
+    <script src="./script/topdf.js"></script>
+</div>
+
+    <div class="hero-container2">
+        <div class="environment"></div>
+        <div class="hero glitch layers fs-b5 fs-h8 text-shadow-2b" data-text="© 小鳥Lab研究所"><span class="color-000">© 小鳥Lab研究所</span></div>
+    </div>
+</body>
+
+</html>
