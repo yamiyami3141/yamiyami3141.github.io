@@ -21,3 +21,7 @@ fetch("parts/web-service.html")
 fetch("parts/sb-tool.html")
     .then((response) => response.text())
     .then((data) => document.querySelector("#sb-tool").innerHTML = data);
+
+fetch("parts/lab.html")
+    .then((response) => response.text())
+    .then((data) => document.querySelector("#lab").innerHTML = data);
