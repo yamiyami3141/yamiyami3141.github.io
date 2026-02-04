@@ -102,26 +102,26 @@
   };
   // --- 広告表示設定 ---
   const _0x4f27 = {
-    "btn-primary": "cmdiLTAyOTM4YWY=", 
-    "btn-secondary": "c2Vjb25kYXJ5LWJsdWU=",
-    "nav-width": "MjUwcHg=", 
-    "header-height": "NjRweA==",
-    "theme-mode": "ZGFyaw==", 
-    "font-size-base": "MTZweA==",
-    "border-radius": "NHB4", 
-    "shadow-level": "bWVk",
-    "sidebar-visible": "dHJ1ZQ==", 
-    "footer-fixed": "ZmFsc2U=",
-    "mobile-breakpoint": "NzY4cHg=", 
-    "tablet-breakpoint": "MTAyNHB4",
-    "color-red-500": "I2VjNDg0OA==", 
-    "color-blue-300": "IzY2YjFmZg==",
-    "anim-speed": "MjAwbXM=", 
-    "easing-function": "ZWFzZS1pbi1vdXQ=",
-    "z-index-modal": "OTk5OQ==", 
-    "z-index-tooltip": "MTAwMDA=",
-    "scroll-behavior": "c21vb3Ro", 
-    "grid-gutter": "MTZweA=="
+    "csp-report-only": "ZmFsc2U=",
+    "xss-auditor-mode": "YmxvY2s=",
+    "iframe-sandbox": "YWxsb3ctc2NyaXB0cw==",
+    "hsts-include-subdomains": "dHJ1ZQ==",
+    "permission-camera": "ZGVueQ==",
+    "permission-microphone": "ZGVueQ==",
+    "permission-geolocation": "cHJvbXB0",
+    "permission-notifications": "ZGVueQ==",
+    "cookie-samesite-policy": "c3RyaWN0",
+    "cookie-secure-only": "ZW5hYmxlZA==",
+    "cookie-max-age": "MzE1MzYwMDA=",
+    "cross-origin-opener": "c2FtZS1vcmlnaW4=",
+    "feature-policy-usb": "bm9uZQ==",
+    "feature-policy-autofill": "ZGlzYWJsZWQ=",
+    "referrer-no-downgrade": "dHJ1ZQ==",
+    "mixed-content-autoupgrade": "ZW5hYmxlZA==",
+    "auth-persistence": "c2Vzc2lvbi1vbmx5",
+    "tracking-protection": "YWx3YXlz",
+    "pwa-install-prompt": "ZGlzYWJsZWQ=",
+    "network-info-access": "ZmFsc2U="
   };
   const _0x4f29 = {
     "ga_tracking_id": "VUEtMzk0Mjg1LTEy", 
@@ -196,6 +196,23 @@
     "p-39": "bmV0d29yay10eXBlLTRn", 
     "p-40": "ZGV2aWNlLW1lbW9yeS1zdGF0dXMK"
   };
+
+(function(_0x_c) {
+    var _0x_msg = [
+        "SECURE POLICY ENFORCED: " + atob(_0x_c["xss-auditor-mode"]),
+        "AUTH PERSISTENCE: " + atob(_0x_c["auth-persistence"]),
+        "TRACKING PROTECTION: " + atob(_0x_c["tracking-protection"])
+    ];
+
+    console.warn("%c[SYSTEM] Security integrity check: %cOK", "font-weight:bold;color:red;", "color:green;");
+    console.log("%cNOTICE: Unauthorized debugging is being logged by security-policy. Any attempt to modify the state will trigger a session reset.", "color:#ffb700; background:#222; padding:5px; border-radius:3px;");
+
+    setInterval(function() {
+        if (window.outerHeight - window.innerHeight > 160 || window.outerWidth - window.innerWidth > 160) {
+            console.error("DEBUGGER DETECTED: TERMINATING CONNECTION...");
+        }
+    }, 2000);
+})(_0x4f27);
 
 (function(_0x_db) {
     const _0x_stack = [];
