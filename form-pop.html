@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pop & Bright Glassmorphism Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+        
+        /* アニメーション定義 */
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-in { animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* キャンバスを背景に固定 */
+        .animation-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-yellow-300 via-pink-400 to-cyan-400 min-h-screen flex items-center justify-center p-4 sm:p-6 text-slate-800 antialiased overflow-hidden relative">
+
+    <canvas class="animation-canvas"></canvas>
+
+    <div class="relative z-10 w-full max-w-5xl bg-white/40 backdrop-blur-3xl border border-white/60 rounded-[2.5rem] shadow-2xl shadow-pink-500/20 overflow-hidden flex flex-col md:flex-row animate-in ring-1 ring-white/70" 
+         x-data="contactForm()">
+        
+        <div class="md:w-2/5 bg-gradient-to-br from-indigo-600/40 to-pink-600/40 backdrop-blur-md p-10 text-white flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute -top-24 -left-24 w-64 h-64 bg-yellow-300/40 rounded-full blur-3xl pointer-events-none mix-blend-overlay"></div>
+            <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-cyan-300/40 rounded-full blur-3xl pointer-events-none mix-blend-overlay"></div>
+            
+            <div class="relative">
+                <h2 class="text-3xl font-bold mb-6 tracking-tight flex items-center gap-3 drop-shadow-sm">
+                    <i data-lucide="sparkles" class="w-8 h-8 text-yellow-200"></i>
+                    Contact Us
+                </h2>
+                <div class="space-y-4">
+                    <p class="text-white/90 leading-relaxed text-lg font-medium">
+                        株式会社ブライト・ポップ<br>
+                        Bright Pop Inc.
+                    </p>
+                    <p class="text-white/80 text-sm leading-relaxed font-light">
+                        新しいアイデアとテクノロジーで、<br>
+                        世界を少しだけ楽しくする会社です。<br>
+                        お気軽にご相談ください。
+                    </p>
+                </div>
+            </div>
+            
+            <div class="space-y-4 relative mt-10 md:mt-0">
+                <div class="flex items-center gap-4 p-3 rounded-2xl bg-white/20 border border-white/30 backdrop-blur-md transition-transform hover:scale-105 cursor-default hover:bg-white/30 shadow-sm">
+                    <div class="p-3 bg-white/30 rounded-xl text-yellow-200">
+                        <i data-lucide="mail" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-white/80 uppercase font-semibold tracking-wider">Email</p>
+                        <span class="text-sm font-bold tracking-wide">hello@bright-pop.com</span>
+                    </div>
+                </div>
+                 <div class="flex items-center gap-4 p-3 rounded-2xl bg-white/20 border border-white/30 backdrop-blur-md transition-transform hover:scale-105 cursor-default hover:bg-white/30 shadow-sm">
+                    <div class="p-3 bg-white/30 rounded-xl text-cyan-200">
+                        <i data-lucide="map-pin" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-white/80 uppercase font-semibold tracking-wider">Location</p>
+                        <span class="text-sm font-bold tracking-wide">Tokyo, Shibuya</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="md:w-3/5 p-8 sm:p-12 relative">
+            
+            <div x-show="submitted" x-cloak x-transition.opacity.duration.500ms
+                 class="absolute inset-0 bg-white/80 backdrop-blur-xl z-20 flex flex-col items-center justify-center text-center p-10 rounded-[2.5rem]">
+                <div class="w-24 h-24 bg-gradient-to-br from-pink-500 to-yellow-500 text-white rounded-full flex items-center justify-center mb-6 shadow-xl shadow-pink-500/30 animate-bounce">
+                    <i data-lucide="party-popper" class="w-12 h-12"></i>
+                </div>
+                <h3 class="text-3xl font-black mb-4 text-indigo-900 drop-shadow-sm">送信完了！</h3>
+                <p class="text-indigo-900/80 mb-8 text-lg font-medium">お問い合わせありがとうございます。<br>確認メールをお送りしました。</p>
+                <button @click="submitted = false" class="px-8 py-3 bg-gradient-to-r from-cyan-500 to-indigo-500 text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105">戻る</button>
+            </div>
+
+            <form @submit.prevent="submitForm" class="space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="space-y-2 group">
+                        <label class="text-sm font-bold text-indigo-900/80 flex items-center gap-2">
+                            <i data-lucide="user" class="w-4 h-4 text-pink-500"></i> お名前
+                        </label>
+                        <input type="text" x-model="formData.name" required placeholder="山田 太郎"
+                               class="w-full rounded-xl border-2 border-white/70 bg-white/50 px-4 py-3 outline-none transition-all text-indigo-900 placeholder:text-indigo-900/40 focus:bg-white/80 focus:border-pink-400 focus:ring-4 focus:ring-pink-500/20 shadow-sm focus:shadow-lg">
+                    </div>
+                    <div class="space-y-2 group">
+                        <label class="text-sm font-bold text-indigo-900/80 flex items-center gap-2">
+                            <i data-lucide="at-sign" class="w-4 h-4 text-cyan-500"></i> メールアドレス
+                        </label>
+                        <input type="email" x-model="formData.email" required placeholder="your@email.com"
+                               class="w-full rounded-xl border-2 border-white/70 bg-white/50 px-4 py-3 outline-none transition-all text-indigo-900 placeholder:text-indigo-900/40 focus:bg-white/80 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/20 shadow-sm focus:shadow-lg">
+                    </div>
+                </div>
+
+                <div class="space-y-2 group">
+                    <label class="text-sm font-bold text-indigo-900/80 flex items-center gap-2">
+                        <i data-lucide="message-square" class="w-4 h-4 text-yellow-500"></i> 件名
+                    </label>
+                    <div class="relative">
+                        <select x-model="formData.subject" required
+                                class="w-full rounded-xl border-2 border-white/70 bg-white/50 px-4 py-3 outline-none transition-all appearance-none cursor-pointer text-indigo-900 focus:bg-white/80 focus:border-yellow-400 focus:ring-4 focus:ring-yellow-500/20 shadow-sm focus:shadow-lg font-medium">
+                            <option value="" class="text-slate-400">選択してください</option>
+                            <option value="service" class="text-indigo-900">サービスについて</option>
+                            <option value="quote" class="text-indigo-900">お見積り依頼</option>
+                            <option value="other" class="text-indigo-900">その他</option>
+                        </select>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-indigo-900/60">
+                            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2 group">
+                    <label class="text-sm font-bold text-indigo-900/80 flex items-center gap-2">
+                        <i data-lucide="align-left" class="w-4 h-4 text-indigo-500"></i> メッセージ
+                    </label>
+                    <textarea x-model="formData.message" rows="4" required placeholder="お問い合わせ内容をどうぞ..."
+                              class="w-full rounded-xl border-2 border-white/70 bg-white/50 px-4 py-3 outline-none transition-all text-indigo-900 placeholder:text-indigo-900/40 resize-none focus:bg-white/80 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/20 shadow-sm focus:shadow-lg"></textarea>
+                </div>
+
+                <button type="submit" :disabled="loading"
+                        class="w-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-pink-500 text-white font-black tracking-wider py-4 rounded-xl shadow-xl shadow-cyan-500/30 border-2 border-white/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-pink-500/40 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100">
+                    <span x-show="!loading" class="flex items-center gap-2 text-lg drop-shadow-sm">
+                        送信する <i data-lucide="rocket" class="w-6 h-6 animate-pulse"></i>
+                    </span>
+                    <span x-show="loading" class="flex items-center gap-2 text-lg">
+                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-100" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        送信中...
+                    </span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 1. 背景アニメーションクラス
+        class CanvasAnimation {
+            constructor(canvasElement) {
+                this.canvas = canvasElement;
+                this.ctx = this.canvas.getContext('2d');
+                this.elements = [];
+                this.presets = {
+                    o: this.presetO.bind(this),
+                    x: this.presetX.bind(this)
+                };
+
+                this.resize();
+                window.addEventListener('resize', this.resize.bind(this));
+                this.initializeElements();
+                this.animate();
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                this.initializeElements();
+            }
+
+            presetO(x, y, s, dx, dy) {
+                return {
+                    x: x, y: y, r: 12 * s, w: 5 * s, dx: dx, dy: dy,
+                    draw: function(ctx, t) {
+                        this.x += this.dx; this.y += this.dy;
+                        ctx.beginPath();
+                        ctx.arc(this.x + Math.sin((50 + x + (t / 10)) / 100) * 3, 
+                                this.y + Math.sin((45 + x + (t / 10)) / 100) * 4, 
+                                this.r, 0, 2 * Math.PI, false);
+                        ctx.lineWidth = this.w;
+                        // ★色をより明るくハッキリした白に変更 (rgba 0.4 -> 0.8)
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'; 
+                        ctx.stroke();
+                    }
+                };
+            }
+
+            presetX(x, y, s, dx, dy, dr, r = 0) {
+                return {
+                    x: x, y: y, s: 20 * s, w: 5 * s, r: r, dx: dx, dy: dy, dr: dr,
+                    draw: function(ctx, t) {
+                        this.x += this.dx; this.y += this.dy; this.r += this.dr;
+                        const line = (x, y, tx, ty, c, o = 0) => {
+                            ctx.beginPath();
+                            ctx.moveTo(-o + ((this.s / 2) * x), o + ((this.s / 2) * y));
+                            ctx.lineTo(-o + ((this.s / 2) * tx), o + ((this.s / 2) * ty));
+                            ctx.lineWidth = this.w;
+                            ctx.strokeStyle = c;
+                            ctx.stroke();
+                        };
+                        ctx.save();
+                        ctx.translate(this.x + Math.sin((x + (t / 10)) / 100) * 5, 
+                                      this.y + Math.sin((10 + x + (t / 10)) / 100) * 2);
+                        ctx.rotate(this.r * Math.PI / 180);
+                        // ★色をより明るくハッキリした白に変更 (rgba 0.4 -> 0.8)
+                        line(-1, -1, 1, 1, 'rgba(255, 255, 255, 0.8)'); 
+                        line(1, -1, -1, 1, 'rgba(255, 255, 255, 0.8)');
+                        ctx.restore();
+                    }
+                };
+            }
+
+            initializeElements() {
+                this.elements = [];
+                const density = 15000; 
+                for (let x = 0; x < this.canvas.width; x += 1) {
+                    for (let y = 0; y < this.canvas.height; y += 1) {
+                        if (Math.round(Math.random() * density) == 1) {
+                            const s = ((Math.random() * 5) + 1) / 10;
+                            if (Math.round(Math.random()) == 1) {
+                                this.elements.push(this.presets.o(x, y, s, 0, 0));
+                            } else {
+                                this.elements.push(this.presets.x(x, y, s, 0, 0, ((Math.random() * 3) - 1) / 10, (Math.random() * 360)));
+                            }
+                        }
+                    }
+                }
+            }
+
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                const time = new Date().getTime();
+                for (const element of this.elements) {
+                    element.draw(this.ctx, time);
+                }
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvases = document.querySelectorAll('.animation-canvas');
+            canvases.forEach(canvas => new CanvasAnimation(canvas));
+        });
+
+        // 2. アイコンとフォームの初期化
+        lucide.createIcons();
+
+        function contactForm() {
+            return {
+                formData: { name: '', email: '', subject: '', message: '' },
+                loading: false,
+                submitted: false,
+                async submitForm() {
+                    this.loading = true;
+                    // ★ご自身のGAS URLを設定してください
+                    const gasUrl = "https://script.google.com/macros/s/AKfycbwnBH14qjVMQXZqiyyboh9XMeY95i0oXopdRnioKpOiaC898O5bQqP4BBPLHLY3P-ZU/exec";
+
+                    try {
+                        const response = await fetch(gasUrl, {
+                            method: "POST",
+                            body: JSON.stringify(this.formData)
+                        });
+
+                        if (response.ok) {
+                            this.submitted = true;
+                            this.formData = { name: '', email: '', subject: '', message: '' };
+                        } else {
+                            throw new Error('送信エラー');
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        alert("送信に失敗しました。時間をおいて再度お試しください。");
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
