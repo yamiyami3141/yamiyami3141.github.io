@@ -19,7 +19,7 @@
         .writing-vertical { writing-mode: vertical-rl; }
         .animate-in { animation: fade-in 1.2s ease-out forwards; }
         @keyframes fade-in { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        
+
         /* 入力欄の微調整 */
         input::placeholder, textarea::placeholder { color: #d1d5db; }
     </style>
@@ -235,13 +235,28 @@
             lucide.createIcons();
         });
 
+        // 送信ロジック完全版
         function contactForm() {
             return {
                 formData: { name: '', email: '', subject: '', message: '' },
-                loading: false, submitted: false,
+                loading: false,
+                submitted: false,
                 async submitForm() {
                     this.loading = true;
-                    setTimeout(() => { this.submitted = true; this.loading = false; }, 1500);
+                    const gasUrl = "https://script.google.com/macros/s/AKfycbwnBH14qjVMQXZqiyyboh9XMeY95i0oXopdRnioKpOiaC898O5bQqP4BBPLHLY3P-ZU/exec";
+                    try {
+                        const response = await fetch(gasUrl, {
+                            method: "POST",
+                            body: JSON.stringify(this.formData)
+                        });
+                        if (response.ok) {
+                            this.submitted = true;
+                            this.formData = { name: '', email: '', subject: '', message: '' };
+                        } else { throw new Error('送信エラー'); }
+                    } catch (error) {
+                        console.error(error);
+                        alert("送信に失敗しました。再度お試しください。");
+                    } finally { this.loading = false; }
                 }
             }
         }
