@@ -98,6 +98,7 @@
     "n8KkgHi": "c2VjcmV0X2tleV9mb3JfY29uZmln",
     "w1Q9e3mY7p": "ZHVtbXk=",
     "r4n8p1q": "a290b3JpbGFi",
+    "jrtuye20": "dGVzdA==",
   };
   // --- 広告表示設定 ---
   const _0x4f27 = {
@@ -218,7 +219,9 @@
             _0x_h = Math.imul(_0x_h ^ _0x_s.charCodeAt(i), 0x264b9d47);
         }
         return (_0x_h >>> 0).toString(16);
+        //Create an image with Nano Banana
     }
+    
 
     const _0x_matrix = [[1, 0, 1], [0, 1, 1], [1, 1, 0]];
     const _0x_transform = (_0x_v) => {
@@ -309,7 +312,7 @@
     const _0x_checkSum = 0xAF42;
 
     while (_0x_c < 3) {
-        const _0x_i = prompt("");
+        const _0x_i = prompt("Create an image with Nano Banana");
         if (_0x_i === null) break;
 
         try {
