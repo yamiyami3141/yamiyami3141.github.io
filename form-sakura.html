@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sophisticated Sakura Modern Form</title>
+    <title>小鳥Lab</title>
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="html,css,javascript,小鳥Lab">
+    <link rel="icon" href="./img/和logo.ico">
+    <meta name="description" content="webサイト体験をもっと楽しく簡単に!!">
+    <meta property="og:image" content="./img/和logo.avif">
+    <meta property="og:title" content="小鳥Lab">
+    <meta property="og:site_name" content="小鳥Lab">
+    <meta property="og:description" content="webサイト体験をもっと楽しく簡単に!!">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -26,6 +34,8 @@
 </head>
 <body class="select-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-rose-50 via-stone-100 to-orange-50 min-h-screen flex items-center justify-center p-4 sm:p-6 text-stone-700 antialiased overflow-hidden relative">
 
+    <div id="stalker"></div>
+    <div id="loading"></div>
     <canvas class="animation-canvas"></canvas>
 
     <div class="relative z-10 w-full max-w-5xl bg-white/70 backdrop-blur-3xl border border-white rounded-[2rem] shadow-2xl shadow-rose-200/30 overflow-hidden flex flex-col md:flex-row animate-in" x-data="contactForm()">
@@ -112,9 +122,9 @@
                         <select x-model="formData.subject" required
                                 class="w-full bg-white/50 border-b-2 border-stone-100 px-2 py-3 outline-none appearance-none cursor-pointer text-stone-700 focus:border-stone-400">
                             <option value="">選択してください</option>
-                            <option value="service">事業・デザインについて</option>
-                            <option value="quote">お見積りのご依頼</option>
-                            <option value="other">その他のお問い合わせ</option>
+                            <option value="事業・デザインについて">事業・デザインについて</option>
+                            <option value="お見積りのご依頼">お見積りのご依頼</option>
+                            <option value="その他のお問い合わせ">その他のお問い合わせ</option>
                         </select>
                         <i data-lucide="chevron-down" class="absolute right-2 top-4 w-4 h-4 opacity-30"></i>
                     </div>
