@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小鳥Lab</title>
+    <link rel="stylesheet" href="import.css">
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="html,css,javascript,小鳥Lab">
+    <link rel="icon" href="./img/和logo.ico">
+    <meta name="description" content="webサイト体験をもっと楽しく簡単に!!">
+    <meta property="og:image" content="./img/和logo.avif">
+    <meta property="og:title" content="小鳥Lab">
+    <meta property="og:site_name" content="小鳥Lab">
+    <meta property="og:description" content="webサイト体験をもっと楽しく簡単に!!">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        .hidden { display: none !important; }
+        
+        /* キャプチャ対象エリアの基本スタイル */
+        #capture-target {
+            background: #ffffff; 
+            padding: 30px; 
+            border-radius: 20px;
+            color: #333;
+            /* 画像出力時のフォントのズレを防ぐため、標準的なフォントを優先 */
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+        }
+
+        /* input要素のズレ対策 */
+        .custom-input, .custom-select {
+            height: 44px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 0 15px; /* 左右にしっかり余白を確保 */
+            font-size: 1rem;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            text-align: left; /* 左寄せを明示 */
+            box-sizing: border-box; /* パディングを含めたサイズ計算 */
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            border: 1px dashed #ccc;
+            background: #fdfdfd;
+            border-radius: 12px;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .result-table th {
+            font-size: 0.75rem;
+            color: #888;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .result-table td {
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        
+        .result-table tr:nth-child(1) {
+            background:#dbdbdb;
+        }
+        .result-table tr:nth-child(2) {
+            background:#ffbebe;
+        }
+        .result-table tr:nth-child(3) {
+            background:#badbff;
+        }
+
+        .highlight { color: #d93025; }
+
+        .btn-save-container {
+            margin: 40px 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .btn-save-max {
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: #34a853;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(52, 168, 83, 0.3);
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="fs-h6 us-n bg-container-img5" oncontextmenu="return false;">
+
+    <div class="mt-02 color-b1-20 t-cc fs-h2 fs-b5">- 便利ツール 目標達成シミュレーター -</div>
+
+    <main class="pdf-tool-wrapper">
+        <div id="capture-target">
+            <span class="section-title">1. 期間の設定</span>
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <label class="fs-b7 fs-b10">対象月</label>
+                    <input type="month" id="target-month" class="custom-select" onchange="updateDays()">
+                </div>
+                <div class="setting-item">
+                    <label class="fs-b7 fs-b10">今日の日付</label>
+                    <input type="number" id="current-day" class="custom-input" min="1" max="31">
+                </div>
+                <div class="setting-item">
+                    <label class="fs-b7 fs-b10">月末日 (自動)</label>
+                    <input type="number" id="total-days" class="custom-input" readonly style="background:#ffffff;">
+                </div>
+                <div class="setting-item">
+                    <label class="fs-b7 fs-b10">今月の非稼働(休み)日数</label>
+                    <input type="number" id="off-days" class="custom-input" value="0" min="0">
+                </div>
+            </div>
+
+            <span class="section-title">2. 残り獲得ポイント</span>
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <label class="fs-b7 fs-b10">SB</label>
+                    <input type="number" id="p-s" class="custom-input" placeholder="0" min="0" style="background:#dbdbdb;">
+                </div>
+                <div class="setting-item">
+                    <label class="fs-b7 fs-b10">YM</label>
+                    <input type="number" id="p-y" class="custom-input" placeholder="0" min="0" style="background:#ffbebe;">
+                </div>
+                <div class="setting-item">
+                    <label class="fs-b7 fs-b10">UQ</label>
+                    <input type="number" id="p-u" class="custom-input" placeholder="0" min="0" style="background:#badbff;">
+                </div>
+            </div>
+
+            <span class="section-title">3. 比率と休日設定</span>
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <label class="fs-b7 fs-b10">平日 比率</label>
+                    <input type="number" id="w-weekday" class="custom-input" value="1.0" step="0.1" min="0">
+                </div>
+                <div class="setting-item">
+                    <label class="fs-b7 fs-b10">休日 比率</label>
+                    <input type="number" id="w-weekend" class="custom-input" value="2.0" step="0.1" min="0">
+                </div>
+            </div>
+
+            <div id="result-area" class="result-box hidden">
+                <span class="fs-b10" style="display:block; margin-bottom:10px;">  1日あたりの算出ノルマ (残稼働: <span id="active-days-display">0</span>日)</span>
+                <table class="result-table">
+                    <thead>
+                        <tr style="background:#ffffff">
+                            <th>キャリア</th>
+                            <th>平日目標</th>
+                            <th>休日目標</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result-body"></tbody>
+                </table>
+            </div>
+        </div> 
+
+        <div style="margin-top: 30px;">
+            <button id="calc-btn" class="btn-merge" onclick="calculate()">ノルマを計算する</button>
+        </div>
+
+        <div class="btn-save-container">
+            <button id="save-btn" class="btn-save-max" onclick="saveAsImage()">
+                計算結果を画像で保存する
+            </button>
+        </div>
+    </main>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = now.getDate();
+
+            document.getElementById('target-month').value = `${year}-${month}`;
+            document.getElementById('current-day').value = day;
+            updateDays();
+        });
+
+        function updateDays() {
+            const val = document.getElementById('target-month').value.split('-');
+            if (val.length === 2) {
+                const lastDay = new Date(val[0], val[1], 0).getDate();
+                document.getElementById('total-days').value = lastDay;
+            }
+        }
+
+        function calculate() {
+            const totalDays = parseInt(document.getElementById('total-days').value) || 0;
+            const currentDay = parseInt(document.getElementById('current-day').value) || 1;
+            const offDays = parseInt(document.getElementById('off-days').value) || 0;
+            
+            let rawRemaining = totalDays - currentDay + 1;
+            let activeRemaining = rawRemaining - offDays;
+
+            if (rawRemaining <= 0 || activeRemaining <= 0) {
+                alert("日付設定または非稼働日数を確認してください。");
+                return;
+            }
+
+            let numWe = 0, numWd = 0;
+            const val = document.getElementById('target-month').value.split('-');
+            for (let i = 0; i < rawRemaining; i++) {
+                let d = new Date(val[0], val[1] - 1, currentDay + i);
+                (d.getDay() === 0 || d.getDay() === 6) ? numWe++ : numWd++;
+            }
+
+            const wWd = parseFloat(document.getElementById('w-weekday').value) || 0;
+            const wWe = parseFloat(document.getElementById('w-weekend').value) || 0;
+            
+            const attendanceRate = activeRemaining / rawRemaining;
+            const effectiveTotalWeight = ((numWd * wWd) + (numWe * wWe)) * attendanceRate;
+
+            const carriers = [
+                { id: 'p-s', name: 'SB' },
+                { id: 'p-y', name: 'YM' },
+                { id: 'p-u', name: 'UQ' }
+            ];
+
+            let html = '';
+            carriers.forEach(c => {
+                const points = parseFloat(document.getElementById(c.id).value) || 0;
+                let targetWd = 0, targetWe = 0;
+                if (effectiveTotalWeight > 0) {
+                    const baseUnit = points / effectiveTotalWeight;
+                    targetWd = baseUnit * wWd;
+                    targetWe = baseUnit * wWe;
+                }
+                html += `<tr><td>${c.name}</td><td class="highlight">${targetWd.toFixed(1)}</td><td class="highlight">${targetWe.toFixed(1)}</td></tr>`;
+            });
+
+            document.getElementById('active-days-display').innerText = activeRemaining;
+            document.getElementById('result-body').innerHTML = html;
+            document.getElementById('result-area').classList.remove('hidden');
+        }
+
+        // --- 画像出力時のズレ対策込みの保存処理 ---
+        function saveAsImage() {
+            const target = document.getElementById('capture-target');
+            const btn = document.getElementById('save-btn');
+            btn.innerText = "生成中...";
+
+            html2canvas(target, {
+                scale: 2,
+                backgroundColor: "#ffffff",
+                useCORS: true,
+                onclone: (clonedDoc) => {
+                    const clonedInputs = clonedDoc.querySelectorAll('input');
+                    clonedInputs.forEach(input => {
+                        input.style.lineHeight = 'normal';
+                        input.style.paddingTop = '5px';    // 上下の位置調整
+                        input.style.paddingRight = '20px';  // 右側に1文字分以上の余白
+                        input.style.textAlign = 'left';    // 左寄せを維持
+                    });
+                }
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Point_Plan_${new Date().toISOString().slice(0,10)}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+                btn.innerText = "計算結果を画像で保存する";
+            });
+        }
+    </script>
+</body>
+</html>

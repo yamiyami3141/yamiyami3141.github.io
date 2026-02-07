@@ -109,7 +109,7 @@
                         <label class="text-[10px] font-bold tracking-[0.3em] text-teal-600 flex items-center gap-2">
                             <i data-lucide="at-sign" class="w-3 h-3"></i> 電子メール
                         </label>
-                        <input type="email" x-model="formData.email" required placeholder="info@example.jp"
+                        <input type="email" x-model="formData.email" autocomplete="email" inputmode="email" required placeholder="info@example.jp"
                                class="w-full bg-white/50 border-b-2 border-stone-100 px-2 py-3 outline-none transition-all focus:border-teal-400 text-stone-800 font-sans">
                     </div>
                 </div>
@@ -122,8 +122,9 @@
                         <select x-model="formData.subject" required
                                 class="w-full bg-white/50 border-b-2 border-stone-100 px-2 py-3 outline-none appearance-none cursor-pointer text-stone-700 focus:border-stone-400">
                             <option value="">選択してください</option>
-                            <option value="事業・デザインについて">事業・デザインについて</option>
-                            <option value="お見積りのご依頼">お見積りのご依頼</option>
+                            <option value="商品・サービスについて">商品・サービスについて</option>
+                            <option value="お見積りのご依頼">お見積りのご相談</option>
+                            <option value="不具合・バグのご報告">不具合・バグのご報告</option>
                             <option value="その他のお問い合わせ">その他のお問い合わせ</option>
                         </select>
                         <i data-lucide="chevron-down" class="absolute right-2 top-4 w-4 h-4 opacity-30"></i>
@@ -136,6 +137,21 @@
                     </label>
                     <textarea x-model="formData.message" rows="4" required placeholder="具体的な内容をご記入くださいませ..."
                               class="w-full bg-white/50 border border-stone-100 rounded-xl p-4 outline-none transition-all focus:border-rose-200 focus:bg-white/80 text-stone-800 resize-none"></textarea>
+                </div>
+
+                <div class="flex items-center gap-3 px-2 py-4">
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" x-model="formData.agreement" required 
+                            class="peer h-5 w-5 cursor-pointer appearance-none rounded border border-stone-200 transition-all checked:bg-rose-400 checked:border-rose-400" />
+                        <span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                    </label>
+                    <span class="text-xs text-stone-400 tracking-wider">
+                        <a href="privacy.html" target="_blank" class="text-rose-400 hover:underline decoration-rose-200 underline-offset-4">個人情報の取り扱い</a> に同意する
+                    </span>
                 </div>
 
                 <button type="submit" :disabled="loading"
@@ -248,12 +264,18 @@
         // 送信ロジック完全版
         function contactForm() {
             return {
-                formData: { name: '', email: '', subject: '', message: '' },
+                // agreement を追加
+                formData: { name: '', email: '', subject: '', message: '', agreement: false },
                 loading: false,
                 submitted: false,
                 async submitForm() {
+                    // チェックされていない場合は送信させない（HTMLのrequiredでも防げますが念のため）
+                    if(!this.formData.agreement) {
+                        alert("個人情報の取り扱いに同意をお願いいたします。");
+                        return;
+                    }
                     this.loading = true;
-                    const gasUrl = "https://script.google.com/macros/s/AKfycbwnBH14qjVMQXZqiyyboh9XMeY95i0oXopdRnioKpOiaC898O5bQqP4BBPLHLY3P-ZU/exec";
+                    const gasUrl = "https://script.google.com/macros/s/AKfycbyDheP3h-C3_rXbqtw1NmEPSQvFjvOu8kfQ07M0-hGpKRE5u5Pup_3BD8whbYwfVKje/exec";
                     try {
                         const response = await fetch(gasUrl, {
                             method: "POST",
