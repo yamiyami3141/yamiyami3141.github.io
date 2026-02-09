@@ -1,253 +1,475 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小鳥Lab</title>
-    <meta name="robots" content="index, follow">
-    <meta name="keywords" content="html,css,javascript,小鳥Lab">
-    <link rel="icon" href="./img/和logo.ico">
-    <meta name="description" content="webサイト体験をもっと楽しく簡単に!!">
-    <meta property="og:image" content="./img/和logo.avif">
-    <meta property="og:title" content="小鳥Lab">
-    <meta property="og:site_name" content="小鳥Lab">
-    <meta property="og:description" content="webサイト体験をもっと楽しく簡単に!!">
+    <title>PDF 捺印システム [安定版]</title>
+    
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://unpkg.com/tesseract.js@5.0.3/dist/tesseract.min.js"></script>
+
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
     </script>
+    
     <style>
-        body { font-family: sans-serif; max-width: 1000px; margin: 20px auto; padding: 0 20px; color: #333; background-color: #f4f7f6; }
-        .container { border: 1px solid #ddd; padding: 25px; border-radius: 12px; background-color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { font-size: 22px; color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-top: 0; }
+        :root {
+            --primary: #007bff;
+            --bg-color: #f4f7f6;
+            --panel-bg: #ffffff;
+        }
+        body { font-family: "Helvetica Neue", Arial, sans-serif; background-color: var(--bg-color); color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
         
-        .row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px; }
-        .col { flex: 1; min-width: 200px; }
-        label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 13px; }
-        
-        input[type="text"], input[type="number"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        
-        /* スライダー周りのデザイン */
-        .control-panel { background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 20px; }
-        .slider-group { display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
-        .slider-group span { min-width: 30px; font-weight: bold; }
-        input[type="range"] { flex-grow: 1; cursor: pointer; }
-        .num-input-small { width: 80px !important; text-align: center; }
+        .controls { flex: 1; min-width: 320px; background: var(--panel-bg); padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 20px; }
+        .preview-pane { flex: 2; min-width: 400px; background: #525659; padding: 20px; border-radius: 8px; height: 85vh; display: flex; flex-direction: column; }
+        .preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; color: white; }
+        .preview-scroll { flex: 1; overflow: auto; display: flex; justify-content: center; align-items: flex-start; background: #333; border-radius: 4px; padding: 20px; }
 
-        /* プレビュー */
-        #previewContainer {
-            margin-top: 20px; border: 2px solid #ddd; background-color: #525659;
-            position: relative; overflow: auto; max-height: 550px; border-radius: 8px;
-            display: flex; justify-content: center;
-        }
-        .canvas-wrapper { position: relative; margin: 20px; background: white; }
-        #pdfCanvas { display: block; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        #sealOverlay {
-            position: absolute; border: 1px solid red; background-color: rgba(255, 0, 0, 0.2);
-            pointer-events: none; display: none; z-index: 10;
-            background-size: contain; background-repeat: no-repeat; background-position: center;
-        }
-        #sealOverlay::after {
-            content: ''; position: absolute; top: 50%; left: 50%;
-            width: 14px; height: 14px; border-left: 1px solid red; border-top: 1px solid red;
-            transform: translate(-50%, -50%);
-        }
+        h2 { margin-top: 0; border-bottom: 2px solid var(--primary); padding-bottom: 10px; color: var(--primary); font-size: 18px; }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.85em; }
+        input[type="file"], input[type="text"], select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        
+        .slider-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .slider-row span { width: 15px; font-weight: bold; font-size: 0.8em; }
+        input[type="range"] { flex: 1; cursor: pointer; }
+        input[type="number"] { width: 60px; padding: 4px; text-align: right; }
 
-        button { background-color: #28a745; color: white; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; width: 100%; font-weight: bold; }
-        button:hover { background-color: #218838; }
-        #status { margin-top: 15px; padding: 10px; font-size: 13px; color: #666; text-align: center; }
+        .mode-tabs { display: flex; margin-bottom: 15px; border-bottom: 1px solid #ddd; }
+        .mode-tab { flex: 1; padding: 8px; text-align: center; cursor: pointer; background: #eee; border-radius: 5px 5px 0 0; font-weight: bold; font-size: 0.9em; color: #666; transition: 0.2s; }
+        .mode-tab.active { background: var(--primary); color: white; }
+        .mode-content { display: none; padding: 15px; background: #f9f9f9; border-radius: 0 0 5px 5px; margin-bottom: 15px; border: 1px solid #eee; }
+        .mode-content.active { display: block; }
+
+        .btn-run { background-color: #28a745; color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; font-size: 1em; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-run:hover { background-color: #218838; }
+        .btn-run:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        #progressLog { margin-top: 10px; font-size: 0.85em; color: #666; white-space: pre-wrap; background: #eee; padding: 10px; border-radius: 4px; max-height: 150px; overflow-y: auto; }
+
+        .canvas-container { 
+            position: relative; 
+            box-shadow: 0 0 15px rgba(0,0,0,0.5); 
+            background: white; 
+            transform-origin: top center; 
+            transition: transform 0.2s ease-out;
+        }
+        
+        #overlay { position: absolute; pointer-events: none; display: none; z-index: 10; box-sizing: border-box; }
+        #overlay.mode-fixed { border: 1px dashed red; background-size: contain; background-repeat: no-repeat; background-position: center; }
+        #overlay.mode-search { border: 2px solid rgba(0, 123, 255, 0.8); background-color: rgba(0, 123, 255, 0.2); }
+        #overlay.mode-fixed::after { content: ''; position: absolute; top: 50%; left: 50%; width: 10px; height: 10px; border-left: 1px solid red; border-top: 1px solid red; transform: translate(-50%, -50%); }
+
+        .ocr-option { background: #fff3cd; padding: 10px; border-radius: 4px; border: 1px solid #ffeeba; margin-top: 10px; font-size: 0.9em; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>PDF 捺印調整システム</h1>
-
-    <div class="row">
-        <div class="col"><label>PDF選択</label><input type="file" id="pdfInput" accept="application/pdf" onchange="loadPreviewPDF()"></div>
-        <div class="col"><label>印影画像選択</label><input type="file" id="imageInput" accept="image/png, image/jpeg" onchange="loadPreviewImage()"></div>
-    </div>
-
-    <div class="control-panel">
-        <label style="color:#007bff; margin-bottom:15px;">▼ 位置・サイズの調整</label>
+    <div class="controls">
+        <h2>設定パネル</h2>
         
-        <div class="slider-group">
-            <span>横</span>
-            <input type="range" id="rangeX" min="0" max="600" value="0" oninput="syncInputs('rangeX', 'areaX')">
-            <input type="number" id="areaX" class="num-input-small" value="0" oninput="syncInputs('areaX', 'rangeX')">
+        <div class="form-group">
+            <label>1. PDFファイル</label>
+            <input type="file" id="pdfInput" accept="application/pdf" onchange="loadPDF()">
+        </div>
+        <div class="form-group">
+            <label>2. 印鑑画像</label>
+            <input type="file" id="imgInput" accept="image/png, image/jpeg" onchange="loadImage()">
         </div>
 
-        <div class="slider-group">
-            <span>縦</span>
-            <input type="range" id="rangeY" min="0" max="800" value="0" oninput="syncInputs('rangeY', 'areaY')">
-            <input type="number" id="areaY" class="num-input-small" value="0" oninput="syncInputs('areaY', 'rangeY')">
+        <div class="form-group">
+            <label>3. 印鑑サイズ</label>
+            <select id="sealSize" onchange="updatePreview()">
+                <option value="10">認印 (10mm)</option>
+                <option value="12">認印・銀行印 (12mm)</option>
+                <option value="15">実印 (15mm)</option>
+                <option value="21" selected>角印 (21mm)</option>
+                <option value="24">角印 (24mm)</option>
+                <option value="30">社印・大 (30mm)</option>
+            </select>
         </div>
 
-        <div class="row" style="margin-top:20px;">
-            <div class="col">
-                <label>印影サイズ (mm)</label>
-                <select id="sealSize" onchange="updateOverlayPosition()">
-                    <option value="10">認印 (10mm)</option>
-                    <option value="15">実印 (15mm)</option>
-                    <option value="21" selected>角印 (21mm)</option>
-                    <option value="24">角印 (24mm)</option>
-                </select>
-            </div>
-            <div class="col">
-                <label>モード設定</label>
-                <select id="modeSelect">
-                    <option value="fixed">全ページ固定位置</option>
-                    <option value="search">文字検索（この範囲内）</option>
-                </select>
+        <label>4. 動作モード</label>
+        <div class="mode-tabs">
+            <div class="mode-tab active" onclick="setMode('fixed')" id="tab-fixed">固定位置</div>
+            <div class="mode-tab" onclick="setMode('search')" id="tab-search">文字検索</div>
+        </div>
+
+        <div id="content-fixed" class="mode-content active">
+            <div class="form-group">
+                <label>位置調整 (PDF全体)</label>
+                <div class="slider-row"><span>X</span><input type="range" id="rangeX_fixed" min="0" max="500" value="100" oninput="syncVal('rangeX_fixed', 'numX_fixed')"><input type="number" id="numX_fixed" value="100" oninput="syncVal('numX_fixed', 'rangeX_fixed')"></div>
+                <div class="slider-row"><span>Y</span><input type="range" id="rangeY_fixed" min="0" max="800" value="100" oninput="syncVal('rangeY_fixed', 'numY_fixed')"><input type="number" id="numY_fixed" value="100" oninput="syncVal('numY_fixed', 'rangeY_fixed')"></div>
             </div>
         </div>
+
+        <div id="content-search" class="mode-content">
+            <div class="form-group">
+                <label>検索する文字</label>
+                <input type="text" id="searchText" placeholder="例: 承認">
+            </div>
+            
+            <div class="ocr-option">
+                <label style="display:flex; align-items:center; cursor:pointer;">
+                    <input type="checkbox" id="useOCR" checked style="width:auto; margin-right:8px;">
+                    OCR(画像認識)を併用する
+                </label>
+                <div style="font-size:0.8em; color:#856404; margin-top:4px;">
+                    ※スキャンデータの文字も検出できます。初回は辞書DLに時間がかかります。
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top:10px;">
+                <label>検索範囲 (青枠内のみ対象)</label>
+                <div class="slider-row"><span>X</span><input type="range" id="rangeX_search" min="0" max="500" value="0" oninput="syncVal('rangeX_search', 'numX_search')"><input type="number" id="numX_search" value="0" oninput="syncVal('numX_search', 'rangeX_search')"></div>
+                <div class="slider-row"><span>Y</span><input type="range" id="rangeY_search" min="0" max="800" value="0" oninput="syncVal('rangeY_search', 'numY_search')"><input type="number" id="numY_search" value="0" oninput="syncVal('numY_search', 'rangeY_search')"></div>
+                <div class="slider-row"><span>W</span><input type="range" id="rangeW_search" min="0" max="500" value="200" oninput="syncVal('rangeW_search', 'numW_search')"><input type="number" id="numW_search" value="200" oninput="syncVal('numW_search', 'rangeW_search')"></div>
+                <div class="slider-row"><span>H</span><input type="range" id="rangeH_search" min="0" max="800" value="200" oninput="syncVal('rangeH_search', 'numH_search')"><input type="number" id="numH_search" value="200" oninput="syncVal('numH_search', 'rangeH_search')"></div>
+            </div>
+        </div>
+
+        <button class="btn-run" id="runBtn" onclick="runProcess()">処理実行 (PDF作成)</button>
+        <div id="progressLog">待機中...</div>
     </div>
 
-    <button id="runBtn" onclick="processPDF()">PDFを書き出す</button>
-    <div id="status">PDFを読み込んでください</div>
-
-    <div id="previewContainer">
-        <div class="canvas-wrapper">
-            <canvas id="pdfCanvas"></canvas>
-            <div id="sealOverlay"></div>
+    <div class="preview-pane">
+        <div class="preview-header">
+            <span>プレビュー (1ページ目)</span>
+            <div>
+                <label style="display:inline; margin-right:5px;">表示倍率:</label>
+                <select id="zoomLevel" onchange="updateZoom()" style="width:auto; padding:4px;">
+                    <option value="0.5">50%</option>
+                    <option value="1.0" selected>100%</option>
+                    <option value="1.5">150%</option>
+                    <option value="2.0">200%</option>
+                </select>
+            </div>
+        </div>
+        <div class="preview-scroll">
+            <div class="canvas-container" id="canvasContainer">
+                <canvas id="pdfCanvas"></canvas>
+                <div id="overlay"></div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    let pdfPageHeight = 0;
-    let pdfPageWidth = 0;
+    // --- 変数管理 ---
+    // プレビュー用 (グローバル)
+    let previewPdfDoc = null; 
+    let imgDataUrl = null;
+    let pageInfo = { w: 0, h: 0 };
+    let currentMode = 'fixed';
+    
     const mmToPt = (mm) => mm * 2.8346;
+    
+    // ロガー
+    const logger = {
+        el: document.getElementById('progressLog'),
+        log: function(msg) {
+            console.log(msg);
+            this.el.innerText += msg + "\n";
+            this.el.scrollTop = this.el.scrollHeight;
+        },
+        clear: function() { this.el.innerText = ""; }
+    };
 
-    // スライダーと数値入力ボックスの同期
-    function syncInputs(sourceId, targetId) {
-        const source = document.getElementById(sourceId);
-        const target = document.getElementById(targetId);
-        target.value = source.value;
-        updateOverlayPosition();
+    // --- UI制御 ---
+    function setMode(mode) {
+        currentMode = mode;
+        document.querySelectorAll('.mode-tab').forEach(el => el.classList.remove('active'));
+        document.getElementById(`tab-${mode}`).classList.add('active');
+        document.querySelectorAll('.mode-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(`content-${mode}`).classList.add('active');
+        updatePreview();
     }
 
-    async function loadPreviewPDF() {
+    function syncVal(src, tgt) {
+        document.getElementById(tgt).value = document.getElementById(src).value;
+        updatePreview();
+    }
+    
+    function updateZoom() {
+        const zoom = document.getElementById('zoomLevel').value;
+        document.getElementById('canvasContainer').style.transform = `scale(${zoom})`;
+    }
+
+    function updateSliderMax(id, max) {
+        const el = document.getElementById(id);
+        if(el) el.max = Math.floor(max);
+    }
+
+    // --- ファイル読み込み (プレビュー用) ---
+    async function loadPDF() {
         const file = document.getElementById('pdfInput').files[0];
         if (!file) return;
 
-        const buffer = await file.arrayBuffer();
-        const pdfDoc = await pdfjsLib.getDocument({ data: buffer }).promise;
-        const page = await pdfDoc.getPage(1);
-        
-        const canvas = document.getElementById('pdfCanvas');
-        const viewport = page.getViewport({ scale: 1.0 });
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        pdfPageWidth = viewport.width;
-        pdfPageHeight = viewport.height;
+        try {
+            const buffer = await file.arrayBuffer();
+            const loadingTask = pdfjsLib.getDocument({ data: buffer });
+            previewPdfDoc = await loadingTask.promise;
+            
+            const page = await previewPdfDoc.getPage(1);
+            const viewport = page.getViewport({ scale: 1.0 });
+            
+            pageInfo.w = viewport.width;
+            pageInfo.h = viewport.height;
 
-        // スライダーの最大値をPDFのサイズに合わせる
-        document.getElementById('rangeX').max = Math.round(pdfPageWidth);
-        document.getElementById('rangeY').max = Math.round(pdfPageHeight);
-        
-        // 初期値を中央にセット
-        const centerX = Math.round(pdfPageWidth / 2);
-        const centerY = Math.round(pdfPageHeight / 2);
-        document.getElementById('rangeX').value = centerX;
-        document.getElementById('areaX').value = centerX;
-        document.getElementById('rangeY').value = centerY;
-        document.getElementById('areaY').value = centerY;
+            const canvas = document.getElementById('pdfCanvas');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
 
-        await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-        document.getElementById('status').innerText = "プレビュー準備完了";
-        updateOverlayPosition();
+            // スライダー設定
+            ['rangeX_fixed','rangeY_fixed','rangeX_search','rangeY_search','rangeW_search','rangeH_search'].forEach(id => {
+                updateSliderMax(id, (id.includes('Y') || id.includes('H')) ? pageInfo.h : pageInfo.w);
+            });
+
+            // 初期位置中央
+            if(document.getElementById('numX_fixed').value == 100) {
+                const cx = Math.floor(pageInfo.w / 2);
+                const cy = Math.floor(pageInfo.h / 2);
+                document.getElementById('rangeX_fixed').value = cx;
+                document.getElementById('numX_fixed').value = cx;
+                document.getElementById('rangeY_fixed').value = cy;
+                document.getElementById('numY_fixed').value = cy;
+                
+                document.getElementById('rangeW_search').value = Math.floor(pageInfo.w);
+                document.getElementById('numW_search').value = Math.floor(pageInfo.w);
+                document.getElementById('rangeH_search').value = Math.floor(pageInfo.h);
+                document.getElementById('numH_search').value = Math.floor(pageInfo.h);
+            }
+            updatePreview();
+        } catch(e) {
+            console.error(e);
+            alert("PDF読み込みエラー: " + e.message);
+        }
     }
 
-    function loadPreviewImage() {
-        const file = document.getElementById('imageInput').files[0];
+    function loadImage() {
+        const file = document.getElementById('imgInput').files[0];
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-            const overlay = document.getElementById('sealOverlay');
-            overlay.style.backgroundImage = `url(${e.target.result})`;
-            overlay.style.display = 'block';
-            updateOverlayPosition();
+            imgDataUrl = e.target.result;
+            updatePreview();
         };
         reader.readAsDataURL(file);
     }
 
-    function updateOverlayPosition() {
-        if (!pdfPageHeight) return;
-        const overlay = document.getElementById('sealOverlay');
-        const x = parseFloat(document.getElementById('areaX').value);
-        const y = parseFloat(document.getElementById('areaY').value);
-        const size = mmToPt(parseFloat(document.getElementById('sealSize').value));
+    // --- プレビュー更新 ---
+    function updatePreview() {
+        if (pageInfo.h === 0) return;
+        const overlay = document.getElementById('overlay');
+        const sizePt = mmToPt(parseFloat(document.getElementById('sealSize').value));
 
-        overlay.style.width = `${size}px`;
-        overlay.style.height = `${size}px`;
-        // CSS座標計算 (PDFは左下が0,0)
-        overlay.style.left = `${x - (size/2)}px`;
-        overlay.style.top = `${pdfPageHeight - y - (size/2)}px`;
+        overlay.className = '';
+        overlay.classList.add(currentMode === 'fixed' ? 'mode-fixed' : 'mode-search');
+        overlay.style.display = 'block';
+
+        if (currentMode === 'fixed') {
+            if (imgDataUrl) overlay.style.backgroundImage = `url(${imgDataUrl})`;
+            
+            const x = parseFloat(document.getElementById('numX_fixed').value) || 0;
+            const y = parseFloat(document.getElementById('numY_fixed').value) || 0;
+            
+            overlay.style.width = `${sizePt}px`;
+            overlay.style.height = `${sizePt}px`;
+            overlay.style.left = `${x - (sizePt/2)}px`;
+            overlay.style.top = `${pageInfo.h - y - (sizePt/2)}px`;
+            
+        } else {
+            overlay.style.backgroundImage = 'none';
+            const x = parseFloat(document.getElementById('numX_search').value) || 0;
+            const y = parseFloat(document.getElementById('numY_search').value) || 0;
+            const w = parseFloat(document.getElementById('numW_search').value) || 0;
+            const h = parseFloat(document.getElementById('numH_search').value) || 0;
+
+            overlay.style.width = `${w}px`;
+            overlay.style.height = `${h}px`;
+            overlay.style.left = `${x}px`;
+            overlay.style.top = `${pageInfo.h - y - h}px`;
+        }
     }
 
-    async function processPDF() {
+    // --- メイン処理 (堅牢化版) ---
+    async function runProcess() {
         const pdfFile = document.getElementById('pdfInput').files[0];
-        const imgFile = document.getElementById('imageInput').files[0];
-        if (!pdfFile || !imgFile) return alert("ファイルが足りません");
+        const imgFile = document.getElementById('imgInput').files[0];
+        if (!pdfFile || !imgFile) return alert("PDFと画像を選択してください。");
 
         const btn = document.getElementById('runBtn');
         btn.disabled = true;
-        document.getElementById('status').innerText = "生成中...";
+        logger.clear();
+        logger.log("処理を開始します...");
 
         try {
-            const pdfDoc = await PDFLib.PDFDocument.load(await pdfFile.arrayBuffer());
-            const imgData = await imgFile.arrayBuffer();
-            const embedImg = imgFile.type === 'image/jpeg' ? await pdfDoc.embedJpg(imgData) : await pdfDoc.embedPng(imgData);
-            
-            const size = mmToPt(parseFloat(document.getElementById('sealSize').value));
-            const x = parseFloat(document.getElementById('areaX').value);
-            const y = parseFloat(document.getElementById('areaY').value);
-            const mode = document.getElementById('modeSelect').value;
+            // 1. ファイルをバッファとして読み込み
+            const pdfBuffer = await pdfFile.arrayBuffer();
+            const imgBuffer = await imgFile.arrayBuffer();
 
-            if (mode === 'fixed') {
-                pdfDoc.getPages().forEach(page => {
-                    page.drawImage(embedImg, { x: x - size/2, y: y - size/2, width: size, height: size });
-                });
+            // 2. 編集用Doc (pdf-lib)
+            const pdfDocLib = await PDFLib.PDFDocument.load(pdfBuffer);
+            
+            // 3. 解析用Doc (pdf.js) - ★ここでローカルスコープに確実に作る
+            const loadingTask = pdfjsLib.getDocument({ data: pdfBuffer.slice(0) });
+            const processingPdfDoc = await loadingTask.promise;
+
+            // 画像埋め込み
+            let embedImg;
+            if (imgFile.type === 'image/jpeg') {
+                embedImg = await pdfDocLib.embedJpg(imgBuffer);
             } else {
-                // 検索モード（以前のロジック）を実行...
-                // ※ ここは文字検索ロジックが入ります（簡略化のため固定ロジックをベースにしています）
+                embedImg = await pdfDocLib.embedPng(imgBuffer);
+            }
+            
+            const sizePt = mmToPt(parseFloat(document.getElementById('sealSize').value));
+            const imgDims = embedImg.scaleToFit(sizePt, sizePt);
+            const totalPages = pdfDocLib.getPageCount();
+            let count = 0;
+
+            // --- 固定モード ---
+            if (currentMode === 'fixed') {
+                const x = parseFloat(document.getElementById('numX_fixed').value);
+                const y = parseFloat(document.getElementById('numY_fixed').value);
+                
+                logger.log("全ページに固定位置で捺印中...");
+                for (let i = 0; i < totalPages; i++) {
+                    const page = pdfDocLib.getPage(i);
+                    page.drawImage(embedImg, {
+                        x: x - imgDims.width/2,
+                        y: y - imgDims.height/2,
+                        width: imgDims.width, height: imgDims.height
+                    });
+                    count++;
+                }
+            } 
+            // --- 検索モード (ハイブリッド) ---
+            else {
+                const searchStr = document.getElementById('searchText').value;
+                const useOCR = document.getElementById('useOCR').checked;
+                const areaX = parseFloat(document.getElementById('numX_search').value);
+                const areaY = parseFloat(document.getElementById('numY_search').value);
+                const areaW = parseFloat(document.getElementById('numW_search').value);
+                const areaH = parseFloat(document.getElementById('numH_search').value);
+
+                if(!searchStr) throw new Error("検索文字を入力してください");
+                
+                let worker = null;
+                if (useOCR) {
+                    logger.log("OCRエンジン初期化中 (Tesseract v5)...");
+                    // Worker生成
+                    worker = await Tesseract.createWorker('jpn');
+                }
+
+                for (let i = 1; i <= totalPages; i++) {
+                    logger.log(`Page ${i}/${totalPages} を解析中...`);
+                    let foundOnPage = false;
+
+                    // 1. テキストレイヤー解析 (processingPdfDocを使用)
+                    const page = await processingPdfDoc.getPage(i);
+                    const textContent = await page.getTextContent();
+                    const libPage = pdfDocLib.getPages()[i - 1]; // pdf-libは0始まり
+
+                    for (const item of textContent.items) {
+                        if (!item.str) continue;
+                        if (item.str.includes(searchStr)) {
+                            // transformがない場合はスキップ
+                            if (!item.transform) continue;
+
+                            const tx = item.transform[4];
+                            const ty = item.transform[5];
+                            
+                            // 範囲内かチェック
+                            if (tx >= areaX && tx <= (areaX + areaW) && ty >= areaY && ty <= (areaY + areaH)) {
+                                libPage.drawImage(embedImg, {
+                                    x: tx + (item.width/2) - (imgDims.width/2),
+                                    y: ty + (item.height/2) - (imgDims.height/2),
+                                    width: imgDims.width, height: imgDims.height
+                                });
+                                foundOnPage = true;
+                                count++;
+                                logger.log(` -> テキストでヒット`);
+                            }
+                        }
+                    }
+
+                    // 2. OCR解析 (テキストで見つからず、OCR ONの場合)
+                    if (!foundOnPage && useOCR && worker) {
+                        logger.log(` -> 画像解析(OCR)を実行中...`);
+                        
+                        // Canvas化 (高解像度で)
+                        const viewport = page.getViewport({ scale: 2.0 });
+                        const canvas = document.createElement('canvas');
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+                        const ctx = canvas.getContext('2d');
+                        await page.render({ canvasContext: ctx, viewport }).promise;
+
+                        // 解析
+                        const { data: { words } } = await worker.recognize(canvas);
+                        
+                        // PDFサイズとの比率計算
+                        const pdfW = libPage.getWidth();
+                        const pdfH = libPage.getHeight();
+                        const ratioX = pdfW / canvas.width;
+                        const ratioY = pdfH / canvas.height;
+
+                        for (const word of words) {
+                            // 空白除去して比較
+                            if (word.text.replace(/\s/g, '').includes(searchStr)) {
+                                // 座標変換 (Canvas px -> PDF pt)
+                                const centerX_px = (word.bbox.x0 + word.bbox.x1) / 2;
+                                const centerY_px = (word.bbox.y0 + word.bbox.y1) / 2;
+
+                                const pdfX = centerX_px * ratioX;
+                                const pdfY = pdfH - (centerY_px * ratioY); // Y軸反転
+
+                                // 範囲チェック
+                                if (pdfX >= areaX && pdfX <= (areaX + areaW) && pdfY >= areaY && pdfY <= (areaY + areaH)) {
+                                    libPage.drawImage(embedImg, {
+                                        x: pdfX - (imgDims.width/2),
+                                        y: pdfY - (imgDims.height/2),
+                                        width: imgDims.width, height: imgDims.height
+                                    });
+                                    count++;
+                                    logger.log(` -> OCRでヒット: (${Math.round(pdfX)}, ${Math.round(pdfY)})`);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (worker) await worker.terminate();
             }
 
-            const pdfBytes = await pdfDoc.save();
+            // 保存
+            const pdfBytes = await pdfDocLib.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = "result.pdf";
+            link.download = 'stamped_result.pdf';
             link.click();
-            document.getElementById('status').innerText = "保存完了！";
+            
+            logger.log(`処理完了: 計 ${count} 箇所に捺印しました。`);
+            alert("ダウンロードが開始されました。");
+
         } catch (e) {
             console.error(e);
-            alert("エラー発生");
+            logger.log("【エラー発生】: " + (e.message || e));
+            alert("エラーが発生しました: " + e.message);
         } finally {
             btn.disabled = false;
         }
     }
+    
+    // 初期化
+    setMode('fixed');
 </script>
-
-    <script src="./script/click.js"></script>
-    <script src="./script/stalker.js"></script>
-    <script src="./script/slideshow.js"></script>
-    <script src="./script/CanvasAnimation.js"></script>
-    <script src="./script/import.js"></script>
-    <!--<script src="./script/first.js" defer></script>-->
-    <script src="./script/clipboad.js"></script>
-    <script src="./script/load.js"></script>
-    <script src="./script/sidebar.js"></script>
-    <script src="./script/topdf.js"></script>
-</div>
-
-    <div class="hero-container2">
-        <div class="environment"></div>
-        <div class="hero glitch layers fs-b5 fs-h8 text-shadow-2b" data-text="© 小鳥Lab研究所"><span class="color-000">© 小鳥Lab研究所</span></div>
-    </div>
 </body>
-
 </html>
