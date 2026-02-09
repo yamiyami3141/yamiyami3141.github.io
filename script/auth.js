@@ -1,6 +1,6 @@
 (function() {
   const PASS_LIST = {
-    "page-a": "", 
+    "page-a": "bmVw",
     "page-b": ""
   };
 
@@ -10,17 +10,30 @@
 
   if (!targetPass) return;
 
-  let input = "";
-  while (true) {
-    input = prompt("パスワードを入力してください：");
+  let count = 0;
+  const MAX_RETRY = 3;
+
+  while (count < MAX_RETRY) {
+    let input = prompt("パスワードを入力してください（残り " + (MAX_RETRY - count) + " 回）：");
+    
     if (input === null) {
-      location.href = "https://www.google.com";
-      break;
+      location.replace("about:blank");
+      return;
     }
-    if (btoa(input) === targetPass) {
-      break; 
-    } else {
-      alert("パスワードが違います。");
+
+    try {
+      if (window.btoa(input) === targetPass) {
+        return;
+      }
+    } catch (e) {
+    }
+
+    count++;
+    if (count < MAX_RETRY) {
+      alert("パスワードが違います。再入力してください。");
     }
   }
+
+  alert("挑戦回数を超えました。");
+  location.replace("about:blank");
 })();
