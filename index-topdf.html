@@ -17,6 +17,39 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <style>
+        /* 追加機能用のスタイル */
+        .folder-section {
+            width: 100%;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.6);
+        }
+        .folder-header {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            color: #444;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* 既存のグリッドスタイルに合わせるための調整 */
+        .file-grid-inner {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+        .file-list-mode .file-grid-inner {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+    </style>
 </head>
 
 <body class="fs-h6 us-n bg-container-img5" oncontextmenu="return false;">
@@ -63,6 +96,14 @@
                 </select>
             </div>
 
+            <div class="setting-item" style="background: #eef; padding: 5px; border-radius: 4px;">
+                <label class="checkbox-label" style="font-weight:bold; color:#0056b3;">
+                    <input class="checkbox_icon" type="checkbox" id="merge-folders-check"> 全フォルダ結合
+                </label>
+                <span class="fs-b7" style="color:#666; margin-top:2px; font-size:10px;">
+                    ON: まとめて1つのPDF<br>OFF: フォルダ別に保存
+                </span>
+            </div>
             <div class="setting-item">
                 <label class="checkbox-label">
                     <input class="checkbox_icon" type="checkbox" id="grayscale-check"> モノクロ変換
@@ -87,8 +128,8 @@
             <div class="setting-item">
                 <label class="fs-b7" style="font-weight:bold;">プレビュー表示形式</label>
                 <div style="display: flex; gap: 10px; margin-top: 5px;">
-                    <label class="fs-b7"><input type="radio" name="view-mode" value="grid" checked onchange="updateUI()"> グリッド</label>
-                    <label class="fs-b7"><input type="radio" name="view-mode" value="list" onchange="updateUI()"> リスト</label>
+                    <label class="fs-b7"><input type="radio" name="view-mode" value="grid" checked onchange="window.topdfUpdateUI()"> グリッド</label>
+                    <label class="fs-b7"><input type="radio" name="view-mode" value="list" onchange="window.topdfUpdateUI()"> リスト</label>
                 </div>
             </div>
         </div>
@@ -108,7 +149,6 @@
     <script src="./script/slideshow.js"></script>
     <script src="./script/CanvasAnimation.js"></script>
     <script src="./script/import.js"></script>
-    <!--<script src="./script/first.js" defer></script>-->
     <script src="./script/clipboad.js"></script>
     <script src="./script/load.js"></script>
     <script src="./script/sidebar.js"></script>
