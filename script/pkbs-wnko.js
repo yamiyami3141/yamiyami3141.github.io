@@ -98,7 +98,7 @@
     "n8KkgHi": "c2VjcmV0X2tleV9mb3JfY29uZmln",
     "w1Q9e3mY7p": "ZHVtbXk=",
     "r4n8p1q": "a290b3JpbGFi",
-    "jrtuye20": "dGVzdA==",
+    "jrtuye20": "dGVzdA=="
   };
   // --- 広告表示設定 ---
   const _0x4f27 = {
