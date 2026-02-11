@@ -1,32 +1,45 @@
-// すべてのコピー可能な要素を取得
-const copyableElements = document.querySelectorAll(".clipboad-l");
-
-// 長押しと判定する時間（ミリ秒）
-const LONG_PRESS_DURATION = 800; 
-
-copyableElements.forEach(element => {
+document.querySelectorAll(".clipboad-l").forEach(element => {
     let timer;
 
-    // 指が触れたとき
+    // 長押しを検知
     element.addEventListener("touchstart", (e) => {
+        // すでに oncontextmenu="return false" がある場合、
+        // タイマーが途切れないように念のためここで伝播を確認
         timer = setTimeout(() => {
             const text = element.innerText;
+            copyAction(text);
             
-            // クリップボードAPIを使用してコピー
-            navigator.clipboard.writeText(text).then(() => {
-                // 成功時の処理
-                element.style.backgroundColor = "#e0e0e0"; // 視覚的なフィードバック
-                setTimeout(() => element.style.backgroundColor = "", 200);
-                
-                alert("コピーしました: " + text);
-            }).catch(err => {
-                console.error("コピーに失敗しました", err);
-            });
-        }, LONG_PRESS_DURATION);
+            // フィードバック
+            element.style.backgroundColor = "rgba(0,0,0,0.1)";
+            setTimeout(() => element.style.backgroundColor = "", 200);
+            
+            alert("コピーしました: " + text);
+        }, 800); 
     }, { passive: true });
 
-    // 指が離れた、または動いたときはキャンセル
-    element.addEventListener("touchend", () => clearTimeout(timer));
-    element.addEventListener("touchmove", () => clearTimeout(timer));
-    element.addEventListener("touchcancel", () => clearTimeout(timer));
+    // キャンセル処理
+    const clear = () => clearTimeout(timer);
+    element.addEventListener("touchend", clear);
+    element.addEventListener("touchmove", clear);
+    element.addEventListener("touchcancel", clear);
+
+    // HTMLの oncontextmenu="return false" と競合しないよう念押し
+    element.addEventListener("contextmenu", (e) => {
+        e.preventDefault(); 
+    });
 });
+
+function copyAction(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    // スマホで画面がガクッと動かないための対策
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    textArea.style.top = "0";
+    document.body.appendChild(textArea);
+    textArea.select();
+    // iOS Safari対策として選択範囲を明示的に指定
+    textArea.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
+}
