@@ -1,45 +1,40 @@
-document.querySelectorAll(".clipboad-l").forEach(element => {
-    let timer;
+document.addEventListener('selectionchange', () => {
+    const selection = window.getSelection();
+    const selectedText = selection.toString();
 
-    // 長押しを検知
-    element.addEventListener("touchstart", (e) => {
-        // すでに oncontextmenu="return false" がある場合、
-        // タイマーが途切れないように念のためここで伝播を確認
-        timer = setTimeout(() => {
-            const text = element.innerText;
-            copyAction(text);
+    // 選択されたテキストが空でなく、かつ選択範囲がターゲットクラス内か判定
+    if (selectedText.length > 0) {
+        const anchorNode = selection.anchorNode.parentElement;
+        
+        if (anchorNode && anchorNode.classList.contains('clipboad-l')) {
+            // コピー実行
+            copyToClipboard(selectedText);
             
-            // フィードバック
-            element.style.backgroundColor = "rgba(0,0,0,0.1)";
-            setTimeout(() => element.style.backgroundColor = "", 200);
-            
-            alert("コピーしました: " + text);
-        }, 800); 
-    }, { passive: true });
+            // 視覚的フィードバック（一瞬だけ背景を変える等）
+            anchorNode.style.backgroundColor = "#d1e7dd";
+            setTimeout(() => {
+                anchorNode.style.backgroundColor = "";
+                // コピー後に選択を解除したい場合は以下の行を有効化
+                // selection.removeAllRanges(); 
+            }, 500);
 
-    // キャンセル処理
-    const clear = () => clearTimeout(timer);
-    element.addEventListener("touchend", clear);
-    element.addEventListener("touchmove", clear);
-    element.addEventListener("touchcancel", clear);
-
-    // HTMLの oncontextmenu="return false" と競合しないよう念押し
-    element.addEventListener("contextmenu", (e) => {
-        e.preventDefault(); 
-    });
+            console.log("Auto-copied: " + selectedText);
+        }
+    }
 });
 
-function copyAction(text) {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    // スマホで画面がガクッと動かないための対策
-    textArea.style.position = "fixed";
-    textArea.style.left = "-9999px";
-    textArea.style.top = "0";
-    document.body.appendChild(textArea);
-    textArea.select();
-    // iOS Safari対策として選択範囲を明示的に指定
-    textArea.setSelectionRange(0, 99999);
-    document.execCommand("copy");
-    document.body.removeChild(textArea);
+// コピー用関数
+function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text);
+    } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+    }
 }
