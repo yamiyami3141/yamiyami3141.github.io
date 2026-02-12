@@ -14,8 +14,7 @@ document.addEventListener('selectionchange', () => {
             anchorNode.style.backgroundColor = "#d1e7dd";
             setTimeout(() => {
                 anchorNode.style.backgroundColor = "";
-                // コピー後に選択を解除したい場合は以下の行を有効化
-                // selection.removeAllRanges(); 
+                selection.removeAllRanges(); 
             }, 500);
 
             console.log("Auto-copied: " + selectedText);

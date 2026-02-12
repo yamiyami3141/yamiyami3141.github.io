@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>予約管理システム - 小鳥Lab</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="p-6 bg-gray-50 border-b flex justify-between items-center">
+      <div class="flex items-center gap-2">
+        <h2 class="text-xl font-bold text-gray-700">予約一覧管理</h2>
+        <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">※翌日以降分は自動非表示</span>
+      </div>
+      <button onclick="loadData()" class="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors flex items-center gap-2">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i> データを更新
+      </button>
+    </div>
+    
+    <div id="loading" class="p-10 text-center text-gray-400">読み込み中...</div>
+    
+    <div class="overflow-x-auto">
+      <table id="dataTable" class="w-full text-left hidden border-collapse">
+        <thead class="bg-gray-50 text-xs text-gray-500 uppercase sticky top-0 shadow-sm">
+          <tr>
+            <th class="p-4 whitespace-nowrap">ID</th>
+            <th class="p-4 whitespace-nowrap">予約日</th>
+            <th class="p-4 whitespace-nowrap">時間</th>
+            <th class="p-4 whitespace-nowrap">名前</th>
+            <th class="p-4 whitespace-nowrap">電話番号</th>
+            <th class="p-4 whitespace-nowrap">コース</th>
+            <th class="p-4 min-w-[200px]">本文</th>
+            <th class="p-4 whitespace-nowrap">登録日時</th>
+            <th class="p-4 whitespace-nowrap">操作</th>
+          </tr>
+        </thead>
+        <tbody id="list" class="divide-y text-sm text-gray-600 bg-white"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbysl-NeiCjnwAfLAryU4ptHpX-o5eYyQCORCwSo41Deost8YRoQHZ02_-EQBYtH9c9LRw/exec";
+
+    window.onload = () => {
+        loadData();
+    };
+
+    async function loadData() {
+      const loadingEl = document.getElementById('loading');
+      const tableEl = document.getElementById('dataTable');
+      const tbody = document.getElementById('list');
+
+      loadingEl.classList.remove('hidden');
+      tableEl.classList.add('hidden');
+      
+      try {
+        const response = await fetch(`${GAS_URL}?action=getAll&_t=${Date.now()}`);
+        if (!response.ok) throw new Error("Server error");
+        let data = await response.json();
+        
+        tbody.innerHTML = "";
+        
+        // --- 1 & 3. フィルタリングとソート処理 ---
+        const now = new Date();
+        // 今日の日付の「始まり（00:00:00）」を取得
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        const filteredData = data.filter(r => {
+            // r[1] は "yyyy/MM/dd" 形式を想定
+            const reserveDate = new Date(r[1]);
+            // 予約日の当日中（翌日0時未満）は表示
+            return reserveDate >= todayStart;
+        }).sort((a, b) => {
+            // 日付で比較
+            const dateA = new Date(a[1] + ' ' + a[2]);
+            const dateB = new Date(b[1] + ' ' + b[2]);
+            return dateA - dateB; // 近い順（昇順）
+        });
+
+        if (filteredData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" class="p-8 text-center text-gray-400">表示できる予約データはありません</td></tr>`;
+        }
+
+        filteredData.forEach(r => {
+          // r配列: [0:ID, 1:Date, 2:Time, 3:Name, 4:Tel, 5:Course, 6:Msg, 7:RegDate, 8:RowNum]
+          const tr = document.createElement('tr');
+          
+          // --- 2. 予約日3日前からの強調処理 ---
+          const reserveDate = new Date(r[1]);
+          const diffTime = reserveDate - todayStart;
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          
+          let alertUi = "";
+          if (diffDays <= 3) {
+              tr.className = "bg-orange-50 hover:bg-orange-100 transition-colors font-medium";
+              alertUi = `<span class="inline-flex items-center text-orange-600 mr-1"><i data-lucide="alert-circle" class="w-3 h-3"></i></span>`;
+          } else {
+              tr.className = "hover:bg-gray-50 transition-colors";
+          }
+
+          const escape = (str) => {
+              if (str === null || str === undefined) return '';
+              return String(str).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+          };
+
+          tr.innerHTML = `
+            <td class="p-4 font-mono font-bold text-blue-600 whitespace-nowrap">${escape(r[0])}</td>
+            <td class="p-4 whitespace-nowrap">${alertUi}${escape(r[1])}</td>
+            <td class="p-4 whitespace-nowrap"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold">${escape(r[2])}</span></td>
+            <td class="p-4 font-bold whitespace-nowrap">${escape(r[3])}</td>
+            <td class="p-4 text-blue-500 underline whitespace-nowrap"><a href="tel:${escape(r[4])}">${escape(r[4])}</a></td>
+            <td class="p-4 whitespace-nowrap"><span class="bg-gray-100 px-2 py-1 rounded text-xs">${escape(r[5])}</span></td>
+            <td class="p-4 text-xs text-gray-500 max-w-[200px] break-words">${escape(r[6] || '-')}</td>
+            <td class="p-4 text-gray-400 text-xs whitespace-nowrap">${escape(r[7])}</td>
+            <td class="p-4 whitespace-nowrap">
+                <button onclick="del(${r[8]})" class="text-white bg-red-400 hover:bg-red-500 px-3 py-1 rounded text-xs transition-colors shadow-sm flex items-center gap-1">
+                    <i data-lucide="trash-2" class="w-3 h-3"></i> 削除
+                </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        tableEl.classList.remove('hidden');
+        lucide.createIcons(); // アイコンを描画
+      } catch (e) {
+        console.error(e);
+        alert("データ取得に失敗しました。URLや権限を確認してください。");
+      } finally {
+        loadingEl.classList.add('hidden');
+      }
+    }
+
+    async function del(rowNum) {
+      if(!confirm("本当にこの予約を削除しますか？\n（スプレッドシートの行が削除されます）")) return;
+      
+      try {
+        const response = await fetch(GAS_URL, {
+            method: 'POST',
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: 'delete', rowNum: rowNum })
+        });
+        const res = await response.json();
+        if(res.success) {
+            alert("削除しました");
+            await loadData();
+        } else {
+            alert("削除に失敗しました: " + (res.msg || "不明なエラー"));
+        }
+      } catch(e) {
+          alert("通信エラーが発生しました");
+      }
+    }
+  </script>
+</body>
+</html>
