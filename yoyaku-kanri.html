@@ -3,6 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>予約管理システム - 小鳥Lab</title>
+  <meta name="robots" content="index, follow">
+  <meta name="keywords" content="html,css,javascript,小鳥Lab">
+  <link rel="icon" href="./img/和logo.ico">
+  <meta name="description" content="webサイト体験をもっと楽しく簡単に!!">
+  <meta property="og:image" content="./img/和logo.avif">
+  <meta property="og:title" content="小鳥Lab">
+  <meta property="og:site_name" content="小鳥Lab">
+  <meta property="og:description" content="webサイト体験をもっと楽しく簡単に!!">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -11,7 +19,7 @@
     <div class="p-6 bg-gray-50 border-b flex justify-between items-center">
       <div class="flex items-center gap-2">
         <h2 class="text-xl font-bold text-gray-700">予約一覧管理</h2>
-        <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">※翌日以降分は自動非表示</span>
+        <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">※過去日予約分は自動非表示</span>
       </div>
       <button onclick="loadData()" class="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors flex items-center gap-2">
         <i data-lucide="refresh-cw" class="w-4 h-4"></i> データを更新
