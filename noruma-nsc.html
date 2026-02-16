@@ -71,15 +71,12 @@
 
         
         .result-table tr:nth-child(1) {
-            background: linear-gradient(
-                105deg, 
-                #dadada 0%, 
-                #dadada 40%, 
-                #ffbebe 70%,
-                #ffbebe 100%
-            );
+            background:#dbdbdb;
         }
         .result-table tr:nth-child(2) {
+            background:#ffbebe;
+        }
+        .result-table tr:nth-child(3) {
             background:#badbff;
         }
 
@@ -133,11 +130,15 @@
                 </div>
             </div>
 
-            <span class="section-title">2. 残目標ポイント数</span>
+            <span class="section-title">2. 残目標台数</span>
             <div class="settings-grid">
                 <div class="setting-item">
+                    <label class="fs-b7 fs-b10">SB MNP</label>
+                    <input type="number" id="p-s" class="custom-input" placeholder="0" min="0" style="background:#dbdbdb;">
+                </div>
+                <div class="setting-item">
                     <label class="fs-b7 fs-b10">SB+YM 総販</label>
-                    <input type="number" id="p-s" class="custom-input" placeholder="0" min="0" style="background: linear-gradient(105deg, #dadada 0%, #dadada 40%, #ffbebe 70%, #ffbebe 100%);">
+                    <input type="number" id="p-y" class="custom-input" placeholder="0" min="0" style="background:#ffbebe;">
                 </div>
                 <div class="setting-item">
                     <label class="fs-b7 fs-b10">UQ</label>
@@ -231,7 +232,8 @@
             const effectiveTotalWeight = ((numWd * wWd) + (numWe * wWe)) * attendanceRate;
 
             const carriers = [
-                { id: 'p-s', name: 'SB+YM 総販' },
+                { id: 'p-s', name: 'SB MNP' },
+                { id: 'p-y', name: 'SB+YM 総販' },
                 { id: 'p-u', name: 'UQ' }
             ];
 
@@ -254,9 +256,9 @@
 
                 html += `<tr>
                     <td>${c.name}</td>
-                    <td style="color: #007bff; font-size: 1.2rem; font-weight: bold;">${nextDayTarget}ポイント</td>
-                    <td class="highlight">${targetWd}ポイント</td>
-                    <td class="highlight">${targetWe}ポイント</td>
+                    <td style="color: #007bff; font-size: 1.2rem; font-weight: bold;">${nextDayTarget}</td>
+                    <td class="highlight">${targetWd}</td>
+                    <td class="highlight">${targetWe}</td>
                 </tr>`;
             });
 
