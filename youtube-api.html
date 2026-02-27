@@ -14,7 +14,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap');
         [x-cloak] { display: none !important; }
         
-        /* Firefox用スクロールバー設定（追加） */
+        /* Firefox用スクロールバー設定 */
         html {
             scrollbar-width: thin;
             scrollbar-color: rgba(244, 63, 94, 0.4) transparent;
@@ -31,9 +31,9 @@
         .animate-in { animation: fade-in 1.2s ease-out forwards; }
         @keyframes fade-in { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* 隠しプレイヤー (Firefoxのバックグラウンド対策で少し調整) */
+        /* 隠しプレイヤー (Firefoxモバイル対策強化: fixedで画面内に配置し透明化) */
         #hidden-player-container {
-            position: absolute; top: -999px; left: -999px; width: 200px; height: 200px; opacity: 0.01; z-index: -1; pointer-events: none;
+            position: fixed; bottom: 0; left: 0; width: 300px; height: 200px; opacity: 0.01; z-index: -10; pointer-events: none;
         }
         
         /* Webkit用スクロールバー装飾 */
@@ -96,11 +96,15 @@
                     </div>
                     
                     <div class="flex justify-between items-center text-stone-500 px-2 pb-1">
-                        <button @click="toggleLoop()" :class="isLooping ? 'text-rose-500 bg-rose-50' : 'hover:bg-stone-100'" class="p-2 rounded-full transition"><i data-lucide="repeat" class="w-4 h-4"></i></button>
+                        <button @click="toggleLoop()" :class="repeatMode > 0 ? 'text-rose-500 bg-rose-50' : 'hover:bg-stone-100 text-stone-400'" class="w-8 h-8 rounded-full transition flex items-center justify-center relative">
+                            <i :data-lucide="repeatMode === 1 ? 'repeat-1' : 'repeat'" class="w-4 h-4"></i>
+                            <span x-show="repeatMode === 2" class="absolute -top-1 -right-1 text-[8px] font-bold bg-rose-500 text-white w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-sm">A</span>
+                        </button>
+                        
                         <button @click="togglePlay()" class="w-10 h-10 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-md hover:scale-105 transition">
                             <i :data-lucide="isPlaying ? 'pause' : 'play'" class="w-5 h-5 ml-0.5"></i>
                         </button>
-                        <button @click="skipNext()" class="p-2 rounded-full hover:bg-stone-100 transition"><i data-lucide="skip-forward" class="w-4 h-4"></i></button>
+                        <button @click="skipNext()" class="w-8 h-8 rounded-full hover:bg-stone-100 transition flex items-center justify-center text-stone-400 hover:text-stone-600"><i data-lucide="skip-forward" class="w-4 h-4"></i></button>
                     </div>
                 </div>
             </div>
@@ -138,9 +142,6 @@
                         <div class="flex items-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-stone-100">
                             <button @click="playNow(searchResult)" class="w-10 h-10 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center hover:bg-rose-100 transition shadow-sm">
                                 <i :data-lucide="(nowPlaying?.id === searchResult?.id && isPlaying) ? 'pause' : 'play'" class="w-4 h-4 ml-0.5"></i>
-                            </button>
-                            <button @click="toggleLoop()" :class="isLooping ? 'bg-rose-500 text-white' : 'bg-stone-50 text-stone-400'" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-rose-100 transition shadow-sm">
-                                <i data-lucide="repeat" class="w-4 h-4"></i>
                             </button>
                             
                             <div class="relative">
@@ -240,8 +241,9 @@
                                                 <button @click="playNow(video, pl.id)" class="w-9 h-9 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-50 transition">
                                                     <i :data-lucide="(nowPlaying?.id === video.id && isPlaying) ? 'pause' : 'play'" class="w-4 h-4 ml-0.5"></i>
                                                 </button>
-                                                <button @click="toggleLoop()" :class="isLooping ? 'text-rose-500' : 'text-stone-300'" class="w-9 h-9 rounded-full flex items-center justify-center hover:bg-stone-100 transition">
-                                                    <i data-lucide="repeat" class="w-4 h-4"></i>
+                                                <button @click="toggleLoop()" :class="repeatMode > 0 ? 'text-rose-500 bg-rose-50' : 'text-stone-300 hover:bg-stone-100'" class="w-9 h-9 rounded-full flex items-center justify-center transition relative">
+                                                    <i :data-lucide="repeatMode === 1 ? 'repeat-1' : 'repeat'" class="w-4 h-4"></i>
+                                                    <span x-show="repeatMode === 2" class="absolute -top-1 -right-0.5 text-[7px] font-bold bg-rose-500 text-white w-3 h-3 rounded-full flex items-center justify-center">A</span>
                                                 </button>
                                                 <button @click="skipNext()" class="w-9 h-9 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-600 hover:bg-stone-100 transition">
                                                     <i data-lucide="skip-forward" class="w-4 h-4"></i>
@@ -269,7 +271,7 @@
 
         <div x-show="nowPlaying" class="md:hidden absolute bottom-0 left-0 w-full bg-white/90 backdrop-blur-md border-t border-stone-200 p-3 pt-4 flex items-center justify-between z-20 shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
             
-            <div class="absolute top-0 left-0 w-full h-1.5 bg-rose-400/20">
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-rose-400/20 group">
                 <div class="absolute top-0 left-0 h-full bg-rose-500 pointer-events-none transition-all duration-300" :style="`width: ${progress}%`"></div>
                 <input type="range" min="0" max="100" step="0.1" :value="progress" 
                        @input="seekTo($event.target.value)" 
@@ -286,10 +288,14 @@
                 </div>
             </div>
             <div class="flex items-center gap-1 shrink-0">
+                <button @click="toggleLoop()" :class="repeatMode > 0 ? 'text-rose-500 bg-rose-50' : 'text-stone-400'" class="w-8 h-8 rounded-full flex items-center justify-center transition relative">
+                    <i :data-lucide="repeatMode === 1 ? 'repeat-1' : 'repeat'" class="w-4 h-4"></i>
+                    <span x-show="repeatMode === 2" class="absolute -top-1 -right-0.5 text-[7px] font-bold bg-rose-500 text-white w-3 h-3 rounded-full flex items-center justify-center">A</span>
+                </button>
                 <button @click="togglePlay()" class="w-10 h-10 bg-rose-500 text-white rounded-full flex items-center justify-center shadow">
                     <i :data-lucide="isPlaying ? 'pause' : 'play'" class="w-4 h-4 ml-0.5"></i>
                 </button>
-                <button @click="skipNext()" class="w-10 h-10 flex items-center justify-center text-stone-500"><i data-lucide="skip-forward" class="w-4 h-4"></i></button>
+                <button @click="skipNext()" class="w-8 h-8 flex items-center justify-center text-stone-500"><i data-lucide="skip-forward" class="w-4 h-4"></i></button>
             </div>
         </div>
     </div>
@@ -335,19 +341,18 @@
         }
     }
 
-    // YouTube API グローバル管理
+    // YouTube API
     let ytPlayer = null;
     let progressTimer = null;
 
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('youtube-player', {
-            height: '100', width: '100', videoId: '', // Firefoxスロットル回避のため1x1からサイズUP
+            height: '200', width: '300', videoId: '', // Firefoxモバイル対策: 大きめサイズを確保
             playerVars: { 'autoplay': 1, 'controls': 0, 'disablekb': 1, 'playsinline': 1 },
             events: {
                 'onReady': (e) => {
                     e.target.setPlaybackQuality('small');
-                    // Firefox向け：明示的にautoplayを許可
-                    e.target.getIframe().setAttribute('allow', 'autoplay');
+                    e.target.getIframe().setAttribute('allow', 'autoplay; encrypted-media');
                     window.dispatchEvent(new CustomEvent('yt-ready'));
                 },
                 'onStateChange': (e) => {
@@ -365,9 +370,12 @@
             
             playlists: [], newPlaylistName: '', activePlaylistId: null, editingPlaylistId: null, editingName: '',
             
-            nowPlaying: null, isPlaying: false, isLooping: false, currentPlaylistId: null, 
+            nowPlaying: null, isPlaying: false, currentPlaylistId: null, 
             progress: 0, currentTimeStr: '0:00',
-            isDragging: false, // シークバー操作中のフラグ
+            isDragging: false,
+            
+            // リピートモード: 0 = Off, 1 = One(1曲), 2 = All(プレイリスト)
+            repeatMode: 0,
 
             init() {
                 setTimeout(() => lucide.createIcons(), 100);
@@ -387,6 +395,7 @@
                         this.isPlaying = true;
                         this.updateVideoDuration(); 
                         this.startProgressTracker();
+                        this.setupMediaSession(this.nowPlaying); // 再生状態をOSに通知
                         lucide.createIcons();
                     } else if (state === YT.PlayerState.PAUSED) {
                         this.isPlaying = false;
@@ -395,9 +404,13 @@
                     } else if (state === YT.PlayerState.ENDED) {
                         this.isPlaying = false;
                         clearInterval(progressTimer);
-                        if (this.isLooping) {
+                        
+                        // リピートモードに応じた終了時の処理
+                        if (this.repeatMode === 1) {
+                            // 1曲リピート
                             ytPlayer.seekTo(0); ytPlayer.playVideo();
                         } else {
+                            // 通常 or プレイリストリピート処理 (skipNextに委譲)
                             this.skipNext();
                         }
                         lucide.createIcons();
@@ -407,58 +420,37 @@
 
             saveData() { localStorage.setItem('kotori_playlists_v2', JSON.stringify(this.playlists)); },
 
-            // ====== [1] インポート・エクスポート (JSON-Base64) ======
+            // インポート・エクスポート
             exportPlaylists() {
                 try {
                     const jsonStr = JSON.stringify(this.playlists);
-                    // Unicode対応のBase64エンコード
                     const base64Str = btoa(unescape(encodeURIComponent(jsonStr)));
-                    
-                    // TXTファイルとしてダウンロード
                     const blob = new Blob([base64Str], { type: 'text/plain' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'kotorilab_playlists.txt';
-                    a.click();
+                    a.href = url; a.download = 'kotorilab_playlists.txt'; a.click();
                     URL.revokeObjectURL(url);
-                } catch(e) {
-                    alert('エクスポートに失敗しました。');
-                }
+                } catch(e) { alert('エクスポートに失敗しました。'); }
             },
-
-            triggerImport() {
-                document.getElementById('import-file').click();
-            },
-
+            triggerImport() { document.getElementById('import-file').click(); },
             handleFileImport(e) {
                 const file = e.target.files[0];
                 if (!file) return;
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     try {
-                        const base64Str = event.target.result;
-                        const jsonStr = decodeURIComponent(escape(atob(base64Str)));
+                        const jsonStr = decodeURIComponent(escape(atob(event.target.result)));
                         const parsed = JSON.parse(jsonStr);
-                        
                         if (Array.isArray(parsed)) {
-                            if(confirm('現在のプレイリストを全て上書きしますか？\n（「キャンセル」を押すと既存のリストに追加されます）')) {
+                            if(confirm('現在のプレイリストを全て上書きしますか？\n（「キャンセル」で既存のリストに追加）')) {
                                 this.playlists = parsed;
                             } else {
-                                // IDの被りを防いで追加
-                                parsed.forEach(p => {
-                                    p.id = Date.now().toString() + Math.random().toString(36).substr(2, 5);
-                                    this.playlists.push(p);
-                                });
+                                parsed.forEach(p => { p.id = Date.now().toString() + Math.random().toString(36).substr(2, 5); this.playlists.push(p); });
                             }
-                            this.saveData();
-                            alert('プレイリストの読み込みが完了しました！');
+                            this.saveData(); alert('読み込みが完了しました！');
                         }
-                    } catch(error) {
-                        alert('ファイルの読み込みに失敗しました。正しい形式のファイルか確認してください。');
-                        console.error(error);
-                    }
-                    e.target.value = ''; // 連続で同じファイルを読めるようにリセット
+                    } catch(error) { alert('ファイルの読み込みに失敗しました。'); }
+                    e.target.value = '';
                 };
                 reader.readAsText(file);
             },
@@ -467,7 +459,6 @@
                 if (!this.searchQuery) return;
                 const match = this.searchQuery.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
                 if (!match) return alert('有効なYouTubeのURLを入力してください。');
-                
                 const vid = match[1];
                 try {
                     const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${vid}&format=json`);
@@ -479,13 +470,14 @@
                 setTimeout(() => lucide.createIcons(), 50);
             },
 
+            // プレイリスト操作
             createPlaylist() {
                 if (!this.newPlaylistName.trim()) return;
                 this.playlists.push({ id: Date.now().toString(), name: this.newPlaylistName, videos: [] });
                 this.newPlaylistName = ''; this.saveData();
             },
             deletePlaylist(id) {
-                if(confirm('プレイリストを削除しますか？')) {
+                if(confirm('削除しますか？')) {
                     this.playlists = this.playlists.filter(p => p.id !== id);
                     if(this.activePlaylistId === id) this.activePlaylistId = null;
                     this.saveData();
@@ -499,7 +491,7 @@
             },
             addToPlaylist(playlistId, video) {
                 const pl = this.playlists.find(p => p.id === playlistId);
-                if (pl) { pl.videos.push({ ...video }); this.saveData(); alert(`「${pl.name}」に追加しました`); }
+                if (pl) { pl.videos.push({ ...video }); this.saveData(); alert(`追加しました`); }
             },
             removeVideo(playlistId, index) {
                 const pl = this.playlists.find(p => p.id === playlistId);
@@ -516,6 +508,7 @@
                 }
             },
 
+            // 再生ロジック
             playNow(video, playlistId = null) {
                 if (!ytPlayer) return;
                 if (this.nowPlaying?.id === video.id) { this.togglePlay(); return; }
@@ -538,18 +531,32 @@
                     ytPlayer.playVideo(); this.manageSilentAudio(true);
                 }
             },
-            toggleLoop() { this.isLooping = !this.isLooping; },
+
+            // ★ リピートモードの切り替え (0: Off -> 1: One -> 2: All)
+            toggleLoop() {
+                this.repeatMode = (this.repeatMode + 1) % 3;
+                setTimeout(() => lucide.createIcons(), 50);
+            },
+
             playPlaylist(playlistId) {
                 const pl = this.playlists.find(p => p.id === playlistId);
                 if (pl && pl.videos.length > 0) this.playNow(pl.videos[0], playlistId);
             },
+
+            // ★ 次の曲へスキップ & プレイリストリピートの判定
             skipNext() {
                 if (!this.currentPlaylistId || !this.nowPlaying) return;
                 const pl = this.playlists.find(p => p.id === this.currentPlaylistId);
                 if (pl) {
                     const idx = pl.videos.findIndex(v => v.id === this.nowPlaying.id);
-                    if (idx !== -1 && idx < pl.videos.length - 1) {
-                        this.playNow(pl.videos[idx + 1], this.currentPlaylistId);
+                    if (idx !== -1) {
+                        if (idx < pl.videos.length - 1) {
+                            // 次の曲を再生
+                            this.playNow(pl.videos[idx + 1], this.currentPlaylistId);
+                        } else if (this.repeatMode === 2) {
+                            // ★ リピート[All]モードで最後の曲なら、最初の曲に戻る
+                            this.playNow(pl.videos[0], this.currentPlaylistId);
+                        }
                     }
                 }
             },
@@ -572,11 +579,9 @@
                 }
             },
 
-            // ====== [2] 再生位置の変更 (シーク機能) ======
             startProgressTracker() {
                 clearInterval(progressTimer);
                 progressTimer = setInterval(() => {
-                    // ドラッグ操作中はバーの自動更新を止める
                     if(ytPlayer && this.isPlaying && !this.isDragging) {
                         const curr = ytPlayer.getCurrentTime() || 0;
                         const dur = ytPlayer.getDuration() || 1;
@@ -602,7 +607,7 @@
                 return `${m}:${s.toString().padStart(2, '0')}`;
             },
 
-            // ====== [3] Firefox対応: バックグラウンドでの再生維持 ======
+            // Firefoxモバイル等のバックグラウンド再生維持ハック
             manageSilentAudio(play) {
                 const audio = document.getElementById('silent-audio');
                 if (!audio) return;
@@ -618,11 +623,12 @@
             },
 
             setupMediaSession(video) {
-                if ('mediaSession' in navigator) {
+                if ('mediaSession' in navigator && video) {
                     navigator.mediaSession.metadata = new MediaMetadata({
                         title: video.title, artist: '小鳥Lab BGM Player',
                         artwork: [{ src: video.thumb, sizes: '320x180', type: 'image/jpeg' }]
                     });
+                    navigator.mediaSession.playbackState = this.isPlaying ? "playing" : "paused";
                     navigator.mediaSession.setActionHandler('play', () => this.togglePlay());
                     navigator.mediaSession.setActionHandler('pause', () => this.togglePlay());
                     navigator.mediaSession.setActionHandler('nexttrack', () => this.skipNext());
