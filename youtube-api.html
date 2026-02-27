@@ -196,23 +196,40 @@
                     <template x-for="pl in playlists" :key="pl.id">
                         <div class="bg-white/70 rounded-2xl border border-white shadow-sm overflow-hidden transition-all w-full max-w-full">
                             
-                            <div class="p-3 sm:p-4 flex justify-between items-center bg-white/50 cursor-pointer hover:bg-white/80 transition gap-2" @click="activePlaylistId = activePlaylistId === pl.id ? null : pl.id">
-                                <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0" @click.stop>
+                            <div class="p-3 sm:p-4 flex justify-between items-center bg-white/50 cursor-pointer hover:bg-white/80 transition gap-2" 
+                                @click="if(editingPlaylistId !== pl.id) activePlaylistId = (activePlaylistId === pl.id ? null : pl.id)">
+                                
+                                <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                                     <i data-lucide="folder" class="w-4 h-4 sm:w-5 sm:h-5 text-rose-400 shrink-0"></i>
+                                    
                                     <template x-if="editingPlaylistId === pl.id">
-                                        <input type="text" x-model="editingName" @keydown.enter="savePlaylistName(pl.id)" @blur="savePlaylistName(pl.id)" class="bg-white border border-rose-300 rounded px-2 py-1 text-sm font-bold text-stone-700 w-full outline-none min-w-0" autofocus>
+                                        <input type="text" x-model="editingName" 
+                                            @click.stop 
+                                            @keydown.enter.stop="savePlaylistName(pl.id)" 
+                                            @blur="savePlaylistName(pl.id)" 
+                                            class="bg-white border border-rose-300 rounded px-2 py-1 text-sm font-bold text-stone-700 w-full outline-none" autofocus>
                                     </template>
+                                    
                                     <template x-if="editingPlaylistId !== pl.id">
                                         <div class="flex items-center gap-2 flex-1 min-w-0">
                                             <span class="font-bold text-stone-700 truncate text-sm sm:text-base" x-text="pl.name"></span>
-                                            <button @click="startEditPlaylist(pl)" class="text-stone-300 hover:text-stone-500 shrink-0"><i data-lucide="edit-2" class="w-3 h-3"></i></button>
+                                            <button @click.stop="startEditPlaylist(pl)" class="text-stone-300 hover:text-stone-500 shrink-0 p-1">
+                                                <i data-lucide="edit-2" class="w-3 h-3"></i>
+                                            </button>
                                         </div>
                                     </template>
                                 </div>
+
                                 <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                                     <span class="text-[10px] sm:text-xs text-stone-400 bg-stone-100 px-2 py-1 rounded-full font-mono whitespace-nowrap" x-text="pl.videos.length + '曲'"></span>
-                                    <button @click.stop="playPlaylist(pl.id)" class="text-rose-400 p-1.5 bg-rose-50 hover:bg-rose-100 rounded-full transition shadow-sm"><i data-lucide="play" class="w-4 h-4 ml-0.5"></i></button>
-                                    <button @click.stop="deletePlaylist(pl.id)" class="text-stone-400 p-1.5 hover:bg-red-50 hover:text-red-500 rounded-full transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                    
+                                    <button @click.stop="playPlaylist(pl.id)" class="text-rose-400 p-1.5 bg-rose-50 hover:bg-rose-100 rounded-full transition shadow-sm">
+                                        <i data-lucide="play" class="w-4 h-4 ml-0.5"></i>
+                                    </button>
+                                    
+                                    <button @click.stop="deletePlaylist(pl.id)" class="text-stone-400 p-1.5 hover:bg-red-50 hover:text-red-500 rounded-full transition">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
                                 </div>
                             </div>
                             
