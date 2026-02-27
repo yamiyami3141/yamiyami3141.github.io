@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>小鳥Lab - Background Player Pro</title>
+    <title>小鳥Lab - Background Player</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -14,35 +14,40 @@
         @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap');
         [x-cloak] { display: none !important; }
         
-        html { scrollbar-width: thin; scrollbar-color: rgba(244, 63, 94, 0.4) transparent; }
+        /* Firefox用スクロールバー設定 */
+        html {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(244, 63, 94, 0.4) transparent;
+        }
 
         body { 
             font-family: 'Shippori Mincho', serif; 
             background-color: #f8f7f4;
             background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
-            overflow: hidden; 
-            width: 100vw; height: 100dvh;
-            margin: 0; padding: 0;
-            touch-action: manipulation; /* モバイルでのズーム誤爆防止 */
+            overflow: hidden; /* 画面全体のスクロールを完全に無効化 */
+            width: 100vw;
+            height: 100dvh;
+            margin: 0;
+            padding: 0;
         }
         
         .animation-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         .writing-vertical { writing-mode: vertical-rl; }
         
-        /* * ★ 専門家デバッグによるFirefox完全対策クラス ★
-         * 完全に画面外(-9999px)にするとプロセスが止められるため、
-         * 画面右下に1x1pxで配置し、不透明度0.01で「見えている」と偽装する
-         */
-        .phantom-media-container {
+        /* Firefoxモバイル対策：隠しすぎると止まるため、1pxで画面内に残す */
+        #hidden-player-container {
             position: fixed;
-            bottom: 1px; right: 1px;
-            width: 1px; height: 1px;
-            opacity: 0.01;
-            z-index: 9999;
-            pointer-events: none;
+            bottom: 1px;
+            left: 1px;
+            width: 1px;
+            height: 1px;
             overflow: hidden;
+            z-index: 0;
+            opacity: 0.1;
+            pointer-events: none;
         }
 
+        /* Webkit用スクロールバー装飾 */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(244, 63, 94, 0.2); border-radius: 10px; }
@@ -52,12 +57,9 @@
 
     <canvas class="animation-canvas"></canvas>
 
-    <div class="phantom-media-container">
-        <video id="phantom-mp4-video" loop playsinline muted preload="auto">
-            <source src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pbmYxbXA0MgADOG1vb3YAAABsbXZoZAAAAADR6S8X0ekvFwAAA+gAAAAAAAEAAAEAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAABidHJha2sAAABcdGtoZAAAAADR6S8X0ekvFwAAAAEAAAAAAAABAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAABtZWRpYQAAACBtZGhkAAAAANHpLxfR6S8XAAA+gAAAAABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAAFbWluZgAAABxtdmhkAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAkZGluZgAAABxkcmVmAAAAAAAAAAEAAAAMdXJsIAAAAAEAAABNc3RibAAAADtzdHNkAAAAAAAAAAEAAAArYXZjMQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAIAAgAEAAAAAAAEAAhbm9uZQAAAAAAAAAAAB9mcmVlAAAAGW1kYXQ=" type="video/mp4">
-        </video>
-        <div id="youtube-player"></div>
-    </div>
+    <audio id="silent-audio" loop preload="auto" src="data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIAD+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+AAAAAExhdmM1OC4xMzQAAAAAAAAAAAAAAAAkAAAAAAAAASAAAAAAAAAApX/uEAAAAAABAAAAAAAAAAAAAAAAAAAA//OEZAAAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"></audio>
+    
+    <div id="hidden-player-container"><div id="youtube-player"></div></div>
 
     <div class="relative z-10 w-full max-w-5xl bg-white/80 backdrop-blur-3xl border border-white rounded-3xl shadow-2xl shadow-rose-200/30 flex flex-col md:flex-row h-[96dvh] md:h-[85vh] overflow-hidden box-border" 
         x-data="musicPlayerApp()">
@@ -337,13 +339,13 @@
         }
     }
 
+    // YouTube API 管理
     let ytPlayer = null;
     let progressTimer = null;
 
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('youtube-player', {
-            // Firefoxの完全隠蔽による停止を防ぐため、100x100で初期化（CSSで縮小される）
-            height: '100', width: '100', videoId: '', 
+            height: '100', width: '100', videoId: '', // Firefoxモバイル向けに1px以上のサイズを指定
             playerVars: { 'autoplay': 1, 'controls': 0, 'disablekb': 1, 'playsinline': 1 },
             events: {
                 'onReady': (e) => {
@@ -377,7 +379,7 @@
                 setTimeout(() => lucide.createIcons(), 100);
                 new SakuraAnimation(document.querySelector('.animation-canvas'));
                 
-                const saved = localStorage.getItem('kotori_playlists_v5');
+                const saved = localStorage.getItem('kotori_playlists_v4');
                 if (saved) {
                     this.playlists = JSON.parse(saved);
                 } else {
@@ -392,17 +394,14 @@
                         this.updateVideoDuration(); 
                         this.startProgressTracker();
                         this.setupMediaSession(this.nowPlaying);
-                        this.syncPhantomVideo(true); // ★ Firefoxバックグラウンド維持オン
                         lucide.createIcons();
                     } else if (state === YT.PlayerState.PAUSED) {
                         this.isPlaying = false;
                         clearInterval(progressTimer);
-                        this.syncPhantomVideo(false); // ★ Firefoxバックグラウンド維持オフ
                         lucide.createIcons();
                     } else if (state === YT.PlayerState.ENDED) {
                         this.isPlaying = false;
                         clearInterval(progressTimer);
-                        this.syncPhantomVideo(false);
                         
                         if (this.repeatMode === 1) {
                             ytPlayer.seekTo(0); ytPlayer.playVideo();
@@ -414,22 +413,7 @@
                 });
             },
 
-            saveData() { localStorage.setItem('kotori_playlists_v5', JSON.stringify(this.playlists)); },
-
-            // ★ 解決策の実装：偽装MP4ビデオとYouTubeの同期
-            syncPhantomVideo(play) {
-                const dummyVideo = document.getElementById('phantom-mp4-video');
-                if (!dummyVideo) return;
-                if (play) {
-                    dummyVideo.volume = 0.01;
-                    const playPromise = dummyVideo.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(error => console.warn("Phantom video blocked:", error));
-                    }
-                } else {
-                    dummyVideo.pause();
-                }
-            },
+            saveData() { localStorage.setItem('kotori_playlists_v4', JSON.stringify(this.playlists)); },
 
             // ====== インポート・エクスポート (JSON-Base64) ======
             exportPlaylists() {
@@ -531,23 +515,15 @@
                 
                 ytPlayer.loadVideoById(video.id);
                 this.isPlaying = true; 
-                
-                // 初回アクションで偽装ビデオも強制起動 (自動再生ポリシー突破)
-                this.syncPhantomVideo(true); 
-                
+                this.manageSilentAudio(true); 
                 this.setupMediaSession(video);
                 setTimeout(() => lucide.createIcons(), 50);
             },
             
             togglePlay() {
                 if (!ytPlayer || !this.nowPlaying) return;
-                if (this.isPlaying) { 
-                    ytPlayer.pauseVideo(); 
-                    this.syncPhantomVideo(false); 
-                } else { 
-                    ytPlayer.playVideo(); 
-                    this.syncPhantomVideo(true); 
-                }
+                if (this.isPlaying) { ytPlayer.pauseVideo(); this.manageSilentAudio(false); }
+                else { ytPlayer.playVideo(); this.manageSilentAudio(true); }
             },
 
             toggleLoop() {
@@ -569,7 +545,7 @@
                         if (idx < pl.videos.length - 1) {
                             this.playNow(pl.videos[idx + 1], this.currentPlaylistId);
                         } else if (this.repeatMode === 2) {
-                            // プレイリスト全体のリピート
+                            // プレイリストリピート
                             this.playNow(pl.videos[0], this.currentPlaylistId);
                         }
                     }
@@ -598,7 +574,6 @@
             startProgressTracker() {
                 clearInterval(progressTimer);
                 progressTimer = setInterval(() => {
-                    // ドラッグ中は数値を更新しない（シーク操作の妨げになるため）
                     if(ytPlayer && this.isPlaying && !this.isDragging) {
                         const curr = ytPlayer.getCurrentTime() || 0;
                         const dur = ytPlayer.getDuration() || 1;
@@ -624,7 +599,21 @@
                 return `${m}:${s.toString().padStart(2, '0')}`;
             },
 
-            // ====== Media Session API ======
+            // ====== Firefox等 バックグラウンド再生維持 ======
+            manageSilentAudio(play) {
+                const audio = document.getElementById('silent-audio');
+                if (!audio) return;
+                if (play) {
+                    audio.volume = 0.01;
+                    const playPromise = audio.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => console.log("Silent audio blocked:", error));
+                    }
+                } else {
+                    audio.pause();
+                }
+            },
+
             setupMediaSession(video) {
                 if ('mediaSession' in navigator && video) {
                     navigator.mediaSession.metadata = new MediaMetadata({
