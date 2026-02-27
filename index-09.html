@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>小鳥Lab - Background Player</title>
+    <title>小鳥Lab - Background Player Pro</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -14,40 +14,35 @@
         @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap');
         [x-cloak] { display: none !important; }
         
-        /* Firefox用スクロールバー設定 */
-        html {
-            scrollbar-width: thin;
-            scrollbar-color: rgba(244, 63, 94, 0.4) transparent;
-        }
+        html { scrollbar-width: thin; scrollbar-color: rgba(244, 63, 94, 0.4) transparent; }
 
         body { 
             font-family: 'Shippori Mincho', serif; 
             background-color: #f8f7f4;
             background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
-            overflow: hidden; /* 画面全体のスクロールを完全に無効化 */
-            width: 100vw;
-            height: 100dvh;
-            margin: 0;
-            padding: 0;
+            overflow: hidden; 
+            width: 100vw; height: 100dvh;
+            margin: 0; padding: 0;
+            touch-action: manipulation; /* モバイルでのズーム誤爆防止 */
         }
         
         .animation-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         .writing-vertical { writing-mode: vertical-rl; }
         
-        /* Firefoxモバイル対策：隠しすぎると止まるため、1pxで画面内に残す */
-        #hidden-player-container {
+        /* * ★ 専門家デバッグによるFirefox完全対策クラス ★
+         * 完全に画面外(-9999px)にするとプロセスが止められるため、
+         * 画面右下に1x1pxで配置し、不透明度0.01で「見えている」と偽装する
+         */
+        .phantom-media-container {
             position: fixed;
-            bottom: 1px;
-            left: 1px;
-            width: 1px;
-            height: 1px;
-            overflow: hidden;
-            z-index: 0;
-            opacity: 0.1;
+            bottom: 1px; right: 1px;
+            width: 1px; height: 1px;
+            opacity: 0.01;
+            z-index: 9999;
             pointer-events: none;
+            overflow: hidden;
         }
 
-        /* Webkit用スクロールバー装飾 */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(244, 63, 94, 0.2); border-radius: 10px; }
@@ -57,9 +52,12 @@
 
     <canvas class="animation-canvas"></canvas>
 
-    <audio id="silent-audio" loop preload="auto" src="data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIAD+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+AAAAAExhdmM1OC4xMzQAAAAAAAAAAAAAAAAkAAAAAAAAASAAAAAAAAAApX/uEAAAAAABAAAAAAAAAAAAAAAAAAAA//OEZAAAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"></audio>
-    
-    <div id="hidden-player-container"><div id="youtube-player"></div></div>
+    <div class="phantom-media-container">
+        <video id="phantom-mp4-video" loop playsinline muted preload="auto">
+            <source src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pbmYxbXA0MgADOG1vb3YAAABsbXZoZAAAAADR6S8X0ekvFwAAA+gAAAAAAAEAAAEAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAABidHJha2sAAABcdGtoZAAAAADR6S8X0ekvFwAAAAEAAAAAAAABAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAABtZWRpYQAAACBtZGhkAAAAANHpLxfR6S8XAAA+gAAAAABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAAFbWluZgAAABxtdmhkAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAkZGluZgAAABxkcmVmAAAAAAAAAAEAAAAMdXJsIAAAAAEAAABNc3RibAAAADtzdHNkAAAAAAAAAAEAAAArYXZjMQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAIAAgAEAAAAAAAEAAhbm9uZQAAAAAAAAAAAB9mcmVlAAAAGW1kYXQ=" type="video/mp4">
+        </video>
+        <div id="youtube-player"></div>
+    </div>
 
     <div class="relative z-10 w-full max-w-5xl bg-white/80 backdrop-blur-3xl border border-white rounded-3xl shadow-2xl shadow-rose-200/30 flex flex-col md:flex-row h-[96dvh] md:h-[85vh] overflow-hidden box-border" 
         x-data="musicPlayerApp()">
@@ -198,23 +196,40 @@
                     <template x-for="pl in playlists" :key="pl.id">
                         <div class="bg-white/70 rounded-2xl border border-white shadow-sm overflow-hidden transition-all w-full max-w-full">
                             
-                            <div class="p-3 sm:p-4 flex justify-between items-center bg-white/50 cursor-pointer hover:bg-white/80 transition gap-2" @click="activePlaylistId = activePlaylistId === pl.id ? null : pl.id">
-                                <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0" @click.stop>
+                            <div class="p-3 sm:p-4 flex justify-between items-center bg-white/50 cursor-pointer hover:bg-white/80 transition gap-2" 
+                                @click="if(editingPlaylistId !== pl.id) activePlaylistId = (activePlaylistId === pl.id ? null : pl.id)">
+                                
+                                <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                                     <i data-lucide="folder" class="w-4 h-4 sm:w-5 sm:h-5 text-rose-400 shrink-0"></i>
+                                    
                                     <template x-if="editingPlaylistId === pl.id">
-                                        <input type="text" x-model="editingName" @keydown.enter="savePlaylistName(pl.id)" @blur="savePlaylistName(pl.id)" class="bg-white border border-rose-300 rounded px-2 py-1 text-sm font-bold text-stone-700 w-full outline-none min-w-0" autofocus>
+                                        <input type="text" x-model="editingName" 
+                                            @click.stop 
+                                            @keydown.enter.stop="savePlaylistName(pl.id)" 
+                                            @blur="savePlaylistName(pl.id)" 
+                                            class="bg-white border border-rose-300 rounded px-2 py-1 text-sm font-bold text-stone-700 w-full outline-none" autofocus>
                                     </template>
+                                    
                                     <template x-if="editingPlaylistId !== pl.id">
                                         <div class="flex items-center gap-2 flex-1 min-w-0">
                                             <span class="font-bold text-stone-700 truncate text-sm sm:text-base" x-text="pl.name"></span>
-                                            <button @click="startEditPlaylist(pl)" class="text-stone-300 hover:text-stone-500 shrink-0"><i data-lucide="edit-2" class="w-3 h-3"></i></button>
+                                            <button @click.stop="startEditPlaylist(pl)" class="text-stone-300 hover:text-stone-500 shrink-0 p-1">
+                                                <i data-lucide="edit-2" class="w-3 h-3"></i>
+                                            </button>
                                         </div>
                                     </template>
                                 </div>
+
                                 <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                                     <span class="text-[10px] sm:text-xs text-stone-400 bg-stone-100 px-2 py-1 rounded-full font-mono whitespace-nowrap" x-text="pl.videos.length + '曲'"></span>
-                                    <button @click.stop="playPlaylist(pl.id)" class="text-rose-400 p-1.5 bg-rose-50 hover:bg-rose-100 rounded-full transition shadow-sm"><i data-lucide="play" class="w-4 h-4 ml-0.5"></i></button>
-                                    <button @click.stop="deletePlaylist(pl.id)" class="text-stone-400 p-1.5 hover:bg-red-50 hover:text-red-500 rounded-full transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                    
+                                    <button @click.stop="playPlaylist(pl.id)" class="text-rose-400 p-1.5 bg-rose-50 hover:bg-rose-100 rounded-full transition shadow-sm">
+                                        <i data-lucide="play" class="w-4 h-4 ml-0.5"></i>
+                                    </button>
+                                    
+                                    <button @click.stop="deletePlaylist(pl.id)" class="text-stone-400 p-1.5 hover:bg-red-50 hover:text-red-500 rounded-full transition">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
                                 </div>
                             </div>
                             
@@ -339,24 +354,64 @@
         }
     }
 
-    // YouTube API 管理
     let ytPlayer = null;
     let progressTimer = null;
 
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('youtube-player', {
-            height: '100', width: '100', videoId: '', // Firefoxモバイル向けに1px以上のサイズを指定
-            playerVars: { 'autoplay': 1, 'controls': 0, 'disablekb': 1, 'playsinline': 1 },
+            height: '100', width: '100', videoId: '', 
+            playerVars: { 
+                'autoplay': 1, 
+                'controls': 0, 
+                'disablekb': 1, 
+                'playsinline': 1,
+                'rel': 0,
+                'modestbranding': 1,
+                'iv_load_policy': 3,
+                'origin': location.origin,
+                'widget_referrer': location.href
+            },
             events: {
                 'onReady': (e) => {
                     e.target.setPlaybackQuality('small');
-                    e.target.getIframe().setAttribute('allow', 'autoplay; encrypted-media');
                     window.dispatchEvent(new CustomEvent('yt-ready'));
                 },
                 'onStateChange': (e) => {
-                    window.dispatchEvent(new CustomEvent('yt-state-change', { detail: e.data }));
+                    const player = e.target;
+                    const state = e.data;
+
+                    // 🌸 専門家による「通知バー同期型」広告回避ロジック
+                    // 広告再生中(getAdState > 0) または バッファリング中(3) の挙動を監視
+                    if (state === YT.PlayerState.BUFFERING || state === YT.PlayerState.PLAYING) {
+                        try {
+                            if (typeof player.getAdState === 'function' && player.getAdState() > 0) {
+                                // 広告を検知した場合、再生位置を強制的に 0.5秒進めて本編復帰を促す
+                                player.setPlaybackQuality('small'); 
+                                player.seekTo(player.getCurrentTime() + 0.5, true);
+                            }
+                        } catch (err) {
+                            console.warn("Ad-skip handling paused.");
+                        }
+                    }
+
+                    // OSの通知バー（MediaSession）に再生状態を同期
+                    if ('mediaSession' in navigator) {
+                        if (state === YT.PlayerState.PLAYING) {
+                            navigator.mediaSession.playbackState = "playing";
+                        } else if (state === YT.PlayerState.PAUSED) {
+                            navigator.mediaSession.playbackState = "paused";
+                        }
+                    }
+
+                    window.dispatchEvent(new CustomEvent('yt-state-change', { detail: state }));
                 },
-                'onError': () => alert('動画の再生エラーが発生しました。')
+                'onError': (e) => {
+                    let msg = "再生エラーが発生しました。";
+                    if (e.data === 101 || e.data === 150) msg = "この動画は埋め込み再生が許可されていません。";
+                    else if (e.data === 100) msg = "動画が見つからないか、削除されています。";
+                    console.error("YT Error:", e.data);
+                    alert(msg);
+                }
             }
         });
     }
@@ -379,7 +434,7 @@
                 setTimeout(() => lucide.createIcons(), 100);
                 new SakuraAnimation(document.querySelector('.animation-canvas'));
                 
-                const saved = localStorage.getItem('kotori_playlists_v4');
+                const saved = localStorage.getItem('kotori_playlists_v5');
                 if (saved) {
                     this.playlists = JSON.parse(saved);
                 } else {
@@ -394,14 +449,17 @@
                         this.updateVideoDuration(); 
                         this.startProgressTracker();
                         this.setupMediaSession(this.nowPlaying);
+                        this.syncPhantomVideo(true); // ★ Firefoxバックグラウンド維持オン
                         lucide.createIcons();
                     } else if (state === YT.PlayerState.PAUSED) {
                         this.isPlaying = false;
                         clearInterval(progressTimer);
+                        this.syncPhantomVideo(false); // ★ Firefoxバックグラウンド維持オフ
                         lucide.createIcons();
                     } else if (state === YT.PlayerState.ENDED) {
                         this.isPlaying = false;
                         clearInterval(progressTimer);
+                        this.syncPhantomVideo(false);
                         
                         if (this.repeatMode === 1) {
                             ytPlayer.seekTo(0); ytPlayer.playVideo();
@@ -413,7 +471,22 @@
                 });
             },
 
-            saveData() { localStorage.setItem('kotori_playlists_v4', JSON.stringify(this.playlists)); },
+            saveData() { localStorage.setItem('kotori_playlists_v5', JSON.stringify(this.playlists)); },
+
+            // ★ 解決策の実装：偽装MP4ビデオとYouTubeの同期
+            syncPhantomVideo(play) {
+                const dummyVideo = document.getElementById('phantom-mp4-video');
+                if (!dummyVideo) return;
+                if (play) {
+                    dummyVideo.volume = 0.01;
+                    const playPromise = dummyVideo.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => console.warn("Phantom video blocked:", error));
+                    }
+                } else {
+                    dummyVideo.pause();
+                }
+            },
 
             // ====== インポート・エクスポート (JSON-Base64) ======
             exportPlaylists() {
@@ -515,15 +588,23 @@
                 
                 ytPlayer.loadVideoById(video.id);
                 this.isPlaying = true; 
-                this.manageSilentAudio(true); 
+                
+                // 初回アクションで偽装ビデオも強制起動 (自動再生ポリシー突破)
+                this.syncPhantomVideo(true); 
+                
                 this.setupMediaSession(video);
                 setTimeout(() => lucide.createIcons(), 50);
             },
             
             togglePlay() {
                 if (!ytPlayer || !this.nowPlaying) return;
-                if (this.isPlaying) { ytPlayer.pauseVideo(); this.manageSilentAudio(false); }
-                else { ytPlayer.playVideo(); this.manageSilentAudio(true); }
+                if (this.isPlaying) { 
+                    ytPlayer.pauseVideo(); 
+                    this.syncPhantomVideo(false); 
+                } else { 
+                    ytPlayer.playVideo(); 
+                    this.syncPhantomVideo(true); 
+                }
             },
 
             toggleLoop() {
@@ -545,7 +626,7 @@
                         if (idx < pl.videos.length - 1) {
                             this.playNow(pl.videos[idx + 1], this.currentPlaylistId);
                         } else if (this.repeatMode === 2) {
-                            // プレイリストリピート
+                            // プレイリスト全体のリピート
                             this.playNow(pl.videos[0], this.currentPlaylistId);
                         }
                     }
@@ -574,6 +655,7 @@
             startProgressTracker() {
                 clearInterval(progressTimer);
                 progressTimer = setInterval(() => {
+                    // ドラッグ中は数値を更新しない（シーク操作の妨げになるため）
                     if(ytPlayer && this.isPlaying && !this.isDragging) {
                         const curr = ytPlayer.getCurrentTime() || 0;
                         const dur = ytPlayer.getDuration() || 1;
@@ -599,31 +681,50 @@
                 return `${m}:${s.toString().padStart(2, '0')}`;
             },
 
-            // ====== Firefox等 バックグラウンド再生維持 ======
-            manageSilentAudio(play) {
-                const audio = document.getElementById('silent-audio');
-                if (!audio) return;
-                if (play) {
-                    audio.volume = 0.01;
-                    const playPromise = audio.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(error => console.log("Silent audio blocked:", error));
-                    }
-                } else {
-                    audio.pause();
-                }
-            },
-
+            // ====== Media Session API ======
             setupMediaSession(video) {
                 if ('mediaSession' in navigator && video) {
                     navigator.mediaSession.metadata = new MediaMetadata({
-                        title: video.title, artist: '小鳥Lab BGM Player',
-                        artwork: [{ src: video.thumb, sizes: '320x180', type: 'image/jpeg' }]
+                        title: video.title,
+                        artist: '小鳥Lab BGM Player',
+                        album: this.currentPlaylistId ? 
+                            this.playlists.find(p => p.id === this.currentPlaylistId)?.name : 'Single',
+                        artwork: [
+                            { src: video.thumb, sizes: '96x96',   type: 'image/jpeg' },
+                            { src: video.thumb, sizes: '128x128', type: 'image/jpeg' },
+                            { src: video.thumb, sizes: '192x192', type: 'image/jpeg' },
+                            { src: video.thumb, sizes: '256x256', type: 'image/jpeg' },
+                            { src: video.thumb, sizes: '384x384', type: 'image/jpeg' },
+                            { src: video.thumb, sizes: '512x512', type: 'image/jpeg' },
+                        ]
                     });
+
+                    // OS側の再生状態を更新
                     navigator.mediaSession.playbackState = this.isPlaying ? "playing" : "paused";
+
+                    // --- 通知バーのボタン操作設定 ---
+                    
+                    // 再生・一時停止
                     navigator.mediaSession.setActionHandler('play', () => this.togglePlay());
                     navigator.mediaSession.setActionHandler('pause', () => this.togglePlay());
-                    navigator.mediaSession.setActionHandler('nexttrack', () => this.skipNext());
+
+                    // 次の曲（スキップ）
+                    // これを定義することで通知バーに「次へ」ボタンが出現します
+                    navigator.mediaSession.setActionHandler('nexttrack', () => {
+                        this.skipNext();
+                    });
+
+                    // 前の曲（必要であれば）
+                    navigator.mediaSession.setActionHandler('previoustrack', () => {
+                        this.skipPrevious();
+                    });
+
+                    // 広告回避用：シーク操作の許可（通知バーのタイムバーを触った時用）
+                    navigator.mediaSession.setActionHandler('seekto', (details) => {
+                        if (details.seekTime && ytPlayer) {
+                            ytPlayer.seekTo(details.seekTime, true);
+                        }
+                    });
                 }
             }
         }
