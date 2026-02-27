@@ -308,14 +308,14 @@
         }
         resize() { this.canvas.width = window.innerWidth; this.canvas.height = window.innerHeight; }
         init() {
-            for (let i = 0; i < 40; i++) {
+            for (let i = 0; i < 50; i++) {
                 this.petals.push({
                     x: Math.random() * this.canvas.width, y: Math.random() * this.canvas.height,
-                    size: Math.random() * 6 + 6, speed: Math.random() * 0.5 + 0.2,
-                    wind: Math.random() * 0.4 - 0.2, angle: Math.random() * 360,
-                    rotateSpeed: Math.random() * 0.8 - 0.4, flip: Math.random() * Math.PI,
-                    flipSpeed: Math.random() * 0.03 + 0.01,
-                    color: `rgba(255, ${215 + Math.random() * 25}, ${225 + Math.random() * 20}, ${0.5 + Math.random() * 0.3})`
+                    size: Math.random() * 8 + 10, speed: Math.random() * 0.7 + 0.3,
+                    wind: Math.random() * 0.6 - 0.3, angle: Math.random() * 360,
+                    rotateSpeed: Math.random() * 1.2 - 0.6, flip: Math.random() * Math.PI,
+                    flipSpeed: Math.random() * 0.04 + 0.01,
+                    color: `rgba(255, ${215 + Math.random() * 25}, ${225 + Math.random() * 20}, ${0.5 + Math.random() * 0.4})`
                 });
             }
         }
