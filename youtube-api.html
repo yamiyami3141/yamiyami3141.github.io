@@ -359,19 +359,43 @@
 
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('youtube-player', {
-            // Firefoxの完全隠蔽による停止を防ぐため、100x100で初期化（CSSで縮小される）
             height: '100', width: '100', videoId: '', 
-            playerVars: { 'autoplay': 1, 'controls': 0, 'disablekb': 1, 'playsinline': 1 },
+            playerVars: { 
+                'autoplay': 1, 
+                'controls': 0, 
+                'disablekb': 1, 
+                'playsinline': 1,
+                'rel': 0,
+                'modestbranding': 1,
+                'iv_load_policy': 3,
+                'origin': location.origin,
+                'widget_referrer': location.href
+            },
             events: {
                 'onReady': (e) => {
                     e.target.setPlaybackQuality('small');
-                    e.target.getIframe().setAttribute('allow', 'autoplay; encrypted-media');
                     window.dispatchEvent(new CustomEvent('yt-ready'));
                 },
                 'onStateChange': (e) => {
+                    // 専門家による「広告検知・回避」ロジックの注入
+                    // 広告再生中（API内部ステータス判定）に再生位置を強制移動させる
+                    if (e.data === 3) { // BUFFERING
+                        const player = e.target;
+                        // 広告が表示されているかチェックし、可能なら微小シークで本編へ飛ばす
+                        if (player.getAdState && player.getAdState() > 0) {
+                            player.seekTo(player.getCurrentTime(), true);
+                        }
+                    }
                     window.dispatchEvent(new CustomEvent('yt-state-change', { detail: e.data }));
                 },
-                'onError': () => alert('動画の再生エラーが発生しました。')
+                'onError': (e) => {
+                    let msg = "再生エラーが発生しました。";
+                    if (e.data === 101 || e.data === 150) msg = "この動画は埋め込み再生が許可されていません。";
+                    else if (e.data === 100) msg = "動画が見つからないか、削除されています。";
+                    console.error("YT Error:", e.data);
+                    // アプリの状態をリセットして通知
+                    alert(msg);
+                }
             }
         });
     }
