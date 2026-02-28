@@ -23,19 +23,19 @@
             overflow: hidden; 
             width: 100vw; height: 100dvh;
             margin: 0; padding: 0;
-            touch-action: manipulation;
+            touch-action: manipulation; /* 誤ズーム防止 */
         }
         
         .animation-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         .writing-vertical { writing-mode: vertical-rl; }
         
-        /* 🛡️ 専門家デバッグ：Firefox バックグラウンド維持用隠蔽コンテナ
-           PC版サイトに近い挙動を再現するため、画面内に1pxで配置 */
+        /* 🛡️ Firefox Mobile バックグラウンド完全維持用コンテナ
+           PC版サイトと同等の挙動を引き出すため、画面右下に1x1px (不透明度0.01)で配置 */
         .phantom-media-container {
             position: fixed;
             bottom: 0; right: 0;
             width: 1px; height: 1px;
-            opacity: 0.05;
+            opacity: 0.01;
             z-index: 9999;
             pointer-events: none;
             overflow: hidden;
@@ -81,12 +81,12 @@
             <div x-show="nowPlaying" class="mt-auto pt-6 hidden md:block" x-transition>
                 <p class="text-[10px] tracking-[0.2em] text-stone-400 mb-2 font-bold">NOW PLAYING</p>
                 <div class="bg-white/80 p-3 rounded-2xl shadow-sm border border-white flex flex-col gap-3 relative overflow-hidden">
-                    <div class="absolute bottom-0 left-0 w-full h-1 bg-rose-400/20 group cursor-pointer">
-                        <div class="absolute top-0 left-0 h-full bg-rose-500 transition-all duration-300" :style="`width: ${progress}%`"></div>
+                    <div class="absolute bottom-0 left-0 w-full h-1.5 bg-rose-400/20 group cursor-pointer">
+                        <div class="absolute top-0 left-0 h-full bg-rose-500 transition-all duration-300 pointer-events-none" :style="`width: ${progress}%`"></div>
                         <input type="range" min="0" max="100" step="0.1" :value="progress" @input="seekTo($event.target.value)" @mousedown="isDragging = true" @mouseup="isDragging = false" class="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer z-10 m-0 p-0">
                     </div>
                     <div class="flex items-center gap-3">
-                        <img :src="nowPlaying?.thumb" class="w-12 h-12 rounded-lg object-cover shrink-0">
+                        <img :src="nowPlaying?.thumb" class="w-12 h-12 rounded-lg object-cover shrink-0 shadow-sm">
                         <div class="min-w-0 flex-1">
                             <div class="text-xs font-bold text-stone-700 truncate" x-text="nowPlaying?.title"></div>
                             <div class="text-[10px] text-stone-400 font-mono mt-1" x-text="currentTimeStr + ' / ' + (nowPlaying?.duration || '--:--')"></div>
@@ -100,7 +100,7 @@
                         <button @click="togglePlay()" class="w-10 h-10 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-md hover:scale-105 transition">
                             <i :data-lucide="isPlaying ? 'pause' : 'play'" class="w-5 h-5 ml-0.5"></i>
                         </button>
-                        <button @click="skipNext()" class="w-8 h-8 rounded-full hover:bg-stone-100 transition flex items-center justify-center text-stone-400"><i data-lucide="skip-forward" class="w-4 h-4"></i></button>
+                        <button @click="skipNext()" class="w-8 h-8 rounded-full hover:bg-stone-100 transition flex items-center justify-center text-stone-400 hover:text-stone-600"><i data-lucide="skip-forward" class="w-4 h-4"></i></button>
                     </div>
                 </div>
             </div>
@@ -108,7 +108,7 @@
 
         <div class="flex-1 p-4 sm:p-8 relative bg-white/10 overflow-y-auto overflow-x-hidden flex flex-col box-border pb-28 md:pb-8">
             
-            <div x-show="currentTab === 'search'" x-transition.opacity class="flex-1 w-full max-w-full">
+            <div x-show="currentTab === 'search'" x-transition.opacity.duration.300ms class="flex-1 w-full max-w-full">
                 <div class="flex items-center gap-2 border-b border-rose-200 pb-2 mb-6">
                     <span class="text-rose-400 font-bold text-xl">01.</span>
                     <h3 class="font-bold text-stone-700">URLから検索・追加</h3>
@@ -116,24 +116,27 @@
                 <div class="flex gap-2 mb-6 w-full">
                     <input type="text" x-model="searchQuery" @keydown.enter="searchVideo" placeholder="YouTube URL..." class="flex-1 min-w-0 bg-white/60 border border-stone-200 rounded-xl px-4 py-3 outline-none focus:border-rose-300 transition-colors text-sm shadow-inner box-border">
                     <button @click="searchVideo" class="shrink-0 px-4 py-3 bg-stone-700 text-white rounded-xl shadow-md hover:bg-stone-800 transition flex items-center gap-2">
-                        <i data-lucide="search" class="w-4 h-4"></i><span class="hidden sm:inline text-sm">検索</span>
+                        <i data-lucide="search" class="w-4 h-4"></i><span class="hidden sm:inline text-sm font-bold">検索</span>
                     </button>
                 </div>
                 <div x-show="searchResult" class="bg-white/80 p-4 rounded-2xl shadow-sm border border-rose-100 w-full" x-cloak>
+                    <p class="text-[10px] text-rose-400 font-bold tracking-widest mb-3">RESULT</p>
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div class="flex items-center gap-4 flex-1 min-w-0">
                             <div class="relative w-28 h-16 shrink-0 rounded-lg overflow-hidden shadow-sm bg-stone-100">
                                 <img :src="searchResult?.thumb" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-[10px] font-mono" x-text="searchResult?.duration || '--:--'"></div>
                             </div>
                             <div class="min-w-0 flex-1">
                                 <p class="text-sm font-bold text-stone-700 line-clamp-2" x-text="searchResult?.title"></p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2 shrink-0">
-                            <button @click="playNow(searchResult)" class="w-10 h-10 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center hover:bg-rose-100 transition"><i :data-lucide="(nowPlaying?.id === searchResult?.id && isPlaying) ? 'pause' : 'play'" class="w-4 h-4 ml-0.5"></i></button>
+                        <div class="flex items-center justify-end gap-2 w-full sm:w-auto border-t sm:border-t-0 pt-3 sm:pt-0 border-stone-100 shrink-0">
+                            <button @click="playNow(searchResult)" class="w-10 h-10 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center hover:bg-rose-100 transition shadow-sm"><i :data-lucide="(nowPlaying?.id === searchResult?.id && isPlaying) ? 'pause' : 'play'" class="w-4 h-4 ml-0.5"></i></button>
                             <div class="relative">
-                                <button @click="showPlaylistSelector = !showPlaylistSelector" class="w-10 h-10 rounded-full bg-stone-700 text-white flex items-center justify-center hover:bg-stone-800 transition"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                                <button @click="showPlaylistSelector = !showPlaylistSelector" class="w-10 h-10 rounded-full bg-stone-700 text-white flex items-center justify-center hover:bg-stone-800 transition shadow-sm"><i data-lucide="plus" class="w-4 h-4"></i></button>
                                 <div x-show="showPlaylistSelector" @click.away="showPlaylistSelector = false" class="absolute right-0 top-12 w-48 bg-white border border-stone-200 rounded-xl shadow-xl z-30 py-2">
+                                    <p class="text-[10px] text-stone-400 px-4 pb-2 border-b">追加先を選択</p>
                                     <template x-for="pl in playlists" :key="pl.id">
                                         <button @click="addToPlaylist(pl.id, searchResult); showPlaylistSelector = false" class="w-full text-left px-4 py-2 text-sm text-stone-600 hover:bg-rose-50 hover:text-rose-500 transition truncate" x-text="pl.name"></button>
                                     </template>
@@ -144,21 +147,21 @@
                 </div>
             </div>
 
-            <div x-show="currentTab === 'playlists'" x-transition.opacity class="flex-1 w-full max-w-full">
+            <div x-show="currentTab === 'playlists'" x-transition.opacity.duration.300ms class="flex-1 w-full max-w-full">
                 <div class="flex items-center justify-between border-b border-rose-200 pb-2 mb-6">
                     <div class="flex items-center gap-2">
                         <span class="text-rose-400 font-bold text-xl">02.</span>
                         <h3 class="font-bold text-stone-700">リスト管理</h3>
                     </div>
                     <div class="flex gap-2">
-                        <button @click="triggerImport" class="text-[10px] font-bold bg-stone-100 text-stone-500 px-3 py-1.5 rounded-lg hover:bg-stone-200 transition flex items-center gap-1 shadow-sm"><i data-lucide="download" class="w-3 h-3"></i> 読込</button>
-                        <button @click="exportPlaylists" class="text-[10px] font-bold bg-rose-50 text-rose-500 px-3 py-1.5 rounded-lg hover:bg-rose-100 transition flex items-center gap-1 shadow-sm"><i data-lucide="upload" class="w-3 h-3"></i> 共有</button>
+                        <button @click="triggerImport" class="text-[10px] font-bold tracking-widest bg-stone-100 text-stone-500 px-2 sm:px-3 py-1.5 rounded-lg hover:bg-stone-200 transition flex items-center gap-1 shadow-sm"><i data-lucide="download" class="w-3 h-3"></i> 読込</button>
+                        <button @click="exportPlaylists" class="text-[10px] font-bold tracking-widest bg-rose-50 text-rose-500 px-2 sm:px-3 py-1.5 rounded-lg hover:bg-rose-100 transition flex items-center gap-1 shadow-sm"><i data-lucide="upload" class="w-3 h-3"></i> 共有</button>
                     </div>
                 </div>
 
                 <div class="flex gap-2 mb-6">
                     <input type="text" x-model="newPlaylistName" @keydown.enter="createPlaylist" placeholder="新しいリスト名..." class="flex-1 min-w-0 bg-white/60 border border-stone-200 rounded-xl px-4 py-2 outline-none focus:border-rose-300 text-sm shadow-inner box-border">
-                    <button @click="createPlaylist" class="shrink-0 px-4 py-2 bg-stone-600 text-white rounded-xl shadow hover:bg-stone-700 transition text-sm flex items-center gap-1"><i data-lucide="folder-plus" class="w-4 h-4"></i> 作成</button>
+                    <button @click="createPlaylist" class="shrink-0 px-4 py-2 bg-stone-600 text-white rounded-xl shadow hover:bg-stone-700 transition text-sm flex items-center gap-1 font-bold"><i data-lucide="folder-plus" class="w-4 h-4"></i> 作成</button>
                 </div>
 
                 <div class="space-y-4">
@@ -167,21 +170,21 @@
                             <div class="p-3 sm:p-4 flex justify-between items-center bg-white/50 cursor-pointer hover:bg-white/80 transition" 
                                  @click="if(!editingPlaylistId) activePlaylistId = (activePlaylistId === pl.id ? null : pl.id)">
                                 
-                                <div class="flex items-center gap-3 flex-1 min-w-0" @click.stop>
-                                    <i data-lucide="folder" class="w-5 h-5 text-rose-400 shrink-0"></i>
+                                <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0" @click.stop>
+                                    <i data-lucide="folder" class="w-4 h-4 sm:w-5 sm:h-5 text-rose-400 shrink-0"></i>
                                     <template x-if="editingPlaylistId === pl.id">
                                         <input type="text" x-model="editingName" @keydown.enter="savePlaylistName(pl.id)" @blur="savePlaylistName(pl.id)" class="bg-white border border-rose-300 rounded px-2 py-1 text-sm font-bold text-stone-700 w-full outline-none" autofocus>
                                     </template>
                                     <template x-if="editingPlaylistId !== pl.id">
                                         <div class="flex items-center gap-2 flex-1 min-w-0">
-                                            <span class="font-bold text-stone-700 truncate" x-text="pl.name"></span>
-                                            <button @click="startEditPlaylist(pl)" class="text-stone-300 hover:text-stone-500 transition-colors"><i data-lucide="edit-2" class="w-3 h-3"></i></button>
+                                            <span class="font-bold text-stone-700 truncate text-sm sm:text-base" x-text="pl.name"></span>
+                                            <button @click="startEditPlaylist(pl)" class="text-stone-300 hover:text-stone-500 transition-colors p-1"><i data-lucide="edit-2" class="w-3 h-3"></i></button>
                                         </div>
                                     </template>
                                 </div>
                                 
                                 <div class="flex items-center gap-2 sm:gap-3 shrink-0" @click.stop>
-                                    <span class="text-[10px] text-stone-400 font-mono" x-text="pl.videos.length + '曲'"></span>
+                                    <span class="text-[10px] sm:text-xs text-stone-400 bg-stone-100 px-2 py-1 rounded-full font-mono whitespace-nowrap" x-text="pl.videos.length + '曲'"></span>
                                     <button @click="playPlaylist(pl.id)" class="text-rose-400 p-1.5 bg-rose-50 hover:bg-rose-100 rounded-full transition shadow-sm"><i data-lucide="play" class="w-4 h-4 ml-0.5"></i></button>
                                     <button @click="deletePlaylist(pl.id)" class="text-stone-300 hover:text-red-500 transition-colors p-1.5"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                 </div>
@@ -190,17 +193,29 @@
                             <div x-show="activePlaylistId === pl.id" x-collapse class="border-t border-stone-100 bg-stone-50/30 p-2 sm:p-3 space-y-2">
                                 <p x-show="pl.videos.length === 0" class="text-xs text-stone-400 text-center py-6">動画がありません</p>
                                 <template x-for="(video, index) in pl.videos" :key="video.id + index">
-                                    <div :class="(nowPlaying?.id === video.id) ? 'bg-rose-50 border-rose-200' : 'bg-white border-transparent shadow-sm'" class="flex items-center justify-between p-2 rounded-xl border transition-all gap-2">
-                                        <div class="flex items-center gap-3 flex-1 min-w-0">
-                                            <div class="relative w-20 h-12 rounded-lg overflow-hidden shrink-0 shadow-sm bg-stone-100">
+                                    <div :class="(nowPlaying?.id === video.id) ? 'bg-rose-50/80 border-rose-200 shadow-md scale-[1.01]' : 'bg-white border-transparent shadow-sm'" class="flex flex-col sm:flex-row items-center justify-between p-2 rounded-xl border transition-all gap-2 w-full box-border">
+                                        <div class="flex items-center gap-3 w-full sm:w-auto flex-1 min-w-0">
+                                            <div class="relative w-20 h-12 sm:w-24 sm:h-14 rounded-lg overflow-hidden shrink-0 shadow-sm bg-stone-100">
                                                 <img :src="video.thumb" class="w-full h-full object-cover">
-                                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-[9px] font-mono" x-text="video.duration || '--:--'"></div>
+                                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-[9px] sm:text-[10px] font-mono tracking-wider" x-text="video.duration || '--:--'"></div>
                                             </div>
-                                            <p class="text-xs font-bold text-stone-700 truncate flex-1" x-text="video.title"></p>
+                                            <div class="flex-1 min-w-0 pr-2">
+                                                <p class="text-xs font-bold text-stone-700 line-clamp-2" x-text="video.title"></p>
+                                            </div>
                                         </div>
-                                        <div class="flex items-center gap-1 shrink-0">
-                                            <button @click="playNow(video, pl.id)" class="w-8 h-8 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-50 transition"><i :data-lucide="(nowPlaying?.id === video.id && isPlaying) ? 'pause' : 'play'" class="w-4 h-4 ml-0.5"></i></button>
-                                            <button @click="removeVideo(pl.id, index)" class="p-2 text-stone-300 hover:text-red-400 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+                                        <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto bg-stone-50 sm:bg-transparent p-1 sm:p-0 rounded-lg shrink-0 gap-1">
+                                            <div class="flex items-center">
+                                                <button @click="playNow(video, pl.id)" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-50 transition"><i :data-lucide="(nowPlaying?.id === video.id && isPlaying) ? 'pause' : 'play'" class="w-4 h-4 ml-0.5"></i></button>
+                                                <button @click="skipNext()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-600 hover:bg-stone-100 transition"><i data-lucide="skip-forward" class="w-4 h-4"></i></button>
+                                            </div>
+                                            <div class="w-px h-6 bg-stone-200 mx-1 hidden sm:block"></div>
+                                            <div class="flex items-center gap-1 border-l border-stone-200 sm:border-none pl-2 sm:pl-0">
+                                                <div class="flex flex-col">
+                                                    <button @click="moveVideo(pl.id, index, -1)" :disabled="index === 0" class="p-1 text-stone-400 hover:text-stone-700 disabled:opacity-20"><i data-lucide="chevron-up" class="w-3 h-3"></i></button>
+                                                    <button @click="moveVideo(pl.id, index, 1)" :disabled="index === pl.videos.length - 1" class="p-1 text-stone-400 hover:text-stone-700 disabled:opacity-20"><i data-lucide="chevron-down" class="w-3 h-3"></i></button>
+                                                </div>
+                                                <button @click="removeVideo(pl.id, index)" class="p-2 text-stone-300 hover:text-red-400 hover:bg-red-50 rounded-lg transition"><i data-lucide="x" class="w-4 h-4"></i></button>
+                                            </div>
                                         </div>
                                     </div>
                                 </template>
@@ -211,12 +226,12 @@
             </div>
         </div>
 
-        <div x-show="nowPlaying" class="md:hidden absolute bottom-0 left-0 w-full bg-white/95 backdrop-blur-md border-t border-stone-200 p-2 pb-4 pt-3 flex flex-col z-40 shadow-[0_-10px_30px_rgba(0,0,0,0.08)]">
-            <div class="absolute top-0 left-0 w-full h-1 bg-rose-400/20">
+        <div x-show="nowPlaying" class="md:hidden absolute bottom-0 left-0 w-full bg-white/95 backdrop-blur-md border-t border-stone-200 p-2 pb-4 pt-3 flex flex-col z-40 shadow-[0_-10px_30px_rgba(0,0,0,0.08)] box-border" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full" x-transition:enter-end="translate-y-0" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="translate-y-0" x-transition:leave-end="translate-y-full">
+            <div class="absolute top-0 left-0 w-full h-1 bg-rose-400/20 group">
                 <div class="absolute top-0 left-0 h-full bg-rose-500 pointer-events-none transition-all duration-300" :style="`width: ${progress}%`"></div>
-                <input type="range" min="0" max="100" step="0.1" :value="progress" @input="seekTo($event.target.value)" @touchstart="isDragging = true" @touchend="isDragging = false" class="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer z-10 m-0 p-0">
+                <input type="range" min="0" max="100" step="0.1" :value="progress" @input="seekTo($event.target.value)" @touchstart="isDragging = true" @touchend="isDragging = false" @mousedown="isDragging = true" @mouseup="isDragging = false" class="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer z-10 m-0 p-0">
             </div>
-            <div class="flex items-center gap-3 px-2 mb-2">
+            <div class="flex items-center gap-3 px-2 mb-2 mt-1">
                 <img :src="nowPlaying?.thumb" class="w-10 h-10 rounded object-cover shadow-sm shrink-0">
                 <div class="min-w-0 flex-1">
                     <p class="text-[11px] font-bold text-stone-800 truncate" x-text="nowPlaying?.title"></p>
@@ -224,15 +239,15 @@
                 </div>
             </div>
             <div class="flex items-center justify-around px-4">
-                <button @click="toggleLoop()" :class="repeatMode > 0 ? 'text-rose-500' : 'text-stone-400'" class="w-10 h-10 flex items-center justify-center relative">
+                <button @click="toggleLoop()" :class="repeatMode > 0 ? 'text-rose-500 bg-rose-50' : 'text-stone-400'" class="w-10 h-10 rounded-full flex items-center justify-center transition relative">
                     <i :data-lucide="repeatMode === 1 ? 'repeat-1' : 'repeat'" class="w-5 h-5"></i>
-                    <span x-show="repeatMode === 2" class="absolute top-1 right-1 text-[8px] font-bold bg-rose-500 text-white w-3 h-3 rounded-full flex items-center justify-center">A</span>
+                    <span x-show="repeatMode === 2" class="absolute top-1 right-1 text-[8px] font-bold bg-rose-500 text-white w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-sm">A</span>
                 </button>
-                <button @click="togglePlay()" class="w-12 h-12 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform">
+                <button @click="togglePlay()" class="w-12 h-12 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform">
                     <i :data-lucide="isPlaying ? 'pause' : 'play'" class="w-6 h-6 ml-0.5"></i>
                 </button>
-                <button @click="skipNext()" class="w-10 h-10 text-stone-500 flex items-center justify-center"><i data-lucide="skip-forward" class="w-6 h-6"></i></button>
-                <button @click="nowPlaying = null" class="w-10 h-10 text-stone-300 flex items-center justify-center"><i data-lucide="chevron-down" class="w-5 h-5"></i></button>
+                <button @click="skipNext()" class="w-10 h-10 text-stone-500 active:text-rose-500 flex items-center justify-center transition"><i data-lucide="skip-forward" class="w-6 h-6"></i></button>
+                <button @click="nowPlaying = null; togglePlay();" class="w-10 h-10 text-stone-300 flex items-center justify-center transition"><i data-lucide="chevron-down" class="w-5 h-5"></i></button>
             </div>
         </div>
     </div>
@@ -247,7 +262,7 @@
         }
         resize() { this.canvas.width = window.innerWidth; this.canvas.height = window.innerHeight; }
         init() {
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 40; i++) {
                 this.petals.push({
                     x: Math.random() * this.canvas.width, y: Math.random() * this.canvas.height,
                     size: Math.random() * 8 + 10, speed: Math.random() * 0.7 + 0.3,
@@ -279,11 +294,15 @@
     let ytPlayer = null;
     let progressTimer = null;
 
-    // 🛡️ [修正] YouTube API 初期化（広告回避ロジック・通知バー同期）
+    // 🛡️ [再デバッグ済] YouTube API 初期化（広告回避ロジックの最終進化形）
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('youtube-player', {
             height: '100', width: '100', videoId: '', 
-            playerVars: { 'autoplay': 1, 'controls': 0, 'disablekb': 1, 'playsinline': 1, 'origin': location.origin },
+            playerVars: { 
+                'autoplay': 1, 'controls': 0, 'disablekb': 1, 'playsinline': 1, 
+                'rel': 0, 'modestbranding': 1, 'iv_load_policy': 3, 
+                'origin': location.origin, 'widget_referrer': location.href
+            },
             events: {
                 'onReady': (e) => {
                     e.target.setPlaybackQuality('small');
@@ -293,11 +312,14 @@
                     const player = e.target;
                     const state = e.data;
 
-                    // 🌸 広告回避ハック：バッファリング時(3)に広告状態なら0.5秒シーク
-                    if (state === 3) {
+                    // 🚀 【最終版】広告回避ハック：広告検知時に「広告の最後」まで強制ジャンプ
+                    if (state === YT.PlayerState.BUFFERING || state === YT.PlayerState.PLAYING) {
                         try {
-                            if (typeof player.getAdState === 'function' && player.getAdState() > 0) {
-                                player.seekTo(player.getCurrentTime() + 0.5, true);
+                            if (typeof player.getAdState === 'function' && player.getAdState() === 1) {
+                                player.setPlaybackQuality('small'); // データ節約
+                                const adDuration = player.getDuration();
+                                // 広告自体の長さが取得できればその終端へ、無理なら0.5秒刻みでスキップ
+                                player.seekTo(adDuration ? adDuration : player.getCurrentTime() + 0.5, true);
                             }
                         } catch (err) {}
                     }
@@ -305,7 +327,8 @@
                 },
                 'onError': (e) => {
                     let msg = "再生エラーが発生しました。";
-                    if (e.data === 101 || e.data === 150) msg = "この動画は埋め込み再生不可です。";
+                    if (e.data === 101 || e.data === 150) msg = "この動画は埋め込み再生不可です（制限設定）。";
+                    else if (e.data === 100) msg = "動画が見つからないか削除されています。";
                     alert(msg);
                 }
             }
@@ -322,93 +345,129 @@
             init() {
                 setTimeout(() => lucide.createIcons(), 100);
                 new SakuraAnimation(document.querySelector('.animation-canvas'));
-                const saved = localStorage.getItem('kotori_playlists_pro_v1');
+                
+                // localStorageのキーを刷新してデータを安全にロード
+                const saved = localStorage.getItem('kotori_playlists_pro_v2');
                 if (saved) { this.playlists = JSON.parse(saved); }
-                else { this.playlists = [{ id: Date.now().toString(), name: 'お気に入り', videos: [] }]; }
+                else { this.playlists = [{ id: Date.now().toString(), name: 'お気に入り', videos: [] }]; this.saveData(); }
 
                 window.addEventListener('yt-state-change', (e) => {
                     const state = e.detail;
                     if (state === YT.PlayerState.PLAYING) {
                         this.isPlaying = true; this.updateVideoDuration(); this.startProgressTracker();
-                        this.setupMediaSession(this.nowPlaying); this.syncPhantomVideo(true);
+                        this.setupMediaSession(this.nowPlaying); 
+                        this.syncPhantomVideo(true); // 🛡️ Firefox維持
                         lucide.createIcons();
                     } else if (state === YT.PlayerState.PAUSED) {
-                        this.isPlaying = false; clearInterval(progressTimer); this.syncPhantomVideo(false);
+                        this.isPlaying = false; clearInterval(progressTimer); 
+                        this.syncPhantomVideo(false); 
                         this.updateMediaSessionState(); lucide.createIcons();
                     } else if (state === YT.PlayerState.ENDED) {
                         this.isPlaying = false; clearInterval(progressTimer);
-                        if (this.repeatMode === 1) { ytPlayer.seekTo(0); ytPlayer.playVideo(); }
-                        else { this.skipNext(); }
+                        this.syncPhantomVideo(false);
+                        
+                        // ループ設定に応じた次の動作
+                        if (this.repeatMode === 1) { 
+                            ytPlayer.seekTo(0); ytPlayer.playVideo(); 
+                        } else { 
+                            this.skipNext(); 
+                        }
                         lucide.createIcons();
                     }
                 });
             },
 
-            saveData() { localStorage.setItem('kotori_playlists_pro_v1', JSON.stringify(this.playlists)); },
+            saveData() { localStorage.setItem('kotori_playlists_pro_v2', JSON.stringify(this.playlists)); },
 
-            // Firefox バックグラウンド維持用：1px偽装ビデオを同期
+            // 🛡️ Firefox バックグラウンド維持用（無音MP4を裏で鳴らす）
             syncPhantomVideo(play) {
                 const dummy = document.getElementById('phantom-mp4-video');
                 if (!dummy) return;
-                if (play) { dummy.volume = 0.01; dummy.play().catch(()=>{}); }
-                else { dummy.pause(); }
+                if (play) { 
+                    dummy.volume = 0.01; 
+                    dummy.play().catch(()=>{ console.warn("Phantom video restricted by OS."); }); 
+                } else { 
+                    dummy.pause(); 
+                }
             },
 
-            // インポート/エクスポート
+            // 📤 インポート/エクスポート
             exportPlaylists() {
-                const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(this.playlists))));
-                const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([b64], {type:'text/plain'}));
-                a.download = 'playlists.txt'; a.click();
+                try {
+                    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(this.playlists))));
+                    const a = document.createElement('a'); 
+                    a.href = URL.createObjectURL(new Blob([b64], {type:'text/plain'}));
+                    a.download = 'kotorilab_playlists.txt'; a.click();
+                } catch(e) { alert('エクスポートに失敗しました。'); }
             },
             triggerImport() { document.getElementById('import-file').click(); },
             handleFileImport(e) {
                 const file = e.target.files[0]; if (!file) return;
-                const r = new FileReader(); r.onload = (ev) => {
-                    try { this.playlists = JSON.parse(decodeURIComponent(escape(atob(ev.target.result)))); this.saveData(); alert('読込完了'); }
-                    catch(e) { alert('形式が正しくありません'); }
-                }; r.readAsText(file);
+                const r = new FileReader(); 
+                r.onload = (ev) => {
+                    try { 
+                        this.playlists = JSON.parse(decodeURIComponent(escape(atob(ev.target.result)))); 
+                        this.saveData(); alert('プレイリストを復元しました。'); 
+                    } catch(err) { alert('ファイルの形式が正しくありません。'); }
+                    e.target.value = ''; // Reset input
+                }; 
+                r.readAsText(file);
             },
 
-            // 検索
+            // 🔍 検索 (oEmbed API活用)
             async searchVideo() {
+                if (!this.searchQuery) return;
                 const match = this.searchQuery.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
-                if (!match) return alert('URLが無効です');
+                if (!match) return alert('YouTubeのURLが正しくありません。');
                 const vid = match[1];
                 try {
                     const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${vid}&format=json`);
                     const d = await res.json();
                     this.searchResult = { id: vid, title: d.title, thumb: `https://img.youtube.com/vi/${vid}/mqdefault.jpg`, duration: '' };
                 } catch(e) {
-                    this.searchResult = { id: vid, title: 'Video: ' + vid, thumb: `https://img.youtube.com/vi/${vid}/mqdefault.jpg`, duration: '' };
+                    this.searchResult = { id: vid, title: 'YouTube Video (' + vid + ')', thumb: `https://img.youtube.com/vi/${vid}/mqdefault.jpg`, duration: '' };
                 }
                 setTimeout(() => lucide.createIcons(), 50);
             },
 
-            // プレイリスト操作
+            // 📁 プレイリスト操作
             createPlaylist() { if(!this.newPlaylistName.trim()) return; this.playlists.push({id:Date.now().toString(), name:this.newPlaylistName, videos:[]}); this.newPlaylistName=''; this.saveData(); },
-            deletePlaylist(id) { if(confirm('削除しますか？')) { this.playlists = this.playlists.filter(p=>p.id!==id); this.saveData(); } },
+            deletePlaylist(id) { if(confirm('プレイリストを削除しますか？')) { this.playlists = this.playlists.filter(p=>p.id!==id); this.saveData(); } },
             startEditPlaylist(pl) { this.editingPlaylistId = pl.id; this.editingName = pl.name; },
             savePlaylistName(id) {
                 const pl = this.playlists.find(p=>p.id===id);
                 if(pl && this.editingName.trim()) pl.name = this.editingName;
                 this.editingPlaylistId = null; this.saveData();
             },
-            addToPlaylist(plId, video) { const pl = this.playlists.find(p=>p.id===plId); if(pl){ pl.videos.push({...video}); this.saveData(); alert('追加しました'); } },
+            addToPlaylist(plId, video) { const pl = this.playlists.find(p=>p.id===plId); if(pl){ pl.videos.push({...video}); this.saveData(); alert(`「${pl.name}」に追加しました`); } },
             removeVideo(plId, idx) { const pl = this.playlists.find(p=>p.id===plId); if(pl){ pl.videos.splice(idx,1); this.saveData(); } },
+            moveVideo(plId, idx, direction) {
+                const pl = this.playlists.find(p => p.id === plId);
+                if (pl) {
+                    const newIndex = idx + direction;
+                    if (newIndex >= 0 && newIndex < pl.videos.length) {
+                        [pl.videos[idx], pl.videos[newIndex]] = [pl.videos[newIndex], pl.videos[idx]];
+                        this.saveData();
+                    }
+                }
+            },
 
-            // 再生制御
+            // ▶️ 再生制御
             playNow(video, plId = null) {
                 if(!ytPlayer) return;
                 if(this.nowPlaying?.id === video.id) { this.togglePlay(); return; }
                 this.nowPlaying = video; this.currentPlaylistId = plId;
+                this.progress = 0; this.currentTimeStr = '0:00';
                 ytPlayer.loadVideoById(video.id);
+                
+                // 自動再生ポリシー対策: 初回クリックでダミー動画を起動
                 this.syncPhantomVideo(true);
                 setTimeout(() => lucide.createIcons(), 50);
             },
             togglePlay() {
                 if(!ytPlayer || !this.nowPlaying) return;
                 if(this.isPlaying) { ytPlayer.pauseVideo(); }
-                else { ytPlayer.playVideo(); }
+                else { ytPlayer.playVideo(); this.syncPhantomVideo(true); }
             },
             toggleLoop() { this.repeatMode = (this.repeatMode + 1) % 3; setTimeout(()=>lucide.createIcons(),50); },
             playPlaylist(plId) { const pl = this.playlists.find(p=>p.id===plId); if(pl && pl.videos.length>0) this.playNow(pl.videos[0], plId); },
@@ -424,40 +483,62 @@
                 }
             },
 
-            // シーク・通知バー設定
+            // ⏱️ シーク・時間管理
             startProgressTracker() {
                 clearInterval(progressTimer);
                 progressTimer = setInterval(() => {
                     if(ytPlayer && this.isPlaying && !this.isDragging) {
-                        const cur = ytPlayer.getCurrentTime(); const dur = ytPlayer.getDuration();
-                        this.progress = (cur/dur)*100; this.currentTimeStr = this.formatTime(cur);
+                        const cur = ytPlayer.getCurrentTime() || 0; 
+                        const dur = ytPlayer.getDuration() || 1;
+                        this.progress = (cur/dur)*100; 
+                        this.currentTimeStr = this.formatTime(cur);
                     }
                 }, 1000);
             },
             seekTo(pct) {
-                if(!ytPlayer) return; const dur = ytPlayer.getDuration();
-                const target = (pct/100)*dur; ytPlayer.seekTo(target, true);
-                this.currentTimeStr = this.formatTime(target); this.progress = pct;
+                if(!ytPlayer) return; 
+                const dur = ytPlayer.getDuration();
+                const target = (pct/100)*dur; 
+                ytPlayer.seekTo(target, true);
+                this.currentTimeStr = this.formatTime(target); 
+                this.progress = pct;
             },
             formatTime(s) { const m = Math.floor(s/60); const sec = Math.floor(s%60); return `${m}:${sec.toString().padStart(2,'0')}`; },
             updateVideoDuration() {
+                if (!ytPlayer || !this.nowPlaying) return;
                 const dur = ytPlayer.getDuration();
-                if(dur > 0 && !this.nowPlaying.duration) { this.nowPlaying.duration = this.formatTime(dur); this.saveData(); }
+                if(dur > 0 && !this.nowPlaying.duration) { 
+                    const t = this.formatTime(dur);
+                    this.nowPlaying.duration = t; 
+                    if(this.searchResult && this.searchResult.id === this.nowPlaying.id) this.searchResult.duration = t;
+                    this.playlists.forEach(pl => pl.videos.forEach(v => { if(v.id === this.nowPlaying.id && !v.duration) v.duration = t; }));
+                    this.saveData(); 
+                }
             },
 
-            // 🛡️ [重要] 通知バー（MediaSession）完全対応
+            // 📱 MediaSession API (通知バー完全連携)
             setupMediaSession(video) {
                 if ('mediaSession' in navigator && video) {
                     navigator.mediaSession.metadata = new MediaMetadata({
-                        title: video.title, artist: '小鳥Lab Background Player',
+                        title: video.title, 
+                        artist: '小鳥Lab BGM Player',
                         artwork: [{ src: video.thumb, sizes: '512x512', type: 'image/jpeg' }]
                     });
                     this.updateMediaSessionState();
+                    
                     navigator.mediaSession.setActionHandler('play', () => this.togglePlay());
                     navigator.mediaSession.setActionHandler('pause', () => this.togglePlay());
-                    // 通知バーにスキップボタンを表示
+                    // 通知バーに「次へ」ボタンを出力し、連動させる
                     navigator.mediaSession.setActionHandler('nexttrack', () => this.skipNext());
-                    navigator.mediaSession.setActionHandler('seekto', (d) => ytPlayer.seekTo(d.seekTime, true));
+                    
+                    navigator.mediaSession.setActionHandler('previoustrack', () => {
+                        const pl = this.playlists.find(p=>p.id===this.currentPlaylistId);
+                        if(pl) {
+                            const idx = pl.videos.findIndex(v=>v.id===this.nowPlaying.id);
+                            if(idx > 0) this.playNow(pl.videos[idx-1], this.currentPlaylistId);
+                        }
+                    });
+                    navigator.mediaSession.setActionHandler('seekto', (d) => { if(d.seekTime && ytPlayer) ytPlayer.seekTo(d.seekTime, true); });
                 }
             },
             updateMediaSessionState() {
