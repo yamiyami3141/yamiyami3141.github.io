@@ -350,10 +350,18 @@
                     window.dispatchEvent(new CustomEvent('yt-state-change', { detail: state }));
                 },
                 'onError': (e) => {
+                    // 2番（再生不可）や100番（削除）以外は、自動再生制限による一時的エラーの可能性が高い
+                    if (e.data === 2) {
+                        console.warn("自動再生がブロックされました。ユーザー操作を待機します。");
+                        return; // アラートを出さずに無視する
+                    }
+                    
                     let msg = "再生エラーが発生しました。";
-                    if (e.data === 101 || e.data === 150) msg = "この動画は埋め込み再生不可です（制限設定）。";
-                    else if (e.data === 100) msg = "動画が見つからないか削除されています。";
-                    alert(msg);
+                    if (e.data === 101 || e.data === 150) msg = "この動画は埋め込み不可です。";
+                    else if (e.data === 100) msg = "動画が見つかりません。";
+                    
+                    // 深刻なエラーの時だけ通知する
+                    console.error("YouTube Error:", e.data);
                 }
             }
         });
