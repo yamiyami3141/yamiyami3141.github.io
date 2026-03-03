@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>在庫・販売管理システム</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <style>
+    /* レシートキャプチャ用の隠しコンテナ */
+    #receipt-container { position: absolute; top: -9999px; left: -9999px; background: white; padding: 20px; width: 350px; font-family: monospace; color: #000; }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans p-6">
+  <div id="app" class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6 text-gray-700">📦 在庫・販売管理システム</h2>
+    
+    <div class="flex border-b border-gray-300 mb-6">
+      <button class="py-2 px-4 font-semibold focus:outline-none"
+              :class="currentTab === 'sales' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'"
+              @click="currentTab = 'sales'">🛒 販売登録</button>
+      <button class="py-2 px-4 font-semibold focus:outline-none"
+              :class="currentTab === 'inventory' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'"
+              @click="currentTab = 'inventory'">📝 商品登録・在庫管理</button>
+    </div>
+
+    <div v-if="isLoading" class="flex flex-col items-center justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+      <p class="text-gray-500">通信中...</p>
+    </div>
+
+    <div v-show="!isLoading && currentTab === 'sales'" class="bg-white shadow rounded-lg p-6">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-50 border-b">
+              <th class="p-3 w-1/6">商品コード</th>
+              <th class="p-3 w-2/6">商品名</th>
+              <th class="p-3 w-1/6">割引率</th>
+              <th class="p-3 w-1/6">販売個数</th>
+              <th class="p-3 w-1/6 text-right">小計</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(line, index) in salesLines" :key="index" class="border-b hover:bg-gray-50">
+              <td class="p-2">
+                <input type="text" class="w-full border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400" 
+                       v-model="line.code" @input="onCodeInput(index)" placeholder="4桁" maxlength="4">
+              </td>
+              <td class="p-2">{{ line.name || '-' }}</td>
+              <td class="p-2">
+                <select class="w-full border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-100" 
+                        v-model="line.discount" @change="calculateLine(index)" :disabled="!line.name">
+                  <option v-for="d in [100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 0]" :value="d">{{ d }}%</option>
+                </select>
+              </td>
+              <td class="p-2">
+                <input type="number" class="w-full border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-100" 
+                       v-model="line.qty" @input="calculateLine(index)" min="1" :disabled="!line.name">
+              </td>
+              <td class="p-2 text-right font-bold">¥ {{ line.subtotal.toLocaleString() }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="flex justify-between items-center mt-6">
+        <h3 class="text-2xl font-bold text-gray-800">合計: ¥ {{ totalAmount.toLocaleString() }}</h3>
+        <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded shadow disabled:opacity-50 disabled:cursor-not-allowed" 
+                :disabled="!isSalesValid" @click="confirmSales">確定してレシート保存</button>
+      </div>
+    </div>
+
+    <div v-show="!isLoading && currentTab === 'inventory'" class="bg-white shadow rounded-lg p-6">
+      <p class="text-sm text-gray-500 mb-4">※内容を変更すると確定ボタンが有効になります。総販売数などは自動計算されます。</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-50 border-b">
+              <th class="p-3">商品コード</th>
+              <th class="p-3">商品名</th>
+              <th class="p-3">仕入れ値</th>
+              <th class="p-3">基本販売価格</th>
+              <th class="p-3">在庫数</th>
+              <th class="p-3 text-right">総販売数</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(product, index) in products" :key="index" class="border-b hover:bg-gray-50">
+              <td class="p-2"><input type="text" class="w-24 border border-gray-300 rounded px-2 py-1" v-model="product.code" @input="markModified"></td>
+              <td class="p-2"><input type="text" class="w-full min-w-[150px] border border-gray-300 rounded px-2 py-1" v-model="product.name" @input="markModified"></td>
+              <td class="p-2"><input type="number" class="w-24 border border-gray-300 rounded px-2 py-1" v-model="product.cost" @input="markModified"></td>
+              <td class="p-2"><input type="number" class="w-24 border border-gray-300 rounded px-2 py-1" v-model="product.basePrice" @input="markModified"></td>
+              <td class="p-2"><input type="number" class="w-20 border border-gray-300 rounded px-2 py-1" v-model="product.stock" @input="markModified"></td>
+              <td class="p-2 text-right">{{ product.totalSales || 0 }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="flex justify-between items-center mt-6">
+        <button class="border border-blue-500 text-blue-500 hover:bg-blue-50 font-bold py-2 px-4 rounded" @click="addNewProductRow">＋ 新規商品を登録</button>
+        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow disabled:opacity-50 disabled:cursor-not-allowed" 
+                :disabled="!isModified" @click="confirmInventoryUpdate">変更を確定する</button>
+      </div>
+    </div>
+
+    <div id="receipt-container">
+      <h3 class="text-center font-bold text-xl mb-3">領収証</h3>
+      <p class="mb-2 text-sm">日時: {{ new Date().toLocaleString() }}</p>
+      <div class="border-b border-gray-800 border-dashed my-2"></div>
+      <div v-for="line in validSalesLines" :key="line.code" class="mb-3">
+        <div class="font-bold">{{ line.name }}</div>
+        <div class="flex justify-between text-sm">
+          <span>@{{ Math.floor(line.basePrice * (line.discount / 100)) }} × {{ line.qty }} ({{line.discount}}%)</span>
+          <span>¥{{ line.subtotal.toLocaleString() }}</span>
+        </div>
+      </div>
+      <div class="border-b border-gray-800 border-dashed my-2"></div>
+      <h4 class="flex justify-between font-bold text-lg mt-3"><span>合計</span><span>¥ {{ totalAmount.toLocaleString() }}</span></h4>
+    </div>
+
+  </div>
+
+  <script>
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzN9Qt7qAlmN1Hh5HClwyr-1TBvwPwR2zNkgvleEpOMNNmZoupV8q7ftHXz7njr7QhU/exec';
+
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          currentTab: 'sales',
+          isLoading: true,
+          products: [],
+          salesLines: [{ code: '', name: '', basePrice: 0, discount: 100, qty: 1, subtotal: 0 }],
+          isModified: false
+        }
+      },
+      computed: {
+        validSalesLines() {
+          return this.salesLines.filter(line => line.name !== '' && line.name !== '該当なし');
+        },
+        totalAmount() {
+          return this.validSalesLines.reduce((sum, line) => sum + line.subtotal, 0);
+        },
+        isSalesValid() {
+          return this.validSalesLines.length > 0;
+        }
+      },
+      mounted() {
+        this.fetchData();
+      },
+      methods: {
+        // APIリクエスト汎用メソッド (POST用)
+        async postData(action, data) {
+          try {
+            // CORSのPreflightリクエストを避けるため、text/plainで送信
+            const response = await fetch(GAS_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain' },
+              body: JSON.stringify({ action: action, data: data })
+            });
+            return await response.json();
+          } catch (error) {
+            console.error('API Error:', error);
+            alert('通信エラーが発生しました。');
+            return null;
+          }
+        },
+
+        // 初期読み込み (GET)
+        async fetchData() {
+          this.isLoading = true;
+          try {
+            const response = await fetch(GAS_URL);
+            this.products = await response.json();
+            this.isModified = false;
+          } catch (error) {
+            console.error('Fetch Error:', error);
+            alert('データの読み込みに失敗しました。URLを確認してください。');
+          } finally {
+            this.isLoading = false;
+          }
+        },
+        
+        // 商品コード入力
+        onCodeInput(index) {
+          const line = this.salesLines[index];
+          if (line.code.length === 4) {
+            const product = this.products.find(p => p.code === line.code);
+            if (product) {
+              line.name = product.name;
+              line.basePrice = product.basePrice;
+              this.calculateLine(index);
+              
+              if (index === this.salesLines.length - 1 && this.salesLines.length < 100) {
+                this.salesLines.push({ code: '', name: '', basePrice: 0, discount: 100, qty: 1, subtotal: 0 });
+              }
+            } else {
+              line.name = '該当なし';
+              line.subtotal = 0;
+            }
+          } else {
+            line.name = '';
+            line.subtotal = 0;
+          }
+        },
+        
+        // 小計計算
+        calculateLine(index) {
+          const line = this.salesLines[index];
+          if (line.name && line.name !== '該当なし') {
+            const price = Math.floor(line.basePrice * (line.discount / 100));
+            line.subtotal = price * line.qty;
+          }
+        },
+
+        // 販売確定 (POST)
+        async confirmSales() {
+          if (!confirm('この内容で販売を確定しますか？')) return;
+          this.isLoading = true;
+          
+          const result = await this.postData('processSales', this.validSalesLines);
+          if (result && result.success) {
+            this.generateReceiptImage();
+            alert(result.message);
+            this.salesLines = [{ code: '', name: '', basePrice: 0, discount: 100, qty: 1, subtotal: 0 }];
+            await this.fetchData(); // 再取得
+          } else {
+            this.isLoading = false;
+          }
+        },
+
+        // レシート生成
+        generateReceiptImage() {
+          const element = document.getElementById('receipt-container');
+          html2canvas(element).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `receipt_${new Date().getTime()}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+          });
+        },
+
+        markModified() { this.isModified = true; },
+
+        addNewProductRow() {
+          this.products.push({ rowIdx: null, code: '', name: '', cost: 0, basePrice: 0, stock: 0, totalSales: 0 });
+          this.isModified = true;
+        },
+
+        // 在庫確定 (POST)
+        async confirmInventoryUpdate() {
+          const invalid = this.products.some(p => !p.code || !p.name);
+          if (invalid) {
+            alert('商品名と商品コードは必須です。');
+            return;
+          }
+
+          if (!confirm('商品情報の変更を反映しますか？')) return;
+          this.isLoading = true;
+          
+          const result = await this.postData('saveInventory', this.products);
+          if (result && result.success) {
+            alert(result.message);
+            await this.fetchData(); 
+          } else {
+            this.isLoading = false;
+          }
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
