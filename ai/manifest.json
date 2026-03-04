@@ -2,7 +2,7 @@
   "name": "小鳥Lab AI",
   "short_name": "小鳥Lab",
   "description": "和風UIのGemini AIチャットアプリ",
-  "start_url": "/",
+  "start_url": "/ai/",
   "display": "standalone",
   "background_color": "#fff7ed",
   "theme_color": "#f43f5e",
