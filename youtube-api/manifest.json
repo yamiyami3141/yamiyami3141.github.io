@@ -1,0 +1,17 @@
+{
+  "name": "小鳥Lab BGM Player",
+  "short_name": "BGM Player",
+  "description": "Background Music Player",
+  "start_url": "/youtube-api/",
+  "display": "standalone",
+  "background_color": "#fdf8f5",
+  "theme_color": "#fdf8f5",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
