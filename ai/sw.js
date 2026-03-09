@@ -1,9 +1,9 @@
 const CACHE_NAME = 'kotori-lab-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/icon.svg',
-  '/manifest.json'
+  './',
+  './index.html',
+  './icon.svg',
+  './manifest.json'
 ];
 
 self.addEventListener('install', event => {
