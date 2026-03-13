@@ -44,7 +44,6 @@
             margin-bottom: 20px;
             background: #ccc;
             overflow: hidden;
-            border-radius: 18px;
         }
         #bg-image { width: 100%; height: 100%; object-fit: cover; }
 
@@ -152,7 +151,6 @@
             flex-direction: column;
             gap: 10px;
             width: 460px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         input[type="text"] { padding: 8px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
         .slider-group { display: flex; flex-direction: column; margin-top: 5px; }
@@ -191,11 +189,7 @@
     </div>
 
     <div id="canvas-container">
-<<<<<<< Updated upstream
-        <img id="bg-image" src="img/免許-基本.avif" crossorigin="anonymous">
-=======
         <img id="bg-image" src="img/免許-3.avif" crossorigin="anonymous">
->>>>>>> Stashed changes
         
         <div id="text-out-1" class="overlay">山田　太郎</div>
         <div id="text-out-2" class="overlay">0000<span class="unit">年</span>00<span class="unit">月</span>00<span class="unit">日生</span></div>
@@ -613,6 +607,7 @@
             }
         });
 
+        
         // ページを離れる（リロード・閉じる）前に警告を表示する
         window.addEventListener('beforeunload', (event) => {
             // フォームに入力がある場合のみ警告を出す、といった制御も可能ですが、
@@ -627,6 +622,7 @@
             return confirmationMessage; // Safari 対策
             
         });
+        
     </script>
 
 <!--/////-->
