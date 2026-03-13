@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>小鳥Lab P2P研究所</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap');
+        [x-cloak] { display: none !important; }
+        
+        body { 
+            font-family: 'Shippori Mincho', serif; 
+            background-color: #f8f7f4;
+            background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png'); 
+            overflow: hidden; 
+        }
+        
+        .animation-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .writing-vertical { writing-mode: vertical-rl; }
+        .animate-in { animation: fade-in 1.2s ease-out forwards; }
+        
+        @keyframes fade-in { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(244, 63, 94, 0.2); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(244, 63, 94, 0.4); }
+
+        .msg-enter { animation: msg-slide-up 0.3s ease-out forwards; }
+        @keyframes msg-slide-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="select-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-rose-50 via-stone-100 to-orange-50 min-h-screen flex items-center justify-center p-2 sm:p-6 text-stone-700 antialiased relative" oncontextmenu="return false;">
+
+    <canvas class="animation-canvas"></canvas>
+
+    <div x-data="chatApp()" x-init="initApp()" class="relative z-10 w-full max-w-6xl h-[95vh] bg-white/70 backdrop-blur-3xl border border-white rounded-[2rem] shadow-2xl shadow-rose-200/30 overflow-hidden flex flex-col md:flex-row animate-in">
+        
+        <div class="md:w-1/3 p-6 md:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-stone-200 relative bg-gradient-to-b from-rose-100/40 to-white/20">
+            <div class="absolute top-0 right-4 p-8 opacity-10 text-4xl font-bold writing-vertical tracking-[0.6em] text-stone-900 pointer-events-none uppercase" x-text="roomId"></div>
+            
+            <div class="relative z-10">
+                <div class="inline-block px-4 py-1.5 bg-rose-500 text-white text-[10px] tracking-[0.2em] mb-4 rounded-full font-sans font-bold shadow-md shadow-rose-200">P2P MESH NETWORK</div>
+                <h2 class="text-3xl font-bold mb-4 tracking-widest text-stone-800 leading-tight">
+                    小鳥Lab研究所<br>
+                    <span class="text-sm opacity-40 font-light italic tracking-normal font-sans">Decentralized Sanctuary</span>
+                </h2>
+                <div class="space-y-3 text-stone-600 leading-relaxed text-xs">
+                    <p class="font-bold">秘匿された対話の空間。</p>
+                    <p>P2P技術により、サーバーに痕跡を残さず<br>この場にいる者だけで記録を補完し合います。</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 relative z-10 bg-white/40 p-4 rounded-2xl border border-white shadow-sm backdrop-blur-md">
+                <div class="flex items-center gap-4">
+                    <img :src="getAvatarUrl(myPeerId)" class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm bg-white">
+                    <div>
+                        <p class="text-[10px] text-stone-400 font-sans tracking-widest uppercase">Your Profile</p>
+                        <p class="font-bold tracking-wider text-stone-800" x-text="myName"></p>
+                    </div>
+                </div>
+                <button @click="showSettings = true" class="mt-4 w-full py-2 bg-stone-800 hover:bg-rose-500 text-white text-xs tracking-[0.2em] rounded-full transition-all duration-300 shadow-md flex justify-center items-center gap-2">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    設定・ルーム移動
+                </button>
+            </div>
+        </div>
+
+        <div class="md:w-2/3 flex flex-col relative bg-white/10">
+            
+            <div class="px-6 py-4 border-b border-stone-200/50 bg-white/30 backdrop-blur-md flex justify-between items-center z-10">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-rose-500 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"></circle><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path></svg>
+                    <span class="text-xs font-bold tracking-widest text-stone-600">ONLINE PEERS : <span x-text="Object.keys(activeConnections).length + 1"></span></span>
+                </div>
+            </div>
+
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar relative z-0">
+                
+                <div x-show="messages.length === 0" class="h-full flex flex-col items-center justify-center opacity-30">
+                    <svg class="w-12 h-12 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg>
+                    <p class="text-sm tracking-widest">静寂に包まれています...</p>
+                </div>
+
+                <template x-for="msg in messages" :key="msg.id">
+                    <div class="flex w-full msg-enter" :class="msg.senderId === myPeerId ? 'justify-end' : 'justify-start'">
+                        
+                        <div x-show="msg.senderId !== myPeerId" class="flex max-w-[80%] gap-3 items-end">
+                            <img :src="getAvatarUrl(msg.senderId)" class="w-8 h-8 rounded-full object-cover shadow-sm border border-white/50 mb-1 flex-shrink-0 bg-white">
+                            <div>
+                                <div class="text-[10px] text-stone-500 ml-2 mb-1" x-text="getContactName(msg.senderId)"></div>
+                                <div class="bg-white/80 backdrop-blur-sm border border-white text-stone-700 px-4 py-3 rounded-2xl rounded-bl-sm shadow-sm text-sm font-sans leading-relaxed whitespace-pre-wrap">
+                                    <span x-text="msg.text"></span>
+                                    <template x-if="msg.hasFile">
+                                        <div class="mt-2">
+                                            <template x-if="msg.fileBlob">
+                                                <img :src="createBlobUrl(msg.fileBlob)" class="max-w-full rounded-lg cursor-pointer border border-stone-200" @click="window.open(createBlobUrl(msg.fileBlob), '_blank')">
+                                            </template>
+                                            <template x-if="!msg.fileBlob">
+                                                <div class="border border-dashed border-stone-300 p-3 rounded-lg text-center bg-stone-50/50">
+                                                    <svg class="w-6 h-6 mx-auto text-stone-400 mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                                    <p class="text-[10px] text-stone-500 mb-2">画像を受信しました</p>
+                                                    <button @click="requestFile(msg.id)" class="px-3 py-1 bg-rose-400 text-white text-[10px] rounded-full hover:bg-rose-500 transition-colors">読み込む</button>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div class="flex justify-start items-center mt-1 ml-1 gap-2">
+                                    <span class="text-[9px] text-stone-400" x-text="formatTime(msg.timestamp)"></span>
+                                    <button @click="copyText(msg.text, $event)" class="text-stone-400 hover:text-stone-600 transition-colors" title="コピー">
+                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div x-show="msg.senderId === myPeerId" class="flex max-w-[80%] flex-col items-end">
+                            <div class="bg-rose-100/60 backdrop-blur-sm border border-rose-50 text-stone-800 px-4 py-3 rounded-2xl rounded-br-sm shadow-sm text-sm font-sans leading-relaxed whitespace-pre-wrap">
+                                <span x-text="msg.text"></span>
+                                <template x-if="msg.hasFile">
+                                    <div class="mt-2">
+                                        <template x-if="msg.fileBlob">
+                                            <img :src="createBlobUrl(msg.fileBlob)" class="max-w-full rounded-lg cursor-pointer border border-rose-200" @click="window.open(createBlobUrl(msg.fileBlob), '_blank')">
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                            <div class="flex justify-end items-center mt-1 mr-1 gap-2">
+                                <button @click="copyText(msg.text, $event)" class="text-stone-400 hover:text-rose-500 transition-colors" title="コピー">
+                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                </button>
+                                <span class="text-[9px] text-stone-400" x-text="formatTime(msg.timestamp)"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </template>
+            </div>
+
+            <div class="p-4 bg-white/40 backdrop-blur-xl border-t border-stone-200/50 relative z-10">
+                <div class="flex items-end gap-3 bg-white/60 border border-white rounded-2xl p-2 shadow-inner">
+                    
+                    <label class="p-3 text-stone-400 hover:text-rose-500 cursor-pointer transition-colors flex-shrink-0" :class="{'text-rose-500': selectedFile}">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                        <input type="file" id="file-input" class="hidden" accept="image/*" @change="handleFileSelect">
+                    </label>
+
+                    <textarea x-model="inputText" rows="1" placeholder="メッセージを綴る... (Enterで改行)"
+                              class="w-full bg-transparent outline-none resize-none py-3 text-sm font-sans text-stone-700 placeholder-stone-400 custom-scrollbar max-h-32"></textarea>
+                    
+                    <button @click="sendChat()" :disabled="!inputText.trim() && !selectedFile"
+                            class="p-3 bg-rose-400 text-white rounded-xl shadow-md hover:bg-rose-500 disabled:opacity-40 transition-all transform active:scale-95 flex-shrink-0">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+                <div x-show="selectedFile" class="absolute -top-10 left-4 bg-white/90 px-3 py-1 rounded-full text-xs text-stone-600 shadow-sm border border-stone-200 flex items-center gap-2">
+                    <svg class="w-3 h-3 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    <span x-text="selectedFile ? selectedFile.name : ''" class="max-w-[150px] truncate"></span>
+                    <button @click="clearFile" class="text-stone-400 hover:text-rose-500">
+                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="showSettings" x-cloak x-transition.opacity
+             class="absolute inset-0 z-[100] flex items-center justify-center p-4 bg-stone-900/30 backdrop-blur-md">
+            <div class="bg-white/95 border border-white p-8 rounded-3xl shadow-2xl w-full max-w-md relative" @click.away="showSettings = false">
+                <button @click="showSettings = false" class="absolute top-4 right-4 text-stone-400 hover:text-rose-500">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                
+                <h3 class="text-lg font-bold mb-6 tracking-widest text-center text-stone-800 border-b pb-4">研究室設定</h3>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label class="text-[10px] font-bold tracking-[0.3em] text-rose-500 block mb-2">表示名</label>
+                        <input type="text" x-model="tempName" class="w-full bg-stone-50 border border-stone-200 px-4 py-3 rounded-xl outline-none focus:border-rose-400 font-sans text-sm">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold tracking-[0.3em] text-rose-500 block mb-2">アバター画像</label>
+                        <input type="file" id="avatar-input" accept="image/*" class="w-full text-sm text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-rose-50 file:text-rose-600 hover:file:bg-rose-100 cursor-pointer">
+                    </div>
+                    <button @click="saveProfile()" class="w-full bg-rose-400 hover:bg-rose-500 text-white font-bold py-3 rounded-full shadow-md transition-all text-xs tracking-widest">プロフィールを更新</button>
+                    
+                    <hr class="border-stone-200">
+                    
+                    <div>
+                        <label class="text-[10px] font-bold tracking-[0.3em] text-teal-600 block mb-2">ルーム移動 (自動リロード)</label>
+                        <div class="flex gap-2">
+                            <input type="text" x-model="tempRoom" class="w-full bg-stone-50 border border-stone-200 px-4 py-3 rounded-xl outline-none focus:border-teal-400 font-sans text-sm">
+                            <button @click="changeRoom()" class="bg-teal-500 hover:bg-teal-600 text-white px-4 rounded-xl shadow-md text-xs tracking-widest transition-colors">移動</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDPS4f1XoY6le7CEOZ2ya4f7ywOpqxspM",
+            authDomain: "p2p-mesh-chat.firebaseapp.com",
+            databaseURL: "https://p2p-mesh-chat-default-rtdb.firebaseio.com",
+            projectId: "p2p-mesh-chat",
+            storageBucket: "p2p-mesh-chat.firebasestorage.app",
+            messagingSenderId: "1030428297112",
+            appId: "1:1030428297112:web:ad9fa6a46f6dcbb9a84ded"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        // Firebaseの機能をグローバルに公開してAlpineから呼べるようにする
+        window.fbDb = getDatabase(app);
+        window.fbRef = ref;
+        window.fbSet = set;
+        window.fbOnValue = onValue;
+        window.fbOnDisconnect = onDisconnect;
+    </script>
+
+    <script>
+        // デフォルトの人型アイコン（SVGデータURI）
+        const defaultAvatarSVG = "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d6d3d1'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E";
+
+        function chatApp() {
+            return {
+                myPeerId: crypto.randomUUID(),
+                roomId: new URLSearchParams(window.location.search).get('room') || 'Sakura-Room',
+                myName: localStorage.getItem('p2p_sakura_name') || '名無し',
+                myAvatarBlob: null,
+                myAvatarUrl: '',
+                
+                peer: null,
+                activeConnections: {},
+                localDB: null,
+                
+                messages: [],
+                contacts: {},
+                objectUrlCache: {}, 
+
+                inputText: '',
+                selectedFile: null,
+                showSettings: false,
+                tempName: '',
+                tempRoom: '',
+
+                async initApp() {
+                    this.tempName = this.myName;
+                    this.tempRoom = this.roomId;
+                    
+                    await this.initDB();
+                    await this.cleanupDatabase();
+                    
+                    const myProfile = await this.dbOp("contacts", "readonly", s => s.get(this.myPeerId));
+                    if (myProfile && myProfile.avatarBlob) {
+                        this.myAvatarBlob = myProfile.avatarBlob;
+                        this.myAvatarUrl = this.createBlobUrl(this.myAvatarBlob);
+                    }
+                    await this.saveContact(this.myPeerId, this.myName, this.myAvatarBlob);
+                    await this.loadMessagesToUI();
+
+                    // Firebaseが読み込まれるのを待ってから接続開始
+                    const checkFb = setInterval(() => {
+                        if (window.fbDb) {
+                            clearInterval(checkFb);
+                            this.startP2P();
+                        }
+                    }, 50);
+                },
+
+                startP2P() {
+                    this.peer = new Peer(this.myPeerId);
+                    this.peer.on('open', (id) => {
+                        console.log("Joined:", id);
+                        
+                        const myRef = window.fbRef(window.fbDb, `rooms/${this.roomId}/${this.myPeerId}`);
+                        window.fbSet(myRef, { active: true });
+                        window.fbOnDisconnect(myRef).remove();
+
+                        window.fbOnValue(window.fbRef(window.fbDb, `rooms/${this.roomId}`), (snapshot) => {
+                            snapshot.forEach((child) => {
+                                const targetId = child.key;
+                                if (targetId !== this.myPeerId && !this.activeConnections[targetId]) {
+                                    if (this.myPeerId < targetId) {
+                                        const conn = this.peer.connect(targetId);
+                                        this.setupConnection(conn);
+                                    }
+                                }
+                            });
+                        });
+                    });
+
+                    this.peer.on('connection', (conn) => this.setupConnection(conn));
+                },
+
+                setupConnection(conn) {
+                    conn.on('open', async () => {
+                        this.activeConnections[conn.peer] = conn;
+                        conn.send({ type: 'PROFILE', peerId: this.myPeerId, name: this.myName, avatarBlob: this.myAvatarBlob });
+                        
+                        const allMsgs = await this.dbOp("messages", "readonly", s => s.getAll());
+                        conn.send({ type: 'SYNC_INV', ids: allMsgs.map(m => m.id) });
+                    });
+
+                    conn.on('data', async (data) => {
+                        if (data.type === 'PROFILE') {
+                            await this.saveContact(data.peerId, data.name, data.avatarBlob);
+                            this.contacts[data.peerId] = { name: data.name, avatarBlob: data.avatarBlob };
+                        }
+                        else if (data.type === 'SYNC_INV') {
+                            const allMsgs = await this.dbOp("messages", "readonly", s => s.getAll());
+                            const myIds = allMsgs.map(m => m.id);
+                            const missingIds = data.ids.filter(id => !myIds.includes(id));
+                            if (missingIds.length > 0) conn.send({ type: 'DATA_REQ', ids: missingIds });
+                        }
+                        else if (data.type === 'DATA_REQ') {
+                            const allMsgs = await this.dbOp("messages", "readonly", s => s.getAll());
+                            const requested = allMsgs.filter(m => data.ids.includes(m.id)).map(m => {
+                                let msgCopy = { ...m };
+                                delete msgCopy.fileBlob; 
+                                return msgCopy;
+                            });
+                            conn.send({ type: 'DATA_DELIVERY', messages: requested });
+                        }
+                        else if (data.type === 'DATA_DELIVERY' || data.type === 'CHAT') {
+                            const msgs = data.type === 'CHAT' ? [data.msg] : data.messages;
+                            for (let m of msgs) await this.saveMessage(m);
+                            await this.loadMessagesToUI();
+                        }
+                        else if (data.type === 'FILE_REQ') {
+                            const msg = await this.dbOp("messages", "readonly", s => s.get(data.msgId));
+                            if (msg && msg.fileBlob) conn.send({ type: 'FILE_DELIVERY', msgId: data.msgId, fileBlob: msg.fileBlob });
+                        }
+                        else if (data.type === 'FILE_DELIVERY') {
+                            const msg = await this.dbOp("messages", "readonly", s => s.get(data.msgId));
+                            if (msg) {
+                                msg.fileBlob = data.fileBlob;
+                                await this.saveMessage(msg);
+                                await this.loadMessagesToUI();
+                            }
+                        }
+                    });
+
+                    conn.on('close', () => delete this.activeConnections[conn.peer]);
+                },
+
+                handleFileSelect(e) {
+                    this.selectedFile = e.target.files[0] || null;
+                },
+                
+                clearFile() {
+                    this.selectedFile = null;
+                    document.getElementById('file-input').value = '';
+                },
+
+                async sendChat() {
+                    if (!this.inputText.trim() && !this.selectedFile) return;
+
+                    let msg = {
+                        id: Date.now() + "-" + this.myPeerId,
+                        senderId: this.myPeerId,
+                        text: this.inputText.trim(),
+                        timestamp: Date.now(),
+                        hasFile: !!this.selectedFile
+                    };
+
+                    if (this.selectedFile) {
+                        msg.fileName = this.selectedFile.name;
+                        msg.fileBlob = await this.resizeImage(this.selectedFile, 800);
+                        if(window.triggerSakuraRush) window.triggerSakuraRush();
+                    }
+
+                    await this.saveMessage(msg);
+                    await this.loadMessagesToUI();
+
+                    let msgToSend = { ...msg };
+                    delete msgToSend.fileBlob; 
+
+                    Object.values(this.activeConnections).forEach(conn => conn.send({ type: 'CHAT', msg: msgToSend }));
+
+                    this.inputText = '';
+                    this.clearFile();
+                },
+
+                requestFile(msgId) {
+                    const peers = Object.values(this.activeConnections);
+                    if (peers.length > 0) {
+                        const randomPeer = peers[Math.floor(Math.random() * peers.length)];
+                        randomPeer.send({ type: 'FILE_REQ', msgId: msgId });
+                    } else {
+                        alert("データを持つオンラインユーザーが現在いません。");
+                    }
+                },
+
+                // メッセージコピーツール
+                copyText(text, event) {
+                    if(!text) return;
+                    navigator.clipboard.writeText(text).then(() => {
+                        const btn = event.currentTarget;
+                        const originalHTML = btn.innerHTML;
+                        // コピー成功時にチェックマークに変更
+                        btn.innerHTML = `<svg class="w-3.5 h-3.5 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+                        setTimeout(() => { btn.innerHTML = originalHTML; }, 2000);
+                    });
+                },
+
+                async saveProfile() {
+                    this.myName = this.tempName;
+                    localStorage.setItem('p2p_sakura_name', this.myName);
+                    
+                    const file = document.getElementById('avatar-input').files[0];
+                    if (file) {
+                        this.myAvatarBlob = await this.resizeImage(file, 200);
+                        this.myAvatarUrl = this.createBlobUrl(this.myAvatarBlob);
+                    }
+                    
+                    await this.saveContact(this.myPeerId, this.myName, this.myAvatarBlob);
+                    
+                    Object.values(this.activeConnections).forEach(conn => {
+                        conn.send({ type: 'PROFILE', peerId: this.myPeerId, name: this.myName, avatarBlob: this.myAvatarBlob });
+                    });
+                    
+                    this.showSettings = false;
+                },
+
+                changeRoom() {
+                    if(this.tempRoom.trim() && this.tempRoom !== this.roomId) {
+                        window.location.href = `?room=${encodeURIComponent(this.tempRoom.trim())}`;
+                    }
+                },
+
+                async loadMessagesToUI() {
+                    const msgs = await this.dbOp("messages", "readonly", s => s.getAll());
+                    msgs.sort((a, b) => a.timestamp - b.timestamp);
+                    this.messages = msgs;
+                    
+                    const contactsRaw = await this.dbOp("contacts", "readonly", s => s.getAll());
+                    contactsRaw.forEach(c => this.contacts[c.peerId] = c);
+                    
+                    this.$nextTick(() => {
+                        const box = document.getElementById('chat-messages');
+                        box.scrollTop = box.scrollHeight;
+                    });
+                },
+
+                getContactName(peerId) {
+                    return this.contacts[peerId]?.name || "不明なユーザー";
+                },
+
+                getAvatarUrl(peerId) {
+                    if (peerId === this.myPeerId && this.myAvatarUrl) return this.myAvatarUrl;
+                    const blob = this.contacts[peerId]?.avatarBlob;
+                    if (blob) return this.createBlobUrl(blob);
+                    return defaultAvatarSVG; // 設定なしの場合は人型アイコンを表示
+                },
+
+                createBlobUrl(blob) {
+                    const hash = blob.size + '-' + blob.type; 
+                    if (!this.objectUrlCache[hash]) {
+                        this.objectUrlCache[hash] = URL.createObjectURL(blob);
+                    }
+                    return this.objectUrlCache[hash];
+                },
+
+                formatTime(ts) {
+                    return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                },
+
+                // --- IndexedDB ---
+                initDB() {
+                    return new Promise((resolve) => {
+                        const req = indexedDB.open("P2P_Sakura_DB", 1);
+                        req.onupgradeneeded = (e) => {
+                            const db = e.target.result;
+                            if (!db.objectStoreNames.contains("messages")) db.createObjectStore("messages", { keyPath: "id" });
+                            if (!db.objectStoreNames.contains("contacts")) db.createObjectStore("contacts", { keyPath: "peerId" });
+                        };
+                        req.onsuccess = (e) => { this.localDB = e.target.result; resolve(); };
+                    });
+                },
+                dbOp(storeName, type, op) {
+                    return new Promise((resolve, reject) => {
+                        const tx = this.localDB.transaction(storeName, type);
+                        const req = op(tx.objectStore(storeName));
+                        req.onsuccess = () => resolve(req.result);
+                        req.onerror = () => reject(req.error);
+                    });
+                },
+                saveMessage(msg) { return this.dbOp("messages", "readwrite", s => s.put(msg)); },
+                saveContact(peerId, name, avatarBlob) { return this.dbOp("contacts", "readwrite", s => s.put({ peerId, name, avatarBlob })); },
+                
+                async cleanupDatabase() {
+                    const msgs = await this.dbOp("messages", "readonly", s => s.getAll());
+                    const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+                    msgs.sort((a, b) => a.timestamp - b.timestamp);
+                    for (let i = 0; i < msgs.length; i++) {
+                        if (msgs[i].timestamp < thirtyDaysAgo || i < msgs.length - 1000) {
+                            await this.dbOp("messages", "readwrite", s => s.delete(msgs[i].id));
+                        }
+                    }
+                },
+
+                resizeImage(file, maxWidth) {
+                    return new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const img = new Image();
+                            img.onload = () => {
+                                const canvas = document.createElement('canvas');
+                                let w = img.width, h = img.height;
+                                if (w > maxWidth) { h = Math.round((h * maxWidth) / w); w = maxWidth; }
+                                canvas.width = w; canvas.height = h;
+                                const ctx = canvas.getContext('2d');
+                                ctx.drawImage(img, 0, 0, w, h);
+                                canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.8);
+                            };
+                            img.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+            };
+        }
+
+        // ==========================================
+        // 桜アニメーション (Canvas)
+        // ==========================================
+        class SakuraAnimation {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.petals = [];
+                this.rushMode = false; 
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                this.init();
+                this.animate();
+                
+                window.triggerSakuraRush = () => {
+                    this.rushMode = true;
+                    setTimeout(() => this.rushMode = false, 2000);
+                };
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            init() {
+                for (let i = 0; i < 60; i++) {
+                    this.petals.push(this.createPetal());
+                }
+            }
+            
+            createPetal() {
+                return {
+                    x: Math.random() * this.canvas.width,
+                    y: Math.random() * this.canvas.height - this.canvas.height,
+                    size: Math.random() * 8 + 10,
+                    speed: Math.random() * 0.7 + 0.3,
+                    wind: Math.random() * 0.6 - 0.3,
+                    angle: Math.random() * 360,
+                    rotateSpeed: Math.random() * 1.2 - 0.6,
+                    flip: Math.random() * Math.PI,
+                    flipSpeed: Math.random() * 0.04 + 0.01,
+                    swing: Math.random() * Math.PI,
+                    swingSpeed: Math.random() * 0.02 + 0.01,
+                    color: `rgba(255, ${215 + Math.random() * 25}, ${225 + Math.random() * 20}, ${0.4 + Math.random() * 0.4})`
+                };
+            }
+
+            drawPetal(p) {
+                const { ctx } = this;
+                ctx.save();
+                const offsetX = Math.sin(p.swing) * 15;
+                ctx.translate(p.x + offsetX, p.y);
+                ctx.rotate(p.angle * Math.PI / 180);
+                ctx.scale(Math.cos(p.flip), 1);
+                ctx.beginPath();
+                ctx.fillStyle = p.color;
+                const s = p.size;
+                ctx.moveTo(0, 0); 
+                ctx.bezierCurveTo(-s * 0.4, -s * 0.5, -s * 1.2, -s * 1.1, -s * 0.4, -s * 2.0);
+                ctx.lineTo(0, -s * 1.5); 
+                ctx.lineTo(s * 0.4, -s * 2.0);
+                ctx.bezierCurveTo(s * 1.2, -s * 1.1, s * 0.4, -s * 0.5, 0, 0);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                const speedMult = this.rushMode ? 3.5 : 1;
+
+                this.petals.forEach(p => {
+                    p.y += p.speed * speedMult;
+                    p.x += (p.wind + (this.rushMode ? 1.5 : 0)) * speedMult;
+                    p.angle += p.rotateSpeed * speedMult;
+                    p.flip += p.flipSpeed * speedMult;
+                    p.swing += p.swingSpeed * speedMult;
+
+                    if (p.y > this.canvas.height + 40 || p.x > this.canvas.width + 40) {
+                        p.y = -40;
+                        p.x = Math.random() * this.canvas.width;
+                    }
+                    this.drawPetal(p);
+                });
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new SakuraAnimation(document.querySelector('.animation-canvas'));
+        });
+    </script>
+</body>
+</html>
