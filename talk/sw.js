@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kotorilab-p2p-v1';
+const CACHE_NAME = 'kotorilab-v1';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
