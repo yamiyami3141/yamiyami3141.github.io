@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trend Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .dashboard {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* プラットフォーム切り替え */
+        .platform-switch {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .platform-btn {
+            border: none;
+            background: transparent;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .platform-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+
+        /* コントロールパネル */
+        .controls-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+            align-items: flex-end;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        input[type="text"], input[type="date"] {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus {
+            border-color: var(--primary);
+        }
+
+        /* 期間プリセット */
+        .preset-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .preset-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: #e2e8f0;
+        }
+
+        #loadingMsg {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 600;
+            display: none;
+            margin-left: auto;
+        }
+
+        /* グラフエリア */
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .view-switch {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .view-btn {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .view-btn.active {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #eff6ff;
+        }
+
+        canvas {
+            margin-top: 40px;
+            width: 100% !important;
+            height: 400px !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <div class="header">
+        <h1 class="title">📈 Trend Compass</h1>
+        <div class="platform-switch" id="platformSwitch">
+            <button class="platform-btn active" onclick="setPlatform('Google')">Google</button>
+            <button class="platform-btn" onclick="setPlatform('Yahoo')" title="現在Googleのみ連携済">Yahoo</button>
+            <button class="platform-btn" onclick="setPlatform('X')" title="現在Googleのみ連携済">X (Twitter)</button>
+        </div>
+    </div>
+
+    <div class="controls-card">
+        <div class="input-group">
+            <div class="input-field" style="flex: 2;">
+                <label>比較キーワード (カンマ区切りで最大5つ)</label>
+                <input type="text" id="keywords" value="ChatGPT, Claude, Gemini" onchange="updateData()">
+            </div>
+            <div class="input-field">
+                <label>開始日</label>
+                <input type="date" id="startDate" onchange="updateData()">
+            </div>
+            <div class="input-field">
+                <label>終了日</label>
+                <input type="date" id="endDate" onchange="updateData()">
+            </div>
+        </div>
+        
+        <div class="preset-buttons">
+            <button class="preset-btn" onclick="setPreset('today')">今日</button>
+            <button class="preset-btn" onclick="setPreset('yesterday')">昨日</button>
+            <button class="preset-btn" onclick="setPreset('1w')">直近1週間</button>
+            <button class="preset-btn" onclick="setPreset('1m')">直近1ヶ月</button>
+            <span id="loadingMsg">🔄 データを取得中...</span>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="view-switch">
+            <button class="view-btn active" id="btn-bubble" onclick="setView('bubble')">🔵 バブルビュー</button>
+            <button class="view-btn" id="btn-line" onclick="setView('line')">📉 ラインビュー</button>
+        </div>
+        <canvas id="trendChart"></canvas>
+    </div>
+</div>
+
+<script>
+    // --- あなた専用のCloudflare Worker URL ---
+    const WORKER_URL = 'https://damp-morning-7030.yamiyami3141.workers.dev';
+
+    // --- 状態管理 ---
+    let currentPlatform = 'Google';
+    let currentView = 'bubble';
+    let chartInstance = null;
+    let cachedTimelineData = null; // APIリクエストを減らすためのキャッシュ
+
+    // --- 初期化 ---
+    document.addEventListener('DOMContentLoaded', () => {
+        setPreset('1w'); // 初期表示は直近1週間
+    });
+
+    // --- UI コントロール関数 ---
+    function setPlatform(platform) {
+        if(platform !== 'Google') {
+            alert('現在バックエンドはGoogleトレンドのみ連携済みです。');
+            return;
+        }
+        currentPlatform = platform;
+        document.querySelectorAll('.platform-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.innerText.includes(platform));
+        });
+        updateData();
+    }
+
+    function setView(view) {
+        currentView = view;
+        document.getElementById('btn-bubble').classList.toggle('active', view === 'bubble');
+        document.getElementById('btn-line').classList.toggle('active', view === 'line');
+        
+        // キャッシュがあれば再取得せずに描画だけ切り替える
+        if(cachedTimelineData) {
+            const keywords = document.getElementById('keywords').value.split(',').map(k => k.trim()).filter(k => k);
+            processRealData(cachedTimelineData, keywords);
+        } else {
+            updateData();
+        }
+    }
+
+    function setPreset(type) {
+        const end = new Date();
+        const start = new Date();
+
+        if (type === 'today') {
+            // 当日
+        } else if (type === 'yesterday') {
+            start.setDate(start.getDate() - 1);
+            end.setDate(end.getDate() - 1);
+        } else if (type === '1w') {
+            start.setDate(start.getDate() - 7);
+        } else if (type === '1m') {
+            start.setMonth(start.getMonth() - 1);
+        }
+
+        document.getElementById('startDate').value = start.toISOString().split('T')[0];
+        document.getElementById('endDate').value = end.toISOString().split('T')[0];
+        updateData();
+    }
+
+    // --- データ取得ロジック ---
+    async function updateData() {
+        const keywordsInput = document.getElementById('keywords').value;
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        const keywordsArray = keywordsInput.split(',').map(k => k.trim()).filter(k => k);
+
+        if (keywordsArray.length === 0 || !start || !end) return;
+        if (keywordsArray.length > 5) {
+            alert("Googleトレンドの仕様上、比較できるキーワードは最大5つまでです。");
+            return;
+        }
+
+        // UIをローディング状態にする
+        const loadingMsg = document.getElementById('loadingMsg');
+        loadingMsg.style.display = 'inline-block';
+
+        try {
+            // Workerへリクエストを送信 (CORSを突破して本物データを取得)
+            const response = await fetch(`${WORKER_URL}?q=${encodeURIComponent(keywordsArray.join(','))}&start=${start}&end=${end}`);
+            const data = await response.json();
+            
+            if(data.error) throw new Error(data.error);
+
+            // データをキャッシュして描画処理へ
+            cachedTimelineData = data.default.timelineData;
+            processRealData(cachedTimelineData, keywordsArray);
+
+        } catch (error) {
+            console.error('データ取得エラー:', error);
+            alert('データの取得に失敗しました。期間やキーワードを変更してお試しください。');
+            cachedTimelineData = null;
+        } finally {
+            loadingMsg.style.display = 'none';
+        }
+    }
+
+    // --- データ加工と描画 ---
+    function processRealData(timelineData, keywords) {
+        if(!timelineData || timelineData.length === 0) {
+            alert('指定された期間のデータが見つかりませんでした。');
+            return;
+        }
+
+        const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'];
+        const labels = timelineData.map(item => item.formattedTime || item.time);
+        
+        if (currentView === 'bubble') {
+            // バブルビュー：期間内の合計検索ボリュームを計算
+            const totals = keywords.map(() => 0);
+            timelineData.forEach(item => {
+                if(item.value) {
+                    item.value.forEach((val, i) => { totals[i] += val; });
+                }
+            });
+
+            // バブルのサイズ調整 (最大値を基準に相対的に計算)
+            const maxTotal = Math.max(...totals, 1);
+
+            const bubbleData = keywords.map((kw, index) => ({
+                label: kw,
+                data: [{ 
+                    x: index + 1, 
+                    y: totals[index], 
+                    r: Math.max((totals[index] / maxTotal) * 40, 5) // 半径を5〜40pxの範囲にスケーリング
+                }],
+                backgroundColor: colors[index % colors.length] + '80', // 半透明
+                borderColor: colors[index % colors.length],
+                borderWidth: 2
+            }));
+            
+            drawChart({ type: 'bubble', data: { datasets: bubbleData } });
+        } else {
+            // ラインビュー：日別の推移
+            const lineData = keywords.map((kw, index) => ({
+                label: kw,
+                data: timelineData.map(item => item.value ? item.value[index] : 0),
+                borderColor: colors[index % colors.length],
+                backgroundColor: colors[index % colors.length] + '20',
+                tension: 0.4,
+                fill: true
+            }));
+            
+            drawChart({ type: 'line', data: { labels: labels, datasets: lineData } });
+        }
+    }
+
+    function drawChart(chartConfig) {
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        
+        if (chartInstance) {
+            chartInstance.destroy(); // 既存のグラフを破棄
+        }
+
+        const options = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            if (currentView === 'bubble') {
+                                return `${context.dataset.label}: 期間合計 ${context.raw.y} pt`;
+                            }
+                            return `${context.dataset.label}: ${context.raw} pt`;
+                        }
+                    }
+                }
+            },
+            scales: currentView === 'bubble' ? {
+                x: { 
+                    display: false, 
+                    min: 0,
+                    max: document.getElementById('keywords').value.split(',').length + 1
+                },
+                y: { beginAtZero: true, title: { display: true, text: '検索ボリューム合計 (相対値)' } }
+            } : {
+                y: { beginAtZero: true, title: { display: true, text: '人気度 (0-100)' } }
+            },
+            animation: { duration: 800, easing: 'easeOutQuart' }
+        };
+
+        chartInstance = new Chart(ctx, {
+            type: chartConfig.type,
+            data: chartConfig.data,
+            options: options
+        });
+    }
+</script>
+
+</body>
+</html>
