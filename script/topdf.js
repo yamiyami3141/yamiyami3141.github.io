@@ -277,20 +277,29 @@ async function appendFileToPdfDoc(pdfDoc, file, quality, margin) {
     if (file.type === 'application/pdf') {
         // --- PDFの場合 ---
         const pdfBytes = await file.arrayBuffer();
-        const loadedPdf = await PDFDocument.load(pdfBytes);
-        const copiedPages = await pdfDoc.copyPages(loadedPdf, loadedPdf.getPageIndices());
-        copiedPages.forEach((page) => {
-            pdfDoc.addPage(page);
-        });
+        
+        try {
+            // 💡修正ポイント: { ignoreEncryption: true } を追加して、
+            // 編集制限（オーナーパスワード等）がかかっているPDFでも強制的に読み込ませる
+            const loadedPdf = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
+            const copiedPages = await pdfDoc.copyPages(loadedPdf, loadedPdf.getPageIndices());
+            copiedPages.forEach((page) => {
+                pdfDoc.addPage(page);
+            });
+        } catch (pdfError) {
+            // 💡修正ポイント: 読み込み不能なヤバいPDFが混ざっていても、
+            // 全体がクラッシュしないようにスキップしてユーザーに通知する
+            console.error(`[${file.name}] の読み込みに失敗しました:`, pdfError);
+            alert(`「${file.name}」は特殊な保護または構造のため結合できませんでした。スキップして処理を続行します。\n\n※このファイルを結合したい場合は、一度ブラウザで開いて「PDFとして印刷」で再保存したものをご使用ください。`);
+        }
+        
     } else {
-        // --- 画像の場合 ---
+        // --- 画像の場合 （変更なし）---
         const imgData = await processImage(file, quality);
         
-        // Base64をArrayBufferに変換
         const res = await fetch(imgData.data);
         const imgBytes = await res.arrayBuffer();
         
-        // PDFLibに画像を埋め込む
         let embedImage;
         if (imgData.format === 'JPEG') {
             embedImage = await pdfDoc.embedJpg(imgBytes);
