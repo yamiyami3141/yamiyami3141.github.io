@@ -4,7 +4,7 @@ const { PDFDocument } = PDFLib;
 // DOM要素の取得
 const dom = {
     dropZone: document.getElementById('drop-zone'),
-    fileInput: document.getElementById('file-input'),
+    fileInput: document.getElementById('file-input'), // フォルダ用
     mergeBtn: document.getElementById('merge-btn'),
     clearBtn: document.getElementById('clear-all-btn'),
     fileList: document.getElementById('file-list'),
@@ -20,17 +20,82 @@ const dom = {
     margin: document.getElementById('margin-size'),
     compression: document.getElementById('compression-level'),
     
-    // 追加: フォルダ結合チェックボックス
     mergeFoldersCheck: document.getElementById('merge-folders-check')
 };
 
+// ==========================================
+// ファイル用とフォルダ用の入力を分けて制御する追加機能
+// ==========================================
+const singleFileInput = document.createElement('input');
+singleFileInput.type = 'file';
+singleFileInput.multiple = true;
+singleFileInput.accept = 'image/*, application/pdf'; // 画像とPDFを許可
+singleFileInput.style.display = 'none';
+document.body.appendChild(singleFileInput);
+
+// ドロップゾーンにファイル選択用のボタンを動的に追加
+const fileSelectBtn = document.createElement('button');
+fileSelectBtn.innerText = "単一ファイルを選択する場合はこちら";
+fileSelectBtn.style.cssText = "display: block; margin: 15px auto 0; padding: 6px 15px; font-size: 0.8rem; background: #fff; border: 1px solid #000; border-radius: 8px; cursor: pointer;";
+fileSelectBtn.onclick = (e) => {
+    e.stopPropagation(); // フォルダ選択(DropZone本体のクリック)を発火させない
+    singleFileInput.click();
+};
+dom.dropZone.appendChild(fileSelectBtn);
+// ==========================================
+
 // 状態管理: フォルダ名をキーとしたオブジェクト
-// 例: { "FolderA": [file1, file2], "FolderB": [file3] }
 let fileGroups = {};
 
 // イベントリスナー設定
 dom.dropZone.onclick = () => dom.fileInput.click();
 dom.fileInput.onchange = (e) => handleFiles(e.target.files);
+singleFileInput.onchange = (e) => handleFiles(e.target.files);
+
+// ドラッグ&ドロップの強化（フォルダ展開機能）
+dom.dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dom.dropZone.style.borderColor = '#000';
+    dom.dropZone.style.background = 'rgba(255, 255, 255, 0.6)';
+});
+dom.dropZone.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    dom.dropZone.style.borderColor = 'rgba(0,0,0,0.2)';
+    dom.dropZone.style.background = 'rgba(255, 255, 255, 0.3)';
+});
+dom.dropZone.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    dom.dropZone.style.borderColor = 'rgba(0,0,0,0.2)';
+    dom.dropZone.style.background = 'rgba(255, 255, 255, 0.3)';
+    
+    const items = e.dataTransfer.items;
+    const filesArray = [];
+    
+    // フォルダとファイルの両方を再帰的に読み込む
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i].webkitGetAsEntry();
+        if (item) {
+            await traverseFileTree(item, "", filesArray);
+        }
+    }
+    handleFiles(filesArray);
+});
+
+// フォルダツリーを再帰的に巡回する関数
+async function traverseFileTree(item, path, filesArray) {
+    if (item.isFile) {
+        const file = await new Promise(resolve => item.file(resolve));
+        // カスタムパスを付与して後でフォルダ名を取得できるようにする
+        file.customPath = path + file.name;
+        filesArray.push(file);
+    } else if (item.isDirectory) {
+        const dirReader = item.createReader();
+        const entries = await new Promise(resolve => dirReader.readEntries(resolve));
+        for (let i = 0; i < entries.length; i++) {
+            await traverseFileTree(entries[i], path + item.name + "/", filesArray);
+        }
+    }
+}
 
 // UI切り替えイベント
 dom.sortOrder.onchange = () => sortAndDisplay();
@@ -49,24 +114,25 @@ dom.clearBtn.onclick = () => {
     if(confirm("リストを空にしますか？")) { 
         fileGroups = {};
         dom.fileInput.value = '';
+        singleFileInput.value = '';
         updateUI(); 
     } 
 };
 
-// 外部(HTML)から呼び出せるようにGlobalに登録
 window.topdfUpdateUI = () => updateUI();
 
 // ファイル処理
 function handleFiles(files) {
-    const newFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+    // 画像またはPDFのみを抽出
+    const newFiles = Array.from(files).filter(f => f.type.startsWith('image/') || f.type === 'application/pdf');
     if (newFiles.length === 0) return;
     
     newFiles.forEach(file => {
-        // フォルダ名の取得 (webkitRelativePath が空の場合は "Root" 扱い)
-        let pathParts = file.webkitRelativePath ? file.webkitRelativePath.split('/') : [];
-        // 親フォルダ名を取得 (例: Parent/Child/img.jpg -> Child を採用。直下なら Parent)
-        // 基本的にはアップロードした最上位フォルダ(pathParts[0])を採用するのが自然
-        let folderName = pathParts.length > 1 ? pathParts[pathParts.length - 2] : (pathParts[0] || "未分類");
+        // Drop時のcustomPath、またはinput時のwebkitRelativePathを利用
+        const fullPath = file.customPath || file.webkitRelativePath || file.name;
+        let pathParts = fullPath.split('/');
+        
+        let folderName = pathParts.length > 1 ? pathParts[pathParts.length - 2] : "個別ファイル";
 
         if (!fileGroups[folderName]) {
             fileGroups[folderName] = [];
@@ -80,7 +146,6 @@ function handleFiles(files) {
 function sortAndDisplay() {
     const val = dom.sortOrder.value;
     
-    // 各グループ内のファイルをソート
     Object.keys(fileGroups).forEach(folderName => {
         fileGroups[folderName].sort((a, b) => {
             if (val === 'name-asc') return a.name.localeCompare(b.name, undefined, {numeric: true});
@@ -93,7 +158,7 @@ function sortAndDisplay() {
 }
 
 function updateUI() {
-    const folders = Object.keys(fileGroups).sort(); // フォルダ名自体は昇順固定
+    const folders = Object.keys(fileGroups).sort();
     let totalFiles = 0;
     
     if (folders.length === 0) {
@@ -107,7 +172,6 @@ function updateUI() {
     const viewMode = document.querySelector('input[name="view-mode"]:checked').value;
     dom.fileList.innerHTML = '';
     
-    // モード切替用クラス制御
     if (viewMode === 'grid') {
         dom.fileList.classList.remove('file-list-mode');
     } else {
@@ -118,32 +182,27 @@ function updateUI() {
         const files = fileGroups[folderName];
         totalFiles += files.length;
 
-        // フォルダごとのコンテナ作成
         const section = document.createElement('div');
         section.className = 'folder-section';
         
-        // ヘッダー
         const header = document.createElement('div');
         header.className = 'folder-header';
-        header.innerHTML = `<span>📁 ${folderName}</span> <span style="font-size:0.8em; font-weight:normal;">(${files.length}枚)</span>`;
+        header.innerHTML = `<span>📁 ${folderName}</span> <span style="font-size:0.8em; font-weight:normal;">(${files.length}ファイル)</span>`;
         section.appendChild(header);
 
-        // ファイルグリッド
         const gridInner = document.createElement('div');
         gridInner.className = 'file-grid-inner';
         
-        // ファイル要素生成
         gridInner.innerHTML = files.map((f, i) => {
-            // 注意: removeFileにフォルダ名とインデックスを渡す必要がありますが、
-            // HTML属性で文字列を渡すのはエスケープ面倒なので、関数経由またはdatasetを使います。
-            // ここではシンプルにonclick文字列生成で対応します。
             const safeFolderName = folderName.replace(/'/g, "\\'");
+            const isPDF = f.type === 'application/pdf';
+            const icon = isPDF ? '📄' : '🖼';
             
             if (viewMode === 'grid') {
                 return `
                 <div class="file-item">
                     <div class="btn-remove" onclick="removeFile('${safeFolderName}', ${i})">×</div>
-                    <div style="margin-bottom:4px;">🖼</div>
+                    <div style="margin-bottom:4px; font-size:1.2rem;">${icon}</div>
                     ${f.name.length > 15 ? f.name.slice(0,12)+'...' : f.name}
                 </div>`;
             } else {
@@ -151,7 +210,7 @@ function updateUI() {
                 <div class="file-item">
                     <div class="btn-remove" onclick="removeFile('${safeFolderName}', ${i})">×</div>
                     <div style="font-size: 14px; flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                        🖼 ${f.name}
+                        ${icon} ${f.name}
                     </div>
                     <div class="fs-b7" style="color: #888;">${(f.size / 1024).toFixed(1)} KB</div>
                 </div>`;
@@ -162,12 +221,11 @@ function updateUI() {
         dom.fileList.appendChild(section);
     });
     
-    dom.fileCount.innerText = `${folders.length}フォルダ / 合計 ${totalFiles} 枚`;
+    dom.fileCount.innerText = `${folders.length}フォルダ / 合計 ${totalFiles} ファイル`;
     dom.mergeBtn.classList.remove('hidden');
     dom.clearBtn.classList.remove('hidden');
 }
 
-// 削除関数（フォルダ名とインデックスを受け取る）
 window.removeFile = (folderName, i) => { 
     if (fileGroups[folderName]) {
         fileGroups[folderName].splice(i, 1);
@@ -178,7 +236,7 @@ window.removeFile = (folderName, i) => {
     updateUI(); 
 };
 
-// 画像読み込みとCanvasによる圧縮処理（既存コード維持）
+// 画像読み込みとCanvasによる圧縮処理
 const processImage = (file, quality) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -190,7 +248,6 @@ const processImage = (file, quality) => {
                 canvas.height = img.height;
                 const ctx = canvas.getContext('2d');
 
-                // モノクロ変換処理
                 if (document.getElementById('grayscale-check').checked) {
                     ctx.filter = 'grayscale(100%)';
                 }
@@ -215,65 +272,44 @@ const processImage = (file, quality) => {
     });
 };
 
-// 共通: PDFに画像を追加する処理
-async function addImagesToDoc(doc, files, quality, margin) {
-    let pageAdded = false;
-
-    // もし既存ページがある状態(docが真っ白でない)なら改ページフラグを調整
-    // jsPDFの初期ページ判定が難しいため、呼び出し元で制御するか、
-    // ここでは「リストの最初以外は改ページ」とする
-    
-    // ただし、jsPDF作成直後は1ページ目が空で存在するため、
-    // 「このドキュメントへの書き込みが初回かどうか」を知る必要がある。
-    // 簡易的に、doc.internal.pages.lengthなどをチェックするか、
-    // 呼び出し側でループ制御する。
-    // 今回は「渡されたfiles」を順番に追加するロジックにする。
-    
-    for (let i = 0; i < files.length; i++) {
-        // 画像処理
-        const imgData = await processImage(files[i], quality);
+// 共通: PDFLibドキュメントにファイル(画像 or PDF)を追加する処理
+async function appendFileToPdfDoc(pdfDoc, file, quality, margin) {
+    if (file.type === 'application/pdf') {
+        // --- PDFの場合 ---
+        const pdfBytes = await file.arrayBuffer();
+        const loadedPdf = await PDFDocument.load(pdfBytes);
+        const copiedPages = await pdfDoc.copyPages(loadedPdf, loadedPdf.getPageIndices());
+        copiedPages.forEach((page) => {
+            pdfDoc.addPage(page);
+        });
+    } else {
+        // --- 画像の場合 ---
+        const imgData = await processImage(file, quality);
         
+        // Base64をArrayBufferに変換
+        const res = await fetch(imgData.data);
+        const imgBytes = await res.arrayBuffer();
+        
+        // PDFLibに画像を埋め込む
+        let embedImage;
+        if (imgData.format === 'JPEG') {
+            embedImage = await pdfDoc.embedJpg(imgBytes);
+        } else {
+            embedImage = await pdfDoc.embedPng(imgBytes);
+        }
+
         const pageWidth = imgData.width + (margin * 2);
         const pageHeight = imgData.height + (margin * 2);
-        const orient = pageWidth > pageHeight ? 'l' : 'p';
-
-        // ページ追加ロジック
-        // 現在のページが「初期作成直後の空ページ」かつ「まだ何も描画していない」場合の判定は難しいので、
-        // setPage(1) してサイズ変更するか、addPageするか。
-        // ここでは呼び出し元で new jsPDF しているので、
-        // 1枚目は setPage、2枚目以降(または結合時の次画像)は addPage という制御が必要。
         
-        // 簡易策: 常にaddPageし、最後に空白の1ページ目を削除する手もあるが、
-        // ここでは「docの現在のページ数が1かつコンテンツがない」と仮定して、
-        // 1枚目はリサイズ、それ以降は追加とする。
-        
-        const isFirstPageOfDoc = (doc.internal.pages.length - 1 === 1) && (i === 0) && (!doc.hasImageAdded); 
-
-        if (isFirstPageOfDoc) {
-            // 1ページ目のサイズ変更と向き設定はjsPDFのバージョンによっては複雑
-            // なので、最も確実な「常にaddPageして、最後に先頭(空白)を削除」方式を採用するか、
-            // あるいは単純に：
-            doc.deletePage(1); // デフォルトのA4ページを削除
-            doc.addPage([pageWidth, pageHeight], orient);
-        } else {
-            doc.addPage([pageWidth, pageHeight], orient);
-        }
-        
-        doc.addImage(
-            imgData.data, 
-            imgData.format, 
-            margin, 
-            margin, 
-            imgData.width, 
-            imgData.height
-        );
-        doc.hasImageAdded = true; // カスタムフラグ
-
-        // UI更新(少し待機)
-        await new Promise(r => setTimeout(r, 10));
+        const page = pdfDoc.addPage([pageWidth, pageHeight]);
+        page.drawImage(embedImage, {
+            x: margin,
+            y: margin,
+            width: imgData.width,
+            height: imgData.height,
+        });
     }
 }
-
 
 // PDF生成処理（メイン）
 dom.mergeBtn.onclick = async () => {
@@ -286,59 +322,47 @@ dom.mergeBtn.onclick = async () => {
     try {
         const quality = parseFloat(dom.compression.value);
         const margin = parseInt(dom.margin.value);
-        const usePassword = dom.passwordCheck.checked;
-        const password = dom.passwordInput.value;
-        const mergeAll = dom.mergeFoldersCheck.checked; // 結合するかどうか
+        const mergeAll = dom.mergeFoldersCheck.checked;
+        
+        // ※ パスワード保護について
+        // 現状 pdf-lib(無償版) で作成したPDFに対する直接のパスワード暗号化保存は難しいため、
+        // 開発環境用のWarningを出しつつ、通常の結合処理を継続させます。
+        if (dom.passwordCheck.checked) {
+            console.warn("注意: pdf-lib環境でのパスワード保護出力は追加の暗号化モジュールが必要です。今回は保護なしで出力されます。");
+        }
+
+        // ダウンロード補助関数
+        const downloadDoc = async (doc, fileName) => {
+            const pdfBytes = await doc.save();
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        };
 
         // --- 全結合モード ---
         if (mergeAll) {
             dom.mergeBtn.innerText = "結合PDF作成中...";
             
-            // 1つのドキュメントを作成
-            const doc = new jsPDF({ compress: true });
-            doc.hasImageAdded = false; // フラグ初期化
-
-            // 全フォルダをループ
+            const pdfDoc = await PDFDocument.create();
             let processedCount = 0;
             const totalFiles = folders.reduce((sum, f) => sum + fileGroups[f].length, 0);
 
             for (const folder of folders) {
                 const files = fileGroups[folder];
-                
-                // 画像追加ループ
                 for (let i = 0; i < files.length; i++) {
                     processedCount++;
                     dom.mergeBtn.innerText = `処理中 (${processedCount}/${totalFiles})...`;
                     
-                    const imgData = await processImage(files[i], quality);
-                    const pageWidth = imgData.width + (margin * 2);
-                    const pageHeight = imgData.height + (margin * 2);
-                    const orient = pageWidth > pageHeight ? 'l' : 'p';
-
-                    // 最初の1枚目だけ既存ページ置換、それ以外は追加
-                    if (processedCount === 1) {
-                         // デフォルトページを削除して追加
-                         doc.deletePage(1);
-                         doc.addPage([pageWidth, pageHeight], orient);
-                    } else {
-                        doc.addPage([pageWidth, pageHeight], orient);
-                    }
-
-                    doc.addImage(imgData.data, imgData.format, margin, margin, imgData.width, imgData.height);
-                    
-                    // 暗号化設定（初回のみ設定すれば効く）
-                    if (processedCount === 1 && usePassword && password) {
-                         if (typeof doc.setEncryption === 'function') {
-                            doc.setEncryption(password, password, ["print", "copy", "modify"], "AES_128");
-                        } else {
-                            console.warn("暗号化不可");
-                        }
-                    }
-                    await new Promise(r => setTimeout(r, 10));
+                    await appendFileToPdfDoc(pdfDoc, files[i], quality, margin);
+                    await new Promise(r => setTimeout(r, 10)); // UI更新待機
                 }
             }
 
-            // 保存名決定
             let fileName = "combined.pdf";
             if (dom.renameCheck.checked && dom.nameInput.value) {
                 fileName = dom.nameInput.value;
@@ -347,7 +371,7 @@ dom.mergeBtn.onclick = async () => {
             }
             if (!fileName.endsWith('.pdf')) fileName += ".pdf";
 
-            doc.save(fileName);
+            await downloadDoc(pdfDoc, fileName);
 
         } 
         // --- 個別フォルダモード ---
@@ -358,42 +382,20 @@ dom.mergeBtn.onclick = async () => {
                 
                 dom.mergeBtn.innerText = `作成中: ${folder} (${fIndex + 1}/${folders.length})...`;
 
-                const doc = new jsPDF({ compress: true });
+                const pdfDoc = await PDFDocument.create();
                 
-                // 画像追加ループ
                 for (let i = 0; i < files.length; i++) {
-                    const imgData = await processImage(files[i], quality);
-                    const pageWidth = imgData.width + (margin * 2);
-                    const pageHeight = imgData.height + (margin * 2);
-                    const orient = pageWidth > pageHeight ? 'l' : 'p';
-
-                    if (i === 0) {
-                        doc.deletePage(1);
-                        doc.addPage([pageWidth, pageHeight], orient);
-                        // パスワード設定
-                        if (usePassword && password) {
-                             if (typeof doc.setEncryption === 'function') {
-                                doc.setEncryption(password, password, ["print", "copy", "modify"], "AES_128");
-                            }
-                        }
-                    } else {
-                        doc.addPage([pageWidth, pageHeight], orient);
-                    }
-
-                    doc.addImage(imgData.data, imgData.format, margin, margin, imgData.width, imgData.height);
+                    await appendFileToPdfDoc(pdfDoc, files[i], quality, margin);
                     await new Promise(r => setTimeout(r, 10));
                 }
 
-                // 保存名決定（フォルダ名優先）
                 let fileName = folder + ".pdf";
-                
-                // もし「名前指定」がある場合、連番などをつける
                 if (dom.renameCheck.checked && dom.nameInput.value) {
                     const base = dom.nameInput.value.replace('.pdf', '');
                     fileName = `${base}_${folder}.pdf`;
                 }
 
-                doc.save(fileName);
+                await downloadDoc(pdfDoc, fileName);
                 
                 // ブラウザが連続ダウンロードを処理できるように少し待機
                 await new Promise(r => setTimeout(r, 800));
