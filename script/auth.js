@@ -1,7 +1,8 @@
 (function() {
   const PASS_LIST = {
     "page-a": "bmVw",
-    "page-b": ""
+    "page-b": "",
+    "page-c": "667788"
   };
 
   const currentScript = document.currentScript;
